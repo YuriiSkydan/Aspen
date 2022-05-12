@@ -1,0 +1,756 @@
+#pragma once
+
+#ifndef MATRIX_H
+#define MATRIX_H
+
+#include <cmath>
+#include <numbers>
+#include "Vector2.h";
+
+template<typename T, size_t SIZE>
+struct Matrix
+{
+	T matrix[SIZE][SIZE];
+
+	Matrix();
+	Matrix(T diagonal);
+
+	//Matrix(const Matrix& other) = default;
+
+	template<size_t S>
+	Matrix(const Matrix<T, S>& other);
+
+	template<size_t S>
+	const Matrix<T, SIZE>& operator=(const Matrix<T, S>& other);
+
+	template<typename U>
+	void operator+=(U scalar);
+	template<typename U>
+	void operator+=(const Matrix<U, SIZE>& m);
+
+	template<typename U>
+	void operator-=(U scalar);
+	template<typename U>
+	void operator-=(const Matrix<U, SIZE>& m);
+
+	template<typename U>
+	void operator*=(U scalar);
+	template<typename U>
+	void operator*=(const Matrix<U, SIZE>& m);
+
+	T* operator[](size_t index);
+	const T* operator[](size_t index) const;
+
+	Matrix<T, SIZE> Transpose() const;
+};
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE>::Matrix()
+	: matrix{ 0 }
+{
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE>::Matrix(T diagonal)
+	: matrix { 0 }
+{
+	for (size_t i = 0; i < SIZE; i++)
+		matrix[i][i] = diagonal;
+}
+
+template<typename T, size_t SIZE>
+template<size_t S>
+inline Matrix<T, SIZE>::Matrix(const Matrix<T, S>& other)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] = other[i][j];
+	}
+}
+
+template<typename T, size_t SIZE>
+template<size_t S>
+inline const Matrix<T, SIZE>& Matrix<T, SIZE>::operator=(const Matrix<T, S>& other)
+{
+	if (S < SIZE)
+		return;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] = other[i][j];
+	}
+
+	return *this;
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator+=(U scalar)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] += scalar;
+	}
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator+=(const Matrix<U, SIZE>& m)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] += m[i][j];
+	}
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator-=(U scalar)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] -= scalar;
+	}
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator-=(const Matrix<U, SIZE>& m)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] -= m[i][j];
+	}
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator*=(U scalar)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			matrix[i][j] *= scalar;
+	}
+}
+
+template<typename T, size_t SIZE>
+template<typename U>
+inline void Matrix<T, SIZE>::operator*=(const Matrix<U, SIZE>& m)
+{
+	*this = *this * m;
+}
+
+template<typename T, size_t SIZE>
+inline T* Matrix<T, SIZE>::operator[](size_t index)
+{
+	return matrix[index];
+}
+
+template<typename T, size_t SIZE>
+inline const T* Matrix<T, SIZE>::operator[](size_t index) const
+{
+	return matrix[index];
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> Matrix<T, SIZE>::Transpose() const
+{
+	Matrix<T, SIZE> transpose;
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			transpose[i][j] = matrix[j][i];
+	}
+
+	return transpose;
+}
+
+
+//-------------------------------------------
+// -- Binary operators --
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator+(const Matrix<T, SIZE>& m, T scalar)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = m[i][j] + scalar;
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator+(const Matrix<T, SIZE>& m1, const Matrix<T, SIZE>& m2)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = m1[i][j] + m2[i][j];
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator+(T scalar, const Matrix<T, SIZE>& m)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = scalar + m[i][j];
+	}
+
+	return temp;
+}
+
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator-(const Matrix<T, SIZE>& m, T scalar)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = m[i][j] - scalar;
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator-(const Matrix<T, SIZE>& m1, const Matrix<T, SIZE>& m2)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = m1[i][j] - m2[i][j];
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator-(T scalar, const Matrix<T, SIZE>& m)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+			temp[i][j] = scalar - m[i][j];
+	}
+
+	return temp;
+}
+
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator*(const Matrix<T, SIZE>& m, T scalar)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			temp[i][j] += m[i][j] * scalar;
+		}
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator*(const Matrix<T, SIZE>& m1, const Matrix<T, SIZE>& m2)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			for (size_t k = 0; k < SIZE; k++)
+			{
+				temp[i][j] += m1[i][k] * m2[k][j];
+			}
+		}
+	}
+
+	return temp;
+}
+
+template<typename T, size_t SIZE>
+inline Matrix<T, SIZE> operator*(T scalar, const Matrix<T, SIZE>& m)
+{
+	Matrix<T, SIZE> temp;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			temp[i][j] += m[i][j] * scalar;
+		}
+	}
+
+	return temp;
+}
+
+//--------- Matrix3x3 ------------
+template<typename T>
+inline Vector2<T> operator*(const Matrix<T, 3>& m, const Vector2<T>& v)
+{
+	Vector2<T> vec;
+	vec.x = (m[0][0] * v.x) + (m[0][1] * v.y);
+	vec.y = (m[1][0] * v.x) + (m[1][1] * v.y);
+	return vec;
+}
+
+template<typename T>
+inline Vector2<T> operator*(const Vector2<T>& v, const Matrix<T, 3>& m)
+{
+	Vector2<T> vec;
+	vec.x = (v.x * m[0][0]) + (v.y * m[1][0]);
+	vec.y = (v.x * m[0][1]) + (v.y * m[1][1]);
+
+	return vec;
+}
+
+//--------- Matrix2x2 ------------
+
+template<typename T>
+inline Vector2<T> operator*(const Matrix<T, 2>& m, const Vector2<T>& v)
+{
+	Vector2<T> vec;
+	vec.x = (m[0][0] * v.x) + (m[0][1] * v.y);
+	vec.y = (m[1][0] * v.x) + (m[1][1] * v.y);
+	return vec;
+}
+
+template<typename T>
+inline Vector2<T> operator*(const Vector2<T>& v, const Matrix<T, 2>& m)
+{
+	Vector2<T> vec;
+	vec.x = (v.x * m[0][0]) + (v.y * m[1][0]);
+	vec.y = (v.x * m[0][1]) + (v.y * m[1][1]);
+
+	return vec;
+}
+
+// -------- Define Types ----------
+// --------------------------------
+
+typedef Matrix<float, 2> Matrix2x2f;
+typedef Matrix<float, 3> Matrix3x3f;
+typedef Matrix<float, 4> Matrix4x4f;
+
+#endif
+
+//#pragma once
+//
+//#ifndef Matrix3x3_H
+//#define Matrix3x3_H
+//
+//#include <iostream> //for debug porpuses
+//#include <cmath>
+//#include <numbers>
+//#include "Vector2.h";
+//
+//template<typename T>
+//struct Matrix3x3;
+//
+////template<typename T = float>
+////Matrix3x3<T> Translate(const Matrix3x3<T>& matrix, const Vector2<T>& position)
+////{
+////	Matrix3x3 translated = matrix;
+////	translated[0][2] = position.x;
+////	translated[1][2] = position.y;
+////
+////	return translated;
+////}
+////
+////template<typename T = float>
+////Matrix3x3<T> Rotate(const Matrix3x3<T>& matrix, float angle)
+////{
+////	Matrix3x3 rotation(1.0f);
+////
+////	float cosValue = cos(angle * (std::numbers::pi / 180));
+////	float sinValue = sin(angle * (std::numbers::pi / 180));
+////
+////	rotation[0][0] = cosValue;
+////	rotation[0][1] = sinValue;
+////
+////	rotation[1][0] = -sinValue;
+////	rotation[1][1] = cosValue;
+////
+////	return matrix * rotation;
+////}
+////
+////template<typename T = float>
+////Matrix3x3<T> Scale(const Matrix3x3<T>& matrix, const Vector2<T>& vector)
+////{
+////	Matrix3x3<T> scaled(1.0f);
+////	scaled[0][0] *= vector.x;
+////	scaled[1][0] *= vector.x;
+////
+////	scaled[0][1] *= vector.y;
+////	scaled[1][1] *= vector.y;
+////
+////	return matrix * scaled;
+////}
+////
+////template<typename T = float>
+////Matrix3x3<T> CameraMatrix(Vector2<float> position, float ratio)
+////{
+////	Matrix3x3<T> cameraMatrix = Matrix3x3<T>(1.0f);
+////
+////	cameraMatrix = Translate(cameraMatrix, position);
+////	cameraMatrix[0][0] = ratio;
+////
+////	return cameraMatrix;
+////}
+//
+//
+//template<typename T = float>
+//struct Matrix3x3
+//{
+//	T matrix[3][3];
+//
+//	Matrix3x3();
+//	Matrix3x3(T diagonal);
+//
+//	Matrix3x3(const Matrix3x3& other) = default;
+//
+//	template<typename U>
+//	const Matrix3x3<T>& operator=(const Matrix3x3<T>& other);
+//
+//	template<typename U>
+//	void operator+=(U scalar);
+//	template<typename U>
+//	void operator+=(const Matrix3x3<U>& matrix);
+//
+//	template<typename U>
+//	void operator-=(U scalar);
+//	template<typename U>
+//	void operator-=(const Matrix3x3<U>& matrix);
+//
+//	template<typename U>
+//	void operator*=(U scalar);
+//	template<typename U>
+//	void operator*=(const Matrix3x3<U>& matrix);
+//
+//	T* operator[](size_t index);
+//	const T* operator[](size_t index) const;
+//};
+//
+//
+//template<typename T>
+//inline Matrix3x3<T>::Matrix3x3()
+//	: matrix{ 0.0f }
+//{
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T>::Matrix3x3(T diagonal)
+//	: matrix{ 0.0f }
+//{
+//	for (size_t i = 0; i < 3; i++)
+//		matrix[i][i] = diagonal;
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline const Matrix3x3<T>& Matrix3x3<T>::operator=(const Matrix3x3<T>& other)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] = other[i][j];
+//	}
+//	return *this;
+//}
+//
+//template<typename T>
+//inline T* Matrix3x3<T>::operator[](size_t index)
+//{
+//	return matrix[index];
+//}
+//
+//template<typename T>
+//inline const T* Matrix3x3<T>::operator[](size_t index) const
+//{
+//	return matrix[index];
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator+=(U scalar)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] += scalar;
+//	}
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator+=(const Matrix3x3<U>& matrix)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] += matrix[i][j];
+//	}
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator-=(U scalar)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] -= scalar;
+//	}
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator-=(const Matrix3x3<U>& matrix)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] -= matrix[i][j];
+//	}
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator*=(U scalar)
+//{
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			matrix[i][j] *= scalar;
+//	}
+//}
+//
+//template<typename T>
+//template<typename U>
+//inline void Matrix3x3<T>::operator*=(const Matrix3x3<U>& matrix)
+//{
+//	*this = *this * matrix;
+//}
+//
+////-----------------------------
+//// -- Binary operators -- 
+//template<typename T>
+//inline Matrix3x3<T> operator+(const Matrix3x3<T>& m, T scalar)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m[i][j] + scalar;
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T> operator+(const Matrix3x3<T>& m1, const Matrix3x3<T>& m2)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m1[i][j] + m2[i][j];
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T> operator+(T scalar, const Matrix3x3<T>& m)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m[i][j] + scalar;
+//	}
+//
+//	return temp;
+//}
+//
+//
+//template<typename T>
+//inline Matrix3x3<T> operator-(const Matrix3x3<T>& m, T scalar)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m[i][j] - scalar;
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T> operator-(const Matrix3x3<T>& m1, const Matrix3x3<T>& m2)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m1[i][j] - m2[i][j];
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T> operator-(T scalar, const Matrix3x3<T>& m)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m[i][j] - scalar;
+//	}
+//
+//	return temp;
+//}
+//
+//
+//template<typename T>
+//inline Matrix3x3<T> operator*(const Matrix3x3<T>& m1, const Matrix3x3<T>& m2)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//		{
+//			for (size_t k = 0; k < 3; k++)
+//			{
+//				temp[i][j] += m1[i][k] * m2[k][j];
+//			}
+//		}
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Matrix3x3<T> operator*(Matrix3x3<T> m, float scaler)
+//{
+//	Matrix3x3<T> temp;
+//
+//	for (size_t i = 0; i < 3; i++)
+//	{
+//		for (size_t j = 0; j < 3; j++)
+//			temp[i][j] = m[i][j] * scaler;
+//	}
+//
+//	return temp;
+//}
+//
+//template<typename T>
+//inline Vector2<T> operator*(const Matrix3x3<T>& matrix, const Vector2<T>& v)
+//{
+//	Vector2<T> vec;
+//	vec.x = (matrix[0][0] * v.x) + (matrix[0][1] * v.y) + (matrix[0][2]);
+//	vec.y = (matrix[1][0] * v.x) + (matrix[1][1] * v.y) + (matrix[1][2]);
+//	return vec;
+//}
+//
+//template<typename T>
+//inline Vector2<T> operator*(const Vector2<T>& v, const Matrix3x3<T>& matrix)
+//{
+//	Vector2<T> vec;
+//	vec.x = (v.x * matrix[0][0]) + (v.y * matrix[1][0]) + (matrix[2][0]);
+//	vec.y = (v.x * matrix[0][1]) + (v.y * matrix[1][1]) + (matrix[2][1]);
+//
+//	return vec;
+//}
+//
+//typedef Matrix3x3<float> Matrix3x3f;
+
+//template<typename T>
+//Matrix3x3f Translate(const Matrix3x3f& matrix, const Vector2f& position)
+//{
+//	Matrix3x3f translated = matrix;
+//	translated[0][2] = position.x;
+//	translated[1][2] = position.y;
+//
+//	return translated;
+//}
+//
+//template<typename T>
+//Matrix3x3<T> Rotate(const Matrix3x3<T>& matrix, float angle)
+//{
+//	Matrix3x3f rotation(1.0f);
+//
+//	float cosValue = cos(angle * (std::numbers::pi / 180));
+//	float sinValue = sin(angle * (std::numbers::pi / 180));
+//
+//	rotation[0][0] = cosValue;
+//	rotation[0][1] = sinValue;
+//
+//	rotation[1][0] = -sinValue;
+//	rotation[1][1] = cosValue;
+//
+//	return matrix * rotation;
+//}
+//
+//template<typename T>
+//Matrix3x3<T> Scale(const Matrix3x3<T>& matrix, const Vector2f& vector)
+//{
+//	Matrix3x3<T> scaled(1.0f);
+//	scaled[0][0] *= vector.x;
+//	scaled[1][0] *= vector.x;
+//
+//	scaled[0][1] *= vector.y;
+//	scaled[1][1] *= vector.y;
+//
+//	return matrix * scaled;
+//}
+
+//template<typename T>
+//Matrix3x3f CameraMatrix(Vector2f position, float ratio)
+//{
+//	Matrix3x3f cameraMatrix = Matrix3x3f(1.0f);
+//
+//	cameraMatrix = Translate(cameraMatrix, position);
+//	cameraMatrix[0][0] = ratio;
+//
+//	return cameraMatrix;
+//}
+
+//#endif 
