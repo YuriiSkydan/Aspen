@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef TEXTURE_H
-#define TEXTURE_H
-
 #include <glad/glad.h>
 //#include <GLFW/glfw3.h>
 #include "stb_image/stb_image.h"
@@ -25,7 +21,7 @@ public:
 	void Bind(unsigned int slot) const;
 	void UnBind() const;
 
+	unsigned int GetID() { return m_ID; }
+
 	~Texture() = default;
 };
-
-#endif

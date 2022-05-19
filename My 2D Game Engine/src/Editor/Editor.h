@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef EDITOR_H
-#define EDITOR_H
-
 #include "../src/Panels/HierarchyPanel.h"
 #include "../src/Panels/Inspector.h"
 #include "../src/Panels/ProjectPanel.h"
@@ -14,13 +11,12 @@ private:
 	enum class SceneState { PLAY = 0, EDIT = 1 };
 
 	HierarchyPanel m_HierarchyPanel;
-	Inspector m_InspectorPanel;
-	ProjectPanel m_ProjectPanel;
+	Inspector      m_InspectorPanel;
+	ProjectPanel   m_ProjectPanel;
 
 	EditorCamera m_EditorCamera;
 
 	std::shared_ptr<Scene> m_ActiveScene;
-	std::shared_ptr<GameObject> m_GameObjectsData;
 
 	SceneState m_SceneState = SceneState::EDIT;
 	bool m_Pause = false;
@@ -44,9 +40,7 @@ public:
 	void MenuBar();
 	void DockSpaceBegin();
 	void DockSpaceEnd();
-	void SceneWindow(); // maybe move it to seperate class
-	void GameWindow();  // maybe move it to seperate class
+	void SceneWindow();  // maybe move it to seperate class
+	void GameWindow();   // maybe move it to seperate class
 	void ImGuiRender();
 };
-
-#endif

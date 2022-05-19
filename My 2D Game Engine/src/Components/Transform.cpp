@@ -4,15 +4,10 @@ void Transform::UpdateGui() // optimize this function
 {
 	if (ImGui::CollapsingHeader("Transform"))
 	{
-		ImGui::Text("Position      X"); 
+		ImGui::Text("Position       "); 
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(70);
-		ImGui::DragFloat("##Position X", &position.x, 0.05);
-		ImGui::SameLine();
-		ImGui::Text("Y");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(70);
-		ImGui::DragFloat("##Position Y", &position.y, 0.05f);
+		ImGui::SetNextItemWidth(165);
+		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
 
 		//if (ImGui::DragFloat2("##Position", (float*)&position, 0.01f))
 		//{
@@ -21,17 +16,12 @@ void Transform::UpdateGui() // optimize this function
 		ImGui::Text("Rotation       ");
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(165);
-		ImGui::DragFloat("##Rotation", &angle, 0.05f);
+		ImGui::DragFloat("##Rotation", &angle, 0.02f);
 
-		ImGui::Text("Scale         X");
+		ImGui::Text("Scale          ");
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(70);
-		ImGui::DragFloat("##Scale X", &scale.x, 0.01f);
-		ImGui::SameLine();
-		ImGui::Text("Y");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(70);
-		ImGui::DragFloat("##Scale Y", &scale.y, 0.01f);
+		ImGui::SetNextItemWidth(165);
+		ImGui::DragFloat2("##Scale  ", (float*)&scale.x, 0.01f);
 	}
 }
 
@@ -40,14 +30,6 @@ Transform::Transform(GameObject* gameObject)
 	 scale{ 1.0f, 1.0f }, angle(0)
 {
 
-}
-
-void Transform::Update()
-{
-}
-
-void Transform::FixedUpdate()
-{
 }
 
 Matrix3x3f Transform::GetTransform() const

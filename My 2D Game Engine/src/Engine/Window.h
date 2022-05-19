@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef WINDOW_H
-#define WINDOW_H
 #include <string>
 #include <memory>
 #include "glad/glad.h"
@@ -16,7 +14,7 @@ public:
 		unsigned int width;
 		unsigned int height;
 
-		WindowData(const std::string& title = "Engine", unsigned int width = 1920, unsigned int height = 1080)
+		WindowData(const std::string& title = "Aspen", unsigned int width = 1920, unsigned int height = 1080)
 			: title(title), width(width), height(height)
 		{
 		}
@@ -47,5 +45,3 @@ public:
 	unsigned int GetWidth() const { return m_Data.width; };
 	unsigned int GetHeight() const { return m_Data.height; }
 };
-
-#endif

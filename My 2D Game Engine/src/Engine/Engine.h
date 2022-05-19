@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef ENGINE_H
-#define ENGINE_H
-
 #include "Window.h"
 #include "../Scene/Scene.h"
 #include "../Editor/Editor.h"
@@ -47,5 +44,3 @@ public:
 
 	static Engine& Get() { return *s_Instance; }
 };
-
-#endif

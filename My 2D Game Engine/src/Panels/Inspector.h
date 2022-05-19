@@ -1,5 +1,4 @@
 #pragma once
-
 #include "HierarchyPanel.h"
 #include "../GameObject/GameObject.h"
 

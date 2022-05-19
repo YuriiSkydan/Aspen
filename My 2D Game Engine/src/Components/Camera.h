@@ -10,7 +10,7 @@ private:
 	Color m_Background;
 
 	float m_Size = 1;
-	float m_Ratio;
+	float m_AspectRation;
 
 	unsigned int m_Width = 0, m_Heigth = 0;
 private:
@@ -19,7 +19,7 @@ private:
 public:
 	Camera(GameObject* gameObject, Transform* transform);
 
-	void SetRatio(float ratio);
+	void SetRatio(float aspectRation);
 	Matrix3x3f GetCameraMatrix();
 
 	Color GetBackgroundColor() const { return m_Background; }

@@ -19,15 +19,15 @@ Camera::Camera(GameObject* gameObject, Transform* transform)
 {
 }
 
-void Camera::SetRatio(float ratio)
+void Camera::SetRatio(float aspectRation)
 {
-	m_Ratio = ratio;
+	m_AspectRation = aspectRation;
 }
 
 Matrix3x3f Camera::GetCameraMatrix()
 {
 	Matrix3x3f cameraMatrix;
-	cameraMatrix = CameraMatrix(-transform->position, m_Ratio);
+	cameraMatrix = CameraMatrix(-transform->position, m_AspectRation);
 	cameraMatrix[0][0] *= 1.0f / m_Size;
 	cameraMatrix[1][1] *= 1.0f / m_Size;
 	cameraMatrix = Rotate(cameraMatrix, -transform->angle);

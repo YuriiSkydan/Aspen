@@ -1,6 +1,4 @@
 #pragma once
-#ifndef COMPONENT_H
-#define COMPONENT_H
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -33,12 +31,10 @@ public:
 	virtual void FixedUpdate() {}
 	virtual void LateUpdate() {}
 	virtual void OnDestroy() {}
-	virtual bool IsEnabled() const { return m_IsEnabled; }
+	bool IsEnabled() const { return m_IsEnabled; }
 
 	~Component()
 	{
 		std::cout << "Component destructor!!!\n";
 	}
 };
-
-#endif

@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef VERTEX_BUFFER_H
-#define VERTEX_BUFFER_H
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -20,7 +16,7 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+	unsigned int GetID() { return m_ID; }
+
 	~VertexBuffer() = default;
 };
-
-#endif

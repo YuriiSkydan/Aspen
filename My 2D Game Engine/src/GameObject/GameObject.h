@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
-
 #include <list>
 #include <string>
 #include <iostream>
@@ -111,5 +108,3 @@ public:
 		std::cout << "GameObject destructor!!!\n";
 	}
 };
-
-#endif

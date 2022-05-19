@@ -21,13 +21,13 @@ Framebuffer::Framebuffer()
 void Framebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-	glBindTexture(GL_TEXTURE_2D, m_Texture);
+	//glBindTexture(GL_TEXTURE_2D, m_Texture);
 }
 
 void Framebuffer::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Framebuffer::Resize(int width, int heigth)
@@ -37,9 +37,17 @@ void Framebuffer::Resize(int width, int heigth)
 
 int Framebuffer::ReadPixel(int attachmentIndex, int x, int y)
 {
+	//glBindTexture(GL_TEXTURE_2D, m_Texture);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
-	int pixelData;
-	glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+	unsigned int pixelData;
+	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_INT, &pixelData);
 
 	return pixelData;
 }
+
+//int Framebuffer::GetPixel(int x, int y)
+//{
+//	int pixelData;
+//	glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData;
+//	return pixelData;
+//}

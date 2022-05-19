@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef MATRIX_TRANSFORM_H
-#define MATRIX_TRANSFORM_H
-
 #include "Matrix.h"
 
 template<typename T>
@@ -55,5 +51,3 @@ Matrix<T, 3> CameraMatrix(Vector2<T> position, float ratio)
 
 	return cameraMatrix;
 }
-
-#endif

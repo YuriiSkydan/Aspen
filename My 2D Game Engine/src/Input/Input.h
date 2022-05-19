@@ -1,6 +1,5 @@
 #pragma once
-#ifndef INPUT_H
-#define INPUT_H
+
 #include "../Math/Vector2.h"
 #include "KeyCodes.h"
 #include "MouseCodes.h"
@@ -15,5 +14,3 @@ public:
 	static float GetMouseX();
 	static float GetMouseY();
 };
-
-#endif

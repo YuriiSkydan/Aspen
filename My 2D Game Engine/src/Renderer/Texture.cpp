@@ -5,35 +5,54 @@ Texture::Texture(std::string_view path)
 {
 	stbi_set_flip_vertically_on_load(true);
 
-	glGenTextures(1, &m_ID);
-	glBindTexture(GL_TEXTURE_2D, m_ID);
-
 	unsigned char* data = stbi_load(path.data(), &m_Width, &m_Height, &m_Channels, 0);
 
 	if (data != nullptr)
 	{
-		GLenum format;
+		GLenum format, internalFormat;
 
 		if (m_Channels == 1)
 			format = GL_RED;
 		else if (m_Channels == 3)
+		{
+			internalFormat = GL_RGB8;
 			format = GL_RGB;
+		}
 		else if (m_Channels == 4)
+		{
+			internalFormat = GL_RGBA8;
 			format = GL_RGBA;
+		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
+		glTextureStorage2D(m_ID, 1, internalFormat, m_Width, m_Height);
+
+		glTextureParameteri(m_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTextureSubImage2D(m_ID, 0, 0, 0, m_Width, m_Height, format, GL_UNSIGNED_BYTE, data);
+
+		stbi_image_free(data);
+
+		/*glGenTextures(1, &m_ID);
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
 	}
 	else
 	{
 		std::cerr << "Failed to load texture!!!\n";
 	}
 
-	stbi_image_free(data);
+	
 }
 
 void Texture::Bind(unsigned int slot) const

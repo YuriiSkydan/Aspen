@@ -1,9 +1,5 @@
 //#include "src/GameObject.h"
 #pragma once
-
-#ifndef SCENE_H
-#define SCENE_H
-
 #include "../Editor/EditorCamera.h"
 #include "../Components/SpriteRenderer.h"
 #include "../Components/Camera.h"
@@ -80,6 +76,3 @@ public:
 		std::cout << "Scene Destructor!!!\n";
 	}
 };
-
-#endif
-

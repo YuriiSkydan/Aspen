@@ -2,9 +2,11 @@
 
 int main()
 {
-	auto engine = std::make_unique<Engine>();
+	Engine* engine = new Engine();
 
 	engine->Run();
+
+	delete engine;
 
 	return 0;
 }

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef SPRITE_RENDERER_H
-#define SPRITE_RENDERRE_H
-
 #include "glad/glad.h"
 #include "../Renderer/IndexBuffer.h"
 #include "../Renderer/VertexBuffer.h"
@@ -30,9 +27,9 @@ class SpriteRenderer : public Component
 private:
 	VertexBuffer m_VertexBuffer;
 	IndexBuffer m_IndexBuffer;
-	unsigned int m_VAO;
+	unsigned int m_VAO; // TODO: make a class
 
-	//Texture m_Sprite;
+	Texture m_Sprite;
 	Shader m_Shader;
 	Color m_Color;
 
@@ -49,9 +46,8 @@ public:
 	void SetSprite(std::string_view& path);
 	void SetSprite(Texture id);
 
+	int GetPixel();
 	Shader& GetShader() { return m_Shader; }
 
 	void Draw();
 };
-
-#endif

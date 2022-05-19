@@ -129,21 +129,21 @@ void Scene::UpdateOnRuntime()
 
 		for (auto it : m_GameObjects)
 		{
-			if (it->HasComponent<Rigidbody>())
-			{
-				Rigidbody* rigidbody = it->GetComponent<Rigidbody>();
-				b2Body* body = rigidbody->body;
-				it->transform->position.x = body->GetPosition().x;
-				it->transform->position.y = body->GetPosition().y;
-				it->transform->angle = -ToDegrees(body->GetAngle());
-
-			}
-		}
-
-		for (auto it : m_GameObjects)
-		{
 			if (it->IsActive())
 				it->ComponentsFixedUpdate();
+		}
+	}
+
+	for (auto it : m_GameObjects)
+	{
+		if (it->HasComponent<Rigidbody>())
+		{
+			Rigidbody* rigidbody = it->GetComponent<Rigidbody>();
+			b2Body* body = rigidbody->body;
+			it->transform->position.x = body->GetPosition().x;
+			it->transform->position.y = body->GetPosition().y;
+			it->transform->angle = -ToDegrees(body->GetAngle());
+
 		}
 	}
 

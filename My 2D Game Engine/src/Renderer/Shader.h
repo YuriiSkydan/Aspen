@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef SHADER_H
-#define SHADER_H
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -24,6 +20,7 @@ private:
 	unsigned int CompileShader(const char* source, int shaderType);
 	unsigned int CreateProgram(unsigned int vShader, unsigned int fShader);
 	int GetUniformLocation(std::string_view name);
+
 public:
 	Shader(std::string_view vShaderPath, std::string_view fShaderPath);
 
@@ -48,5 +45,3 @@ public:
 
 	~Shader() = default;
 };
-
-#endif

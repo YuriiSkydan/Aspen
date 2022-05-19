@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef EDITOR_CAMERA_H
-#define EDITOR_CAMERA_H
-
 #include "../Math/MatrixTransform.h"
 
 class EditorCamera
@@ -22,5 +19,3 @@ public:
 	float GetRatio() const { return m_Ratio; }
 	Vector2f GetPosition() const{ return m_Position; }
 };
-
-#endif

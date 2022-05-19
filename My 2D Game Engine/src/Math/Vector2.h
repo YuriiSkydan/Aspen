@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef VECTOR2_H
-#define VECTOR2_H
-
 #include <cmath>
 
 template<typename T = float>
@@ -204,7 +200,6 @@ inline Vector2<T> operator+(T scalar, const Vector2<T>& v)
 	return Vector2<T>(scalar + v.x, scalar + v.y);
 }
 
-
 template<typename T>
 inline Vector2<T> operator-(const Vector2<T>& v, T scalar)
 {
@@ -222,7 +217,6 @@ inline Vector2<T> operator-(T scalar, const Vector2<T>& v)
 {
 	return Vector2<T>(scalar + v.x, scalar + v.y);
 }
-
 
 template<typename T>
 inline Vector2<T> operator*(const Vector2<T>& v, T scalar)
@@ -248,7 +242,6 @@ inline Vector2<T> operator/(const Vector2<T>& v, T scalar)
 	return Vector2<T>(v.x / scalar, v.y / scalar);
 }
 
-
 // -- Boolean operators --
 template<typename T>
 inline bool operator==(const Vector2<T>& v1, const Vector2<T>& v2)
@@ -263,8 +256,6 @@ inline bool operator!=(const Vector2<T>& v1, const Vector2<T>& v2)
 }
 
 // -- Define Types --
-typedef Vector2<unsigned int> Vector2ui;
-typedef Vector2<float> Vector2f;
-typedef Vector2<int> Vector2i;
-
-#endif
+using Vector2ui = Vector2<unsigned int>;
+using Vector2f = Vector2<float>;
+using Vector2i = Vector2<int>;

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
-
 #include "Component.h"
 #include "../Math/MatrixTransform.h"
 
@@ -22,9 +19,6 @@ private:
 public:
 	Transform(GameObject* gameObject);
 
-	void Update() override;
-	void FixedUpdate() override;
-
 	//void Translate(Vector2<float> translation);
 	//void Rotate();
 
@@ -43,4 +37,3 @@ public:
 
 	~Transform() = default;
 };
-#endif

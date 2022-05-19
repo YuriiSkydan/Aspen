@@ -6,6 +6,9 @@
 #include "../vendor/glm/gtx/quaternion.hpp"
 #include "../vendor/glm/gtc/type_ptr.hpp"
 
+
+#include "../Input/Input.h"
+
 glm::vec3 Position = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::mat4 Projection = glm::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 1000.0f);
 glm::mat4 tran = glm::mat4(1.0f);
@@ -97,8 +100,8 @@ void Editor::ImGuiRender()
 	m_InspectorPanel.ImGuiRender();
 	//m_ProjectPanel.ImGuiRender();
 
-	SceneWindow();
 	GameWindow();
+	SceneWindow();
 
 	DockSpaceEnd();
 }
@@ -128,29 +131,42 @@ void Editor::GameWindow()
 
 void Editor::SceneWindow()
 {
+	m_SceneFramebuffer.Bind();
+	Vector2f mousePosition = Input::GetMousePosition();
+
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	int pData;
+	glReadPixels(mousePosition.x, mousePosition.y, 1, 1, GL_RED_INTEGER, GL_INT, &pData);
+
+	std::cout << "X: " << mousePosition.x << " Y: " << mousePosition.y;
+	std::cout <<  " Data: " << pData << std::endl;
+	
+	m_SceneFramebuffer.Unbind();
+
+	ImGuizmo::BeginFrame();
 	ImGui::Begin("Scene");
 
 	start = ImGui::GetCursorScreenPos();
 	m_SceneWindowSize = ImGui::GetWindowSize();
 
-	glm::mat4 matrix = glm::mat4(1.5f);
+	glm::mat4 matrix = glm::mat4(1.0f);
 	Vector2f pos = m_EditorCamera.GetPosition();
 
-//	std::cout << "Camera Position X: " << pos.x << "\tY: " << pos.y << std::endl;
+	//	std::cout << "Camera Position X: " << pos.x << "\tY: " << pos.y << std::endl;
 
-	glm::mat4 CameraView = glm::lookAt(Position, Position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	CameraView = glm::scale(CameraView, glm::vec3(50.0f, 50.0f, 50.0f));
-	CameraView = glm::translate(CameraView, glm::vec3(pos.x, 0.0f, pos.y));
+	glm::mat4 CameraView = glm::lookAt(Position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	CameraView = glm::scale(CameraView, glm::vec3(275.0f, 275.0f, 275.0f));
+	CameraView = glm::translate(CameraView, glm::vec3(pos.x, 0.0f, -pos.y));
 
 	float ratio = float(m_SceneWindowSize.x) / float(m_SceneWindowSize.y);
 	Projection = glm::ortho(float(-m_SceneWindowSize.x) / 2.0f, float(m_SceneWindowSize.x) / 2.0f,
-		float(-m_SceneWindowSize.y) / 2.0f, float(m_SceneWindowSize.y) / 2.0f, -10.0f, 1000.0f);
-
-	//ImGuizmo::Manipulate(,);
-	ImGuizmo::DrawGrid((float*)&CameraView, (float*)&Projection,
-		(float*)&matrix, 20.25);
+		float(-m_SceneWindowSize.y) / 2.0f, float(m_SceneWindowSize.y) / 2.0f, 0.1f, 1000.0f);
 
 	ImGuizmo::SetOrthographic(true);
+	ImGuizmo::DrawGrid((float*)&CameraView, (float*)&Projection,
+		(float*)&matrix, 10.25);
+
+
 	ImVec2 cursorPos = ImGui::GetCursorPos();
 	glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
 	ImGui::GetWindowDrawList()->AddImage(
@@ -167,12 +183,10 @@ void Editor::SceneWindow()
 	//	(ImGuizmo::ROTATE_Z), ImGuizmo::LOCAL, glm::value_ptr(tran), nullptr, nullptr);
 
 	m_EditorCamera.SetRatio(m_SceneWindowSize.y / m_SceneWindowSize.x);
-	if (ImGui::IsWindowHovered())
-		m_EditorCamera.Update();
-
-	ImGui::RadioButton("Translate", true);
+	m_EditorCamera.Update();
 
 	ImGui::End();
+
 }
 
 void Editor::DockSpaceBegin()

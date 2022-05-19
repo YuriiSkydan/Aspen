@@ -1,8 +1,4 @@
 #pragma once
-
-#ifndef HIERARCHY_PANEL_H
-#define HIERARCHY_PANEL_H
-
 #include "../Engine/Base.h"
 #include "../Scene/Scene.h"
 
@@ -20,10 +16,8 @@ public:
 
 	//static void Init(const std::shared_ptr<Scene>& scene);
 	void SetScene(const std::shared_ptr<Scene>& scene);
-//	void SetSelectedGameObjectRef(std::shared_ptr<GameObject>& gameObject);
+	//	void SetSelectedGameObjectRef(std::shared_ptr<GameObject>& gameObject);
 	void ImGuiRender();
 
 	GameObject* GetSelectedGameObject();
 };
-
-#endif

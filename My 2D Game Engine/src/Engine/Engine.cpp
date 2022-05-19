@@ -3,6 +3,8 @@
 #include "../Input/Input.h"
 #include "ImGuizmo.h"
 
+#include <chrono>
+
 Engine* Engine::s_Instance = nullptr;
 
 void Engine::InitImGui()
@@ -35,14 +37,15 @@ void Engine::ImGuiBegin()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGuizmo::BeginFrame();
 }
 
 void Engine::ImGuiEnd()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	Engine& engine = Engine::Get();
-	io.DisplaySize = ImVec2((float)engine.GetWindow().GetWidth(), (float)engine.GetWindow().GetHeight());
+
+	float windowWidth = m_Window->GetWidth();
+	float windowHeight = m_Window->GetHeight();
+	io.DisplaySize = ImVec2(windowWidth, windowHeight);
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -430,18 +433,22 @@ void Engine::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		ImGuiBegin();
-
 		ImGuiMainMenuBar();
-
+		
+		auto start = std::chrono::high_resolution_clock::now();
 		m_Editor->Update();
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
 		m_Editor->ImGuiRender();
 
 		ImGuiEnd();
-		
+
 		m_Window->Update();
-		glfwPollEvents();
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
+	
+		std::string title = "Aspen " + std::to_string(1.0f / duration.count());
+		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());
 	}
 }
 

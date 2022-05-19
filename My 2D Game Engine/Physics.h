@@ -251,9 +251,6 @@
 //
 //#endif
 
-#ifndef PHYSICS_H
-#define PGYSICS_H
-
 #include "src/Components/Transform.h"
 #include "box2d/b2_body.h"
 
@@ -383,5 +380,3 @@ public:
 		}
 	}
 };
-
-#endif
