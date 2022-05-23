@@ -4,13 +4,24 @@
 
 #include "../Math/Math.h"
 
-GameObject*  Scene::CreateGameObject()
+GameObject* Scene::CreateGameObject()
 {
 	WARN("Game Object created");
 	m_GameObjects.push_back(std::make_shared<GameObject>(this));
 
 	return m_GameObjects.back().get();
 	//m_GameObjects.push_back(std::shared_ptr<GameObject>(new GameObject(this)));
+}
+
+GameObject* Scene::GetObjectWithID(int ID)
+{
+	for (auto object : m_GameObjects)
+	{
+		if (object->GetID() == ID)
+			return object.get();
+	}
+
+	return nullptr;
 }
 
 void Scene::UpdateOnEditor(EditorCamera& camera)
@@ -34,21 +45,23 @@ void Scene::RuntimeStart()
 
 	for (auto object : m_GameObjects)
 	{
+		std::cout << "Possible ID: " << (int)object.get() << std::endl;
+
 		if (object->HasComponent<Rigidbody>())
 		{
 			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
-			
+
 			Vector2f pos = object->transform->position;
 			bodyDef.position = b2Vec2(pos.x, pos.y);
 
 			float angle = ToRads(-object->transform->angle);
 			bodyDef.angle = angle;
 			bodyDef.fixedRotation = false;
-			
+
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			
+
 
 			b2FixtureDef fixtureDef;
 			fixtureDef.density = 1.0f;
@@ -59,7 +72,7 @@ void Scene::RuntimeStart()
 			if (object->HasComponent<BoxCollider>())
 			{
 				BoxCollider* collider = object->GetComponent<BoxCollider>();
-				
+
 				float hx = collider->size.x * object->transform->scale.x;
 				float hy = collider->size.y * object->transform->scale.y;
 				b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
@@ -160,7 +173,7 @@ void Scene::UpdateOnRuntime()
 	//end = std::chrono::steady_clock::now();
 }
 
-void Scene::ViewportResize(unsigned int width, unsigned int heigth)
+void Scene::Resize(unsigned int width, unsigned int heigth)
 {
 	for (auto it : m_GameObjects)
 	{

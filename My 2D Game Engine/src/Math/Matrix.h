@@ -1,5 +1,4 @@
 #pragma once
-#include <cmath>
 #include <numbers>
 #include "Vector2.h";
 

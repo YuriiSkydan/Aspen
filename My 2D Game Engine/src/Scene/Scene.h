@@ -4,7 +4,7 @@
 #include "../Components/SpriteRenderer.h"
 #include "../Components/Camera.h"
 #include "../Physics.h"
-#include "../box2d/b2_api.h"
+#include "../box2d/b2_api.h" // maybe move it to the physics
 #include "../box2d/b2_body.h"
 #include "../box2d/b2_world.h"
 #include "../box2d/b2_math.h"
@@ -41,6 +41,7 @@ public:
 	Scene() = default;
 
 	GameObject* CreateGameObject();
+	GameObject* GetObjectWithID(int ID);
 	//void DestroyGameObject();
 
 	void RuntimeStart();
@@ -48,7 +49,7 @@ public:
 	void RuntimeStop();
 	void UpdateOnRuntime();
 	void UpdateOnEditor(EditorCamera& camera);
-	void ViewportResize(unsigned int width, unsigned int heigth);
+	void Resize(unsigned int width, unsigned int heigth);
 	void Render();
 
 	void SaveGameObjectsData();

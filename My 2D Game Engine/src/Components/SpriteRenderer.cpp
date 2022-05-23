@@ -1,8 +1,8 @@
+#include "../GameObject/GameObject.h"
 #include "SpriteRenderer.h"
-#include "Transform.h"
-
-
 #include "../Input/Input.h" // delete later
+
+#include <filesystem>
 
 float square[]
 {
@@ -34,7 +34,26 @@ void SpriteRenderer::UpdateGui()
 		if (ImGui::ColorEdit4("##Color", (float*)&m_Color))
 		{
 			m_Shader.Bind();
-			m_Shader.SetVec4f("color", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
+			m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
+		}
+		
+		ImGui::Text("Texture        ");
+		ImGui::SameLine();
+		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { 165, 165 }, { 0, 1 }, { 1, 0 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path texturePath = "Assets";
+				texturePath /= path;
+				std::wstring wPath = texturePath.c_str();
+				std::string sPath(wPath.begin(), wPath.end());
+				m_Sprite = Texture(sPath);
+				//m_Sprite = Texture(path);
+				//ImGui::GetDragDropPayload();
+				ImGui::EndDragDropTarget();
+			}
 		}
 
 		ImGui::Text("Order In Layer "); 
@@ -47,7 +66,7 @@ void SpriteRenderer::UpdateGui()
 
 SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform), m_Shader("Shaders/StandartShader.vs", "Shaders/StandartShader.fs"),
-	m_Sprite("Sprites/Slime.png")
+	m_Sprite("Assets/Sprites/StandartSprite.png")
 {
 	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);
@@ -68,6 +87,7 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 
 	m_Shader.Bind();
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.r, m_Color.a);
+	m_Shader.SetInt("gameObjectID", gameObject->GetID());
 }
 
 void SpriteRenderer::SetColor(const Color& color)

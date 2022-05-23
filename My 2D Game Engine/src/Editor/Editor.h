@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../src/Panels/HierarchyPanel.h"
 #include "../src/Panels/Inspector.h"
 #include "../src/Panels/ProjectPanel.h"
@@ -16,19 +15,17 @@ private:
 
 	EditorCamera m_EditorCamera;
 
-	std::shared_ptr<Scene> m_ActiveScene;
-
 	SceneState m_SceneState = SceneState::EDIT;
+	std::shared_ptr<Scene> m_ActiveScene;
 	bool m_Pause = false;
 
 	GameObject* m_SelectedObject = nullptr;
+	GameObject* m_HoveredObject = nullptr;
 
 	Framebuffer m_SceneFramebuffer;
 	Framebuffer m_GameFramebuffer;
 
 	ImVec2 m_SceneWindowSize;
-
-	ImVec2 start, size;
 public:
 	Editor();
 

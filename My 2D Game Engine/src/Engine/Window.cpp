@@ -40,6 +40,8 @@ void Window::Init(const WindowData& data)
 		glfwTerminate();
 		return;
 	}
+
+	glEnable(GL_DEBUG_OUTPUT);
 }
 
 std::unique_ptr<Window> Window::Create(const WindowData& data)

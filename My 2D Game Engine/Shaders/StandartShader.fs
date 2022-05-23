@@ -1,10 +1,11 @@
-#version 330 core
+#version 450 core
 
-out vec4 FragColor;
-out int color2;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out int IDColor;
 
 in vec2 f_TexCoords;
 
+uniform int gameObjectID; 
 uniform vec4 spriteColor;
 uniform sampler2D sprite;
 
@@ -14,8 +15,6 @@ void main()
    if(texColor.a < 0.1f)
         discard;
 
-   //FragColor = texColor * spriteColor;
-
-    FragColor = texture2D(sprite, f_TexCoords) * spriteColor;
-    color2 = 150;
+   FragColor = texColor * spriteColor;
+   IDColor = gameObjectID;
 }

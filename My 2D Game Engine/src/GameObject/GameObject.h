@@ -1,26 +1,28 @@
 #pragma once
-
-#include <list>
-#include <string>
-#include <iostream>
 #include "../Components/Transform.h"
 #include "../Components/SpriteRenderer.h"
 #include "../Scene/Scene.h"
 #include "../Log/Log.h"
 
+#include <list>
+#include <string>
+#include <iostream>
+
 class GameObject
 {
 private:
-	friend class Inspector;
-	friend class Scene;
-	friend class Hierarchy;
-
 	std::vector<std::shared_ptr<Component>> m_Components;
 	Scene* m_Scene = nullptr;
 
 	char m_Name[20];
 	bool m_IsActive = true;
-	static size_t s_Objects;
+	unsigned int m_ID;
+
+	static unsigned int s_Objects;
+
+	friend class Inspector;
+	friend class Scene;
+	friend class Hierarchy;
 public:
 	std::shared_ptr<Transform> transform;
 
@@ -97,7 +99,8 @@ public:
 
 	void SetName(const char* newName);
 	const char* GetName() const { return m_Name; }
-	
+	unsigned int GetID() const { return m_ID; }
+
 	bool IsActive() { return m_IsActive; }
 	void SetActive(bool active) { m_IsActive = active; }
 

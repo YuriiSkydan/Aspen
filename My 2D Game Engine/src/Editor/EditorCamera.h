@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../Math/MatrixTransform.h"
 
 class EditorCamera
@@ -17,5 +16,6 @@ public:
 	Matrix3x3f GetCameraMatrix() const;
 	void SetRatio(float ratio) { m_Ratio = ratio; }
 	float GetRatio() const { return m_Ratio; }
+	float GetScale() const { return m_Scale; }
 	Vector2f GetPosition() const{ return m_Position; }
 };

@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Panels\ProjectPanel.cpp" />
     <ClCompile Include="src\Components\Camera.cpp" />
     <ClCompile Include="src\Renderer\Framebuffer.cpp" />

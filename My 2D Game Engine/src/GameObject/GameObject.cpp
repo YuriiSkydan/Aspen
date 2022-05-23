@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-size_t GameObject::s_Objects = 0;
+unsigned int GameObject::s_Objects = 0;
 
 GameObject::GameObject(Scene* scene)
 	:m_Scene(scene)
@@ -13,6 +13,7 @@ GameObject::GameObject(Scene* scene)
 	name << "GameObject" << s_Objects << '\0';
 	name >> m_Name;
 
+	m_ID = s_Objects;
 	s_Objects++;
 }
 
