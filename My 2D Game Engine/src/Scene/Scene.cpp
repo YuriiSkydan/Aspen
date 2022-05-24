@@ -8,10 +8,10 @@
 GameObject* Scene::CreateGameObject()
 {
 	WARN("Game Object created");
-	m_GameObjects.push_back(std::make_shared<GameObject>(this));
 
-	return m_GameObjects.back().get();
+	m_GameObjects.push_back(std::make_shared<GameObject>(this));
 	//m_GameObjects.push_back(std::shared_ptr<GameObject>(new GameObject(this)));
+	return m_GameObjects.back().get();
 }
 
 GameObject* Scene::GetObjectWithID(int ID)
@@ -44,7 +44,7 @@ void Scene::RuntimeStart()
 {
 	m_PhysicsWorld = std::make_unique<b2World>(m_Gravity);
 
-	for (auto object : m_GameObjects)
+	for (auto& object : m_GameObjects)
 	{
 		if (object->HasComponent<Rigidbody>())
 		{
@@ -118,8 +118,6 @@ void Scene::RuntimeStart()
 
 			b2BodyDef bodyDef;
 			Vector2f pos = object->transform->position;
-
-
 		}
 	}
 }
@@ -131,10 +129,10 @@ void Scene::RuntimeStop()
 
 void Scene::UpdateOnRuntime()
 {
-	for (auto it : m_GameObjects)
+	for (auto& object : m_GameObjects)
 	{
-		if (it->IsActive())
-			it->ComponentsUpdate();
+		if (object->IsActive())
+			object->ComponentsUpdate();
 	}
 
 	end = std::chrono::steady_clock::now();
@@ -147,21 +145,21 @@ void Scene::UpdateOnRuntime()
 
 		m_PhysicsWorld->Step(0.015f, 6, 2);
 
-		for (auto it : m_GameObjects)
+		for (auto& object : m_GameObjects)
 		{
-			if (it->IsActive())
-				it->ComponentsFixedUpdate();
+			if (object->IsActive())
+				object->ComponentsFixedUpdate();
 		}
 
-		for (auto it : m_GameObjects)
+		for (auto& object : m_GameObjects)
 		{
-			if (it->HasComponent<Rigidbody>())
+			if (object->HasComponent<Rigidbody>())
 			{
-				Rigidbody* rigidbody = it->GetComponent<Rigidbody>();
+				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
 				b2Body* body = rigidbody->body;
-				it->transform->position.x = body->GetPosition().x;
-				it->transform->position.y = body->GetPosition().y;
-				it->transform->angle = -ToDegrees(body->GetAngle());
+				object->transform->position.x = body->GetPosition().x;
+				object->transform->position.y = body->GetPosition().y;
+				object->transform->angle = -ToDegrees(body->GetAngle());
 
 			}
 		}
@@ -182,11 +180,11 @@ void Scene::UpdateOnRuntime()
 
 void Scene::Resize(unsigned int width, unsigned int heigth)
 {
-	for (auto it : m_GameObjects)
+	for (auto& object : m_GameObjects)
 	{
-		if (it->HasComponent<Camera>())
+		if (object->HasComponent<Camera>())
 		{
-			it->GetComponent<Camera>()->SetRatio(float(heigth) / float(width));
+			object->GetComponent<Camera>()->SetRatio(float(heigth) / float(width));
 		}
 	}
 }
@@ -194,11 +192,11 @@ void Scene::Resize(unsigned int width, unsigned int heigth)
 void Scene::Render()
 {
 	Camera* mainCamera = nullptr;
-	for (auto it : m_GameObjects)
+	for (auto& object : m_GameObjects)
 	{
-		if (it->HasComponent<Camera>())
+		if (object->HasComponent<Camera>())
 		{
-			mainCamera = it->GetComponent<Camera>();
+			mainCamera = object->GetComponent<Camera>();
 		}
 	}
 
@@ -226,7 +224,6 @@ void Scene::SaveGameObjectsData() // think about another solution to this proble
 {
 	for (auto it : m_GameObjectsData)
 	{
-
 		if (typeid(*(std::get<0>(it))) == typeid(Transform))
 		{
 			Transform* transform_1 = static_cast<Transform*>(std::get<0>(it).get());

@@ -14,7 +14,7 @@ void Camera::UpdateGui()
 		ImGui::Text("Background");
 		ImGui::Spacing();
 		ImGui::Text("Size"); ImGui::SameLine();
-		
+
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
 
@@ -39,11 +39,19 @@ void Camera::SetRatio(float aspectRation)
 
 Matrix3x3f Camera::GetCameraMatrix()
 {
-	Matrix3x3f cameraMatrix;
-	cameraMatrix = CameraMatrix(-transform->position, m_AspectRation);
-	cameraMatrix[0][0] *= 1.0f / m_Size;
-	cameraMatrix[1][1] *= 1.0f / m_Size;
-	cameraMatrix = Rotate(cameraMatrix, -transform->angle);
+	Matrix3x3f cameraMatrix(1.0f);
+	cameraMatrix[0][0] = m_AspectRation;
+	cameraMatrix = Rotate(cameraMatrix, transform->angle);
+	cameraMatrix = Translate(cameraMatrix, -transform->position);
+
+
+	//Matrix3x3f cameraMatrix(1.0f);
+	//cameraMatrix = CameraMatrix(-transform->position, m_AspectRation);
+	//cameraMatrix[0][0] *= 1.0f / m_Size;
+	//cameraMatrix[1][1] *= 1.0f / m_Size;
+	//cameraMatrix = Rotate(cameraMatrix, -transform->angle);
+
+	//cameraMatrix = cameraMatrix.Transpose();
 
 	return cameraMatrix;
 }

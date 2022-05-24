@@ -29,7 +29,7 @@ void SpriteRenderer::UpdateGui()
 	if (isOpen)
 	{
 		int columnWidth = 110;
-		float itemSize = ImGui::GetWindowSize().x - columnWidth - 10;;
+		float itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 20;
 
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, columnWidth);
@@ -46,17 +46,17 @@ void SpriteRenderer::UpdateGui()
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
 
-		ImGui::SetNextItemWidth(itemSize);
+		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragInt("##Order In Layer", &orderInLayer, 1, 0);
 
-		ImGui::SetNextItemWidth(itemSize);
+		ImGui::SetNextItemWidth(itemWidth);
 		if (ImGui::ColorEdit4("##Color", (float*)&m_Color))
 		{
 			m_Shader.Bind();
 			m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 		}
 
-		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { itemSize, itemSize }, { 0, 1 }, { 1, 0 });
+		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { itemWidth, itemWidth }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))

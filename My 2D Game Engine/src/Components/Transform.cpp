@@ -5,6 +5,7 @@ void Transform::UpdateGui() // optimize this function
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		int columnWidth = 110;
+		int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 10;
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, columnWidth);
 
@@ -17,11 +18,12 @@ void Transform::UpdateGui() // optimize this function
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
-		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
+		
+		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
-		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
+		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragFloat("##Rotation", &angle, 0.02f);
-		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
+		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragFloat2("##Scale  ", (float*)&scale.x, 0.01f);
 
 		ImGui::Columns(1);

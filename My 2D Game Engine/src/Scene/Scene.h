@@ -20,6 +20,7 @@ class Scene
 private:
 	std::string m_Name = "Scene";
 
+	//when vector is resized object will be destory that why you use shared_ptr
 	std::vector<std::shared_ptr<GameObject>> m_GameObjects;
 	std::vector<SpriteRenderer*> m_RenderObjects;
 

@@ -2,11 +2,11 @@
 #include "Matrix.h"
 
 template<typename T>
-Matrix<T, 3> Translate(const Matrix<T, 3>& matrix, const Vector2<T>& position)
+Matrix<T, 3> Translate(const Matrix<T, 3>& m, const Vector2<T>& position)
 {
-	Matrix<T, 3> translated = matrix;
-	translated[0][2] = position.x;
-	translated[1][2] = position.y;
+	Matrix<T, 3> translated = m;
+	translated[0][2] = m[0][0] * position.x + m[0][1] * position.y + m[0][2];
+	translated[1][2] = m[1][0] * position.x + m[1][1] * position.y + m[1][2];
 
 	return translated;
 }

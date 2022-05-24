@@ -68,29 +68,30 @@ void HierarchyPanel::ImGuiRender()
 
 	ImGui::InputText("##", findInput, 20);
 
+	
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
 		if (strlen(findInput) != 0)
 		{
-			for (auto it : m_Scene->m_GameObjects)
+			for (auto& object : m_Scene->m_GameObjects)
 			{
-				findStr = it->GetName();
-				if (!findStr.find(findInput) && ImGui::Button(it->GetName()))
-					m_SelectedGameObject = &(*it);
+				findStr = object->GetName();
+				if (!findStr.find(findInput) && ImGui::Button(object->GetName()))
+					m_SelectedGameObject = object.get();
 			}
 		}
 		else
 		{
-			for (auto it : m_Scene->m_GameObjects)
+			for (auto& object : m_Scene->m_GameObjects)
 			{
 				ImGui::Text("   ");
 				ImGui::SameLine();
-				if (ImGui::MenuItem(it->GetName()))
-					m_SelectedGameObject = &(*it);
+				if (ImGui::MenuItem(object->GetName()))
+					m_SelectedGameObject = object.get();
 			}
 		}
 	}
-
+	
 	ImGui::End();
 }
 
