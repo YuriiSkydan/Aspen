@@ -5,12 +5,25 @@ void Camera::UpdateGui()
 {
 	if (ImGui::CollapsingHeader("Camera"))
 	{
-		ImGui::Text("Background");
-		ImGui::SameLine();
-		ImGui::ColorEdit4("##Background Color", (float*)&m_Background);
+		int columnWidth = 110;
+		float itemSize = ImGui::GetWindowSize().x - columnWidth - 10;;
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, columnWidth);
 
+		ImGui::Spacing();
+		ImGui::Text("Background");
+		ImGui::Spacing();
 		ImGui::Text("Size"); ImGui::SameLine();
+		
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+
+		ImGui::SetNextItemWidth(itemSize);
+		ImGui::ColorEdit4("##Background Color", (float*)&m_Background);
+		ImGui::SetNextItemWidth(itemSize);
 		ImGui::DragFloat("##Size", &m_Size, 0.001f);
+
+		ImGui::Columns(1);
 	}
 }
 

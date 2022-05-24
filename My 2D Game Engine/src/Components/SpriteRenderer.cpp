@@ -28,18 +28,35 @@ void SpriteRenderer::UpdateGui()
 
 	if (isOpen)
 	{
-		ImGui::Text("Color          ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(165);
+		int columnWidth = 110;
+		float itemSize = ImGui::GetWindowSize().x - columnWidth - 10;;
+
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, columnWidth);
+		
+		//ImGui::Spacing();
+		//ImGui::Text("Layer");
+		ImGui::Spacing();
+		ImGui::Text("Order In Layer");
+		ImGui::Spacing();
+		ImGui::Text("Color");
+		ImGui::Spacing();
+		ImGui::Text("Texture");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+
+		ImGui::SetNextItemWidth(itemSize);
+		ImGui::DragInt("##Order In Layer", &orderInLayer, 1, 0);
+
+		ImGui::SetNextItemWidth(itemSize);
 		if (ImGui::ColorEdit4("##Color", (float*)&m_Color))
 		{
 			m_Shader.Bind();
 			m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 		}
-		
-		ImGui::Text("Texture        ");
-		ImGui::SameLine();
-		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { 165, 165 }, { 0, 1 }, { 1, 0 });
+
+		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { itemSize, itemSize }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -56,10 +73,7 @@ void SpriteRenderer::UpdateGui()
 			}
 		}
 
-		ImGui::Text("Order In Layer "); 
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(165);
-		ImGui::DragInt("##Order In Layer", &orderInLayer, 1, 0);
+		ImGui::Columns(1);
 	}
 }
 
@@ -76,7 +90,7 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0));
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeof(float) * 2));
-	
+
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
@@ -102,7 +116,7 @@ void SpriteRenderer::Draw()
 	m_Shader.Bind();
 	m_Shader.SetMat3("transform", transform->GetTransform());
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
-	
+
 	m_Sprite.Bind(0);
 	m_Shader.SetInt("sprite", 0);
 

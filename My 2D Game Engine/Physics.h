@@ -278,37 +278,35 @@ public:
 	{
 		if (ImGui::CollapsingHeader("Box Collider"))
 		{
-			ImGuiSliderFlags flags = ImGuiSliderFlags_None;
-			flags |= ImGuiSliderFlags_AlwaysClamp;
+			int columnWidth = 110;
+			int itemWidth = ImGui::GetWindowSize().x - columnWidth - 10;
+			ImGui::Columns(2, 0, false);
+			ImGui::SetColumnWidth(0, columnWidth);
 
-			ImGui::Text("Size          X");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(70);
-			ImGui::DragFloat("##Size X", &size.x, 0.01f, 0.0f, FLT_MAX, "%.3f");
-			ImGui::SameLine();
-			ImGui::Text("Y");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(70);
-			ImGui::DragFloat("##Size Y", &size.y, 0.01f, 0.0f, FLT_MAX, "%.3f");
-
-			ImGui::Text("Offset        X");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(70);
-			ImGui::DragFloat("##Offset X", &offset.x, 0.1f);
-			ImGui::SameLine();
-			ImGui::Text("Y");
-			ImGui::SameLine();
-			ImGui::SetNextItemWidth(70);
-			ImGui::DragFloat("##Offset Y", &offset.y, 0.1f);
-
+			ImGui::Spacing();
+			ImGui::Text("Size");
+			ImGui::Spacing();
+			ImGui::Text("Offset");
+			ImGui::Spacing();
 			ImGui::Text("Material");
-			ImGui::Text("Friction       ");
-			ImGui::SameLine();
+			ImGui::Spacing();
+			ImGui::Text("Friction");
+			ImGui::Spacing();
 
+			ImGui::NextColumn();
+			ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+
+			ImGui::SetNextItemWidth(itemWidth);
+			ImGui::DragFloat2("##Size", (float*)&size, 0.01f, 0.0f, FLT_MAX, "%.3f");
+			ImGui::SetNextItemWidth(itemWidth);
+			ImGui::DragFloat2("##Offset", (float*)&offset, 0.1f);
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(itemWidth);
 			ImGui::DragFloat("##Friction", &material.friction, 0.01f, 0.0f, FLT_MAX);
-			ImGui::Text("Bounciness     ");
-			ImGui::SameLine();
-			ImGui::DragFloat("##Bounciness", &material.restitution, 0.01f, 0.0f, FLT_MAX);
+			//ImGui::Text("Bounciness     ");
+			//ImGui::SameLine();
+			//ImGui::DragFloat("##Bounciness", &material.restitution, 0.01f, 0.0f, FLT_MAX);
+			ImGui::Columns(1);
 		}
 	}
 };
@@ -329,9 +327,21 @@ public:
 	{
 		if (ImGui::CollapsingHeader("Circle Collider"))
 		{
-			ImGui::Text("Radius         ");
-			ImGui::SameLine();
+			int columnWidth = 110;
+			int itemWidth = ImGui::GetWindowSize().x - columnWidth - 10;
+			ImGui::Columns(2, 0, false);
+			ImGui::SetColumnWidth(0, columnWidth);
+
+			ImGui::Spacing();
+			ImGui::Text("Radius");
+			ImGui::Spacing();
+
+			ImGui::NextColumn();
+			ImGui::SetColumnWidth(0, ImGui::GetWindowSize().x - columnWidth);
+
 			ImGui::DragFloat("##Radius", &radius, 0.001f, 0.0f);
+
+			ImGui::Columns(1);
 		}
 	}
 };
@@ -362,21 +372,36 @@ public:
 		type = b2_dynamicBody;
 		if (ImGui::CollapsingHeader("Rigidbody"))
 		{
-			ImGui::Text("Body Type    ");
-			if (ImGui::BeginCombo("##Body Type", "Dynamic"))
+			int columnWidth = 110;
+			int itemWidth = ImGui::GetWindowSize().x - columnWidth - 10;
+			ImGui::Columns(2, 0, false);
+			ImGui::SetColumnWidth(0, columnWidth);
+
+			ImGui::Spacing();
+			ImGui::Text("Body Type");
+			ImGui::Spacing();
+			ImGui::Text("Material");
+			ImGui::Spacing();
+			ImGui::Text("Friction");
+			ImGui::Spacing();
+			ImGui::Text("Bounciness");
+
+			ImGui::NextColumn();
+			ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+
+			if (ImGui::BeginCombo("##BodyType", "Dynamic"))
 			{
 				//if(ImGui::Combo("Static", "")
 				ImGui::EndCombo();
 			}
 
-			ImGui::Text("Material");
-			ImGui::Text("Friction       ");
-			ImGui::SameLine();
-
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(itemWidth);
 			ImGui::DragFloat("##Friction", &material.friction, 0.01f, 0.0f, FLT_MAX);
-			ImGui::Text("Bounciness     ");
-			ImGui::SameLine();
+			ImGui::SetNextItemWidth(itemWidth);
 			ImGui::DragFloat("##Bounciness", &material.restitution, 0.01f, 0.0f, FLT_MAX);
+		
+			ImGui::Columns(1);
 		}
 	}
 };

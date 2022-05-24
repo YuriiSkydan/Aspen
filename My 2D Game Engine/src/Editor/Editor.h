@@ -19,6 +19,10 @@ private:
 	std::shared_ptr<Scene> m_ActiveScene;
 	bool m_Pause = false;
 
+	Texture m_PlayButtonIcon;
+	Texture m_PauseButtonIcon;
+	Texture m_StopButtonIcon;
+
 	GameObject* m_SelectedObject = nullptr;
 	GameObject* m_HoveredObject = nullptr;
 
@@ -26,18 +30,31 @@ private:
 	Framebuffer m_GameFramebuffer;
 
 	ImVec2 m_SceneWindowSize;
+	float m_ToolbarHeight;
+	float m_MenuBarHeight;
+
+	enum class Theme { Dark, Black, DarkNight, CorporateGray, Light };
+	Theme m_CurrentTheme = Theme::Dark;
+
+private:
+	void BlackStyle();
+	void CorporateGreyStyle();
+	void DarkStyle();
+	void DarkNightStyle();
+	void SetCurrentTheme();
+
 public:
 	Editor();
 
 //	void SetSelectedObject(std::shared_ptr<GameObject> gameObject);
 //	std::shared_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
-
 	void Update();
 
-	void MenuBar();
-	void DockSpaceBegin();
-	void DockSpaceEnd();
+	void Toolbar();
+	void DockSpace();
+	void MainMenuBar();
 	void SceneWindow();  // maybe move it to seperate class
-	void GameWindow();   // maybe move it to seperate class
+	void GameWindow();   // maybe move it to seperate class	
 	void ImGuiRender();
+
 };

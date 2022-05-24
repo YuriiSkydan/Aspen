@@ -4,24 +4,27 @@ void Transform::UpdateGui() // optimize this function
 {
 	if (ImGui::CollapsingHeader("Transform"))
 	{
-		ImGui::Text("Position       "); 
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(165);
+		int columnWidth = 110;
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, columnWidth);
+
+		ImGui::Spacing();
+		ImGui::Text("Position");
+		ImGui::Spacing();
+		ImGui::Text("Rotation");
+		ImGui::Spacing();
+		ImGui::Text("Scale");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
 		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
-
-		//if (ImGui::DragFloat2("##Position", (float*)&position, 0.01f))
-		//{
-		//	//transform = Translate(transform, position);
-		//}
-		ImGui::Text("Rotation       ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(165);
+		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
 		ImGui::DragFloat("##Rotation", &angle, 0.02f);
-
-		ImGui::Text("Scale          ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(165);
+		ImGui::SetNextItemWidth(ImGui::GetWindowSize().x - columnWidth - 10);
 		ImGui::DragFloat2("##Scale  ", (float*)&scale.x, 0.01f);
+
+		ImGui::Columns(1);
 	}
 }
 

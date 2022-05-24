@@ -24,7 +24,7 @@ private:
 	std::vector<SpriteRenderer*> m_RenderObjects;
 
 	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
-	b2World* m_PhysicsWorld = nullptr;
+	std::unique_ptr<b2World> m_PhysicsWorld;
 
 	unsigned int m_ViewportWidth = 0, m_ViewportHeigth = 0;
 	
@@ -55,6 +55,9 @@ public:
 	void SaveGameObjectsData();
 	void ApplySavedData();
 
+	void Serialize() const;
+	void Deserialize();
+
 	template<typename T>
 	void OnComponentAdded(std::shared_ptr<T>& component)
 	{
@@ -72,8 +75,5 @@ public:
 
 	std::string GetName() const { return m_Name; }
 
-	~Scene()
-	{
-		std::cout << "Scene Destructor!!!\n";
-	}
+	~Scene();
 };

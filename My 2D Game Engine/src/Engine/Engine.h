@@ -16,23 +16,12 @@ private:
 
 	static Engine* s_Instance;
 
-	//maybe move it to the editor // yeah think about it
-	enum class Theme { Dark, Black, DarkNight, CorporateGray, Light };
-	Theme m_CurrentTheme = Theme::Dark;
-
 	//bool OnWindowClose(WindowCloseEvent& e);
 	//bool OnWindowResize(WindowResizeEvent& e);
 private:
 	void InitImGui();
 	void ImGuiBegin();
 	void ImGuiEnd();
-	void BlackStyle();
-	void CorporateGreyStyle();
-	void DarkStyle();
-	void DarkNightStyle();
-	void SetCurrentTheme();
-
-	void ImGuiMainMenuBar();
 
 public:
 	Engine();

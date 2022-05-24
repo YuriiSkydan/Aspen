@@ -28,7 +28,7 @@ void ProjectPanel::ImGuiRender()
 			m_CurrentDirectory = m_CurrentDirectory.parent_path();
 		}
 	}
-
+	
 	float padding = 15;
 	float iconSize = 90;
 	float cellSize = iconSize + padding;

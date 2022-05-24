@@ -22,8 +22,8 @@ private:
 
 	friend class Inspector;
 	friend class Scene;
-	friend class Hierarchy;
 public:
+	//TODO Change to simple pointer 
 	std::shared_ptr<Transform> transform;
 
 private:
@@ -37,7 +37,6 @@ private:
 	void UpdateComponentsGUI(); // delete later // maybe
 
 public:
-	GameObject() = default;
 	GameObject(Scene* scene);
 
 	template<typename T>
