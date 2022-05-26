@@ -404,4 +404,11 @@ public:
 			ImGui::Columns(1);
 		}
 	}
+
+	void SetMass(float mass)
+	{
+		if (mass > 0)
+			m_Mass = mass;
+	}
+	float GetMass() const { return m_Mass; }
 };

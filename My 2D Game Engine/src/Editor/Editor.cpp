@@ -2,6 +2,7 @@
 #include "ImGuizmo.h"
 
 #include "../Math/Math.h"
+#include "../Scene/SceneSerializer.h"
 
 #include "../vendor/glm/glm.hpp"
 #include "../vendor/glm/gtc/matrix_transform.hpp"
@@ -25,12 +26,13 @@ Editor::Editor()
 	, m_PauseButtonIcon("Resources/PauseIcon.png")
 	, m_ToolbarHeight(33)
 {
+	//Move somewhere later
 	glDebugMessageCallback(DebugMessageCallback, nullptr);
 	glfwSetErrorCallback(ErrorCallback);
-	//delete later
-	m_ActiveScene = std::make_shared<Scene>();
 
-	m_HierarchyPanel.SetScene(m_ActiveScene);
+	m_ActiveScene = std::make_unique<Scene>();
+
+	m_HierarchyPanel.SetScene(m_ActiveScene.get());
 
 	m_SceneFramebuffer.Bind();
 	m_SceneFramebuffer.AddColorAttachment(GL_RGBA8, GL_RGBA);
@@ -52,7 +54,7 @@ void Editor::Update()
 	m_ActiveScene->UpdateOnEditor(m_EditorCamera);
 
 	if (m_SceneState == SceneState::PLAY && !m_Pause)
-		m_ActiveScene->UpdateOnRuntime();
+		m_ActiveScene->Update();
 
 	Vector2f mPos = Input::GetMousePosition();
 	int pData = m_SceneFramebuffer.ReadPixel(1, mPos.x, mPos.y);
@@ -105,6 +107,25 @@ void Editor::GameWindow()
 
 	ImGui::End();
 	ImGui::PopStyleVar();
+}
+
+void Editor::OpenScene()
+{
+	auto newScene = std::make_unique<Scene>();
+	SceneSerializer serializer(newScene.get());
+
+	serializer.Deserialize();
+	if (newScene != nullptr)
+	{
+		m_ActiveScene = std::move(newScene);
+		m_HierarchyPanel.SetScene(m_ActiveScene.get());
+	}
+}
+
+void Editor::SaveScene()
+{
+	SceneSerializer serializer(m_ActiveScene.get());
+	serializer.Serialize();
 }
 
 void Editor::SceneWindow()
@@ -220,7 +241,7 @@ void Editor::Toolbar()
 			m_Pause = false;
 
 			m_ActiveScene->SaveGameObjectsData();
-			m_ActiveScene->RuntimeStart();
+			m_ActiveScene->Start();
 		}
 	}
 	else
@@ -231,7 +252,7 @@ void Editor::Toolbar()
 			m_Pause = false;
 
 			m_ActiveScene->ApplySavedData();
-			m_ActiveScene->RuntimeStop();
+			m_ActiveScene->Stop();
 		}
 	}
 
@@ -288,12 +309,12 @@ void Editor::MainMenuBar()
 			if (ImGui::MenuItem("New Scene"));
 
 			if (ImGui::MenuItem("Open Scene"))
-				m_ActiveScene->Deserialize();
+				OpenScene();
 
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Save"))
-				m_ActiveScene->Serialize();
+				SaveScene();
 
 			if (ImGui::MenuItem("Save As..."));
 			ImGui::Separator();

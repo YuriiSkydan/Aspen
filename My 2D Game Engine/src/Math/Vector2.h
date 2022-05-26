@@ -18,6 +18,8 @@ struct Vector2
 	template<typename U>
 	const Vector2<T>& operator=(U value);
 
+	const Vector2<T>& operator=(T* arr);
+
 	template<typename U>
 	void operator+=(U scalar);
 	template<typename U>
@@ -38,7 +40,6 @@ struct Vector2
 };
 
 
-
 template<typename T>
 inline Vector2<T>::Vector2()
 	:x(0), y(0)
@@ -55,6 +56,14 @@ template<typename T>
 inline Vector2<T>::Vector2(T x, T y)
 	: x(x), y(y)
 {
+}
+
+template<typename T>
+inline const Vector2<T>& Vector2<T>::operator=(T* arr)
+{
+	x = arr[0];
+	y = arr[1];
+	return *this;
 }
 
 template<typename T>

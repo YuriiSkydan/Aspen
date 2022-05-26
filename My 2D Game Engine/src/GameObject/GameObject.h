@@ -11,7 +11,7 @@
 class GameObject
 {
 private:
-	std::vector<std::shared_ptr<Component>> m_Components;
+	std::vector<std::unique_ptr<Component>> m_Components;
 	Scene* m_Scene = nullptr;
 
 	char m_Name[20];
@@ -22,9 +22,10 @@ private:
 
 	friend class Inspector;
 	friend class Scene;
+	friend class SceneSerializer;
 public:
 	//TODO Change to simple pointer 
-	std::shared_ptr<Transform> transform;
+	Transform* transform;
 
 private:
 	void ComponentsUpdateOnEditor();
@@ -40,27 +41,36 @@ public:
 	GameObject(Scene* scene);
 
 	template<typename T>
-	void AddComponent()
+	T* AddComponent()
 	{
 		if (std::is_base_of<Component, T>::value)
 		{
-			if (HasComponent<T>())
+			for (auto& it : m_Components)
 			{
-				WARN("Component is already added");
-				return;
+				T* component = dynamic_cast<T*>(it.get());
+				if (component != nullptr)
+				{
+					WARN("Component is already added");
+					return component;
+				}
 			}
 
-			std::shared_ptr<T> newComponent = std::make_shared<T>(this, transform.get());
-			m_Components.push_back(newComponent);
-
+			auto newComponent = std::make_unique<T>(this, transform);
+			T* returnComponent = newComponent.get();
+			
 			m_Scene->OnComponentAdded<T>(newComponent);
+			m_Components.push_back(std::move(newComponent));
+
+			return returnComponent;
 		}
+
+		return nullptr;
 	}
 
 	template<typename T>
 	bool HasComponent()
 	{
-		for (auto component : m_Components)
+		for (auto& component : m_Components)
 		{
 			if (typeid(T) == typeid(*component))
 				return true;
@@ -85,15 +95,14 @@ public:
 	template<typename T>
 	T* GetComponent()
 	{
-		T* component = nullptr;
-		for (auto it : m_Components)
+		for (auto& it : m_Components)
 		{
-			component = dynamic_cast<T*>(it.get());
+			T* component = dynamic_cast<T*>(it.get());
 			if (component != nullptr)
 				return component;
 		}
 
-		return component;
+		return nullptr;
 	}
 
 	void SetName(const char* newName);
@@ -103,7 +112,7 @@ public:
 	bool IsActive() { return m_IsActive; }
 	void SetActive(bool active) { m_IsActive = active; }
 
-	std::vector<std::shared_ptr<Component>>& GetComponents() { return m_Components; }
+	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
 
 	~GameObject()
 	{

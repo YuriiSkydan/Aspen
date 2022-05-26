@@ -8,21 +8,16 @@ HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
 {
 }
 
-HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
+HierarchyPanel::HierarchyPanel(Scene* scene, Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
 {
 
 }
 
-void HierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene)
+void HierarchyPanel::SetScene(Scene* scene)
 {
 	m_Scene = scene;
 }
-
-//void HierarchyPanel::SetSelectedGameObjectRef(std::shared_ptr<GameObject>& gameObject)
-//{
-//	
-//}
 
 void HierarchyPanel::ImGuiRender()
 {

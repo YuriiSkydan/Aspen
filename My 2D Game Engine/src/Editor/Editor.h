@@ -16,7 +16,7 @@ private:
 	EditorCamera m_EditorCamera;
 
 	SceneState m_SceneState = SceneState::EDIT;
-	std::shared_ptr<Scene> m_ActiveScene;
+	std::unique_ptr<Scene> m_ActiveScene;
 	bool m_Pause = false;
 
 	Texture m_PlayButtonIcon;
@@ -43,18 +43,18 @@ private:
 	void DarkNightStyle();
 	void SetCurrentTheme();
 
-public:
-	Editor();
-
-//	void SetSelectedObject(std::shared_ptr<GameObject> gameObject);
-//	std::shared_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
-	void Update();
-
 	void Toolbar();
 	void DockSpace();
 	void MainMenuBar();
 	void SceneWindow();  // maybe move it to seperate class
 	void GameWindow();   // maybe move it to seperate class	
-	void ImGuiRender();
+	
+	void OpenScene();
+	void SaveScene();
 
+public:
+	Editor();
+
+	void Update();
+	void ImGuiRender();
 };

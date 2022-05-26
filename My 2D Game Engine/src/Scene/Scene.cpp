@@ -2,14 +2,13 @@
 #include "../src/GameObject/GameObject.h"
 #include "../Log/Log.h"
 #include "../Math/Math.h"
-#include "JSON/json.hpp"
 
 
 GameObject* Scene::CreateGameObject()
 {
 	WARN("Game Object created");
 
-	m_GameObjects.push_back(std::make_shared<GameObject>(this));
+	m_GameObjects.push_back(std::make_unique<GameObject>(this));
 	//m_GameObjects.push_back(std::shared_ptr<GameObject>(new GameObject(this)));
 	return m_GameObjects.back().get();
 }
@@ -27,7 +26,7 @@ GameObject* Scene::GetObjectWithID(int ID)
 
 void Scene::UpdateOnEditor(EditorCamera& camera)
 {
-	for (auto& renderObj: m_RenderObjects)
+	for (auto& renderObj : m_RenderObjects)
 	{
 		if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
 		{
@@ -40,7 +39,7 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	}
 }
 
-void Scene::RuntimeStart()
+void Scene::Start()
 {
 	m_PhysicsWorld = std::make_unique<b2World>(m_Gravity);
 
@@ -122,12 +121,12 @@ void Scene::RuntimeStart()
 	}
 }
 
-void Scene::RuntimeStop()
+void Scene::Stop()
 {
 	m_PhysicsWorld.release();
 }
 
-void Scene::UpdateOnRuntime()
+void Scene::Update()
 {
 	for (auto& object : m_GameObjects)
 	{
@@ -137,6 +136,21 @@ void Scene::UpdateOnRuntime()
 
 	end = std::chrono::steady_clock::now();
 	int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
+	//Want to make objects moveble in editor while game is running 
+	//for (auto& object : m_GameObjects)
+	//{
+	//	if (object->HasComponent<Rigidbody>())
+	//	{
+	//		Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
+	//		//Transform* transform = object->transform;
+	//		b2Body* body = rigidbody->body;
+	//		//if(body->GetPosition() == object->transform->position)
+	//		//body->SetTransform();
+	//		object->transform->position = (float*)&body->GetPosition();
+	//		object->transform->angle = -ToDegrees(body->GetAngle());
+	//	}
+	//}
 
 	if (duration >= 15)
 	{
@@ -157,10 +171,8 @@ void Scene::UpdateOnRuntime()
 			{
 				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
 				b2Body* body = rigidbody->body;
-				object->transform->position.x = body->GetPosition().x;
-				object->transform->position.y = body->GetPosition().y;
+				object->transform->position = (float*)&body->GetPosition();
 				object->transform->angle = -ToDegrees(body->GetAngle());
-
 			}
 		}
 	}
@@ -222,7 +234,7 @@ void Scene::Render()
 
 void Scene::SaveGameObjectsData() // think about another solution to this problem
 {
-	for (auto it : m_GameObjectsData)
+	/*for (auto it : m_GameObjectsData)
 	{
 		if (typeid(*(std::get<0>(it))) == typeid(Transform))
 		{
@@ -231,17 +243,17 @@ void Scene::SaveGameObjectsData() // think about another solution to this proble
 			*transform_1 = *transform_2;
 		}
 		else if (typeid(*(std::get<0>(it))) == typeid(SpriteRenderer))
-		{
+		{ 
 			SpriteRenderer* spriteRenderer_1 = static_cast<SpriteRenderer*>(std::get<0>(it).get());
 			SpriteRenderer* spriteRenderer_2 = static_cast<SpriteRenderer*>(std::get<1>(it).get());
 			*spriteRenderer_1 = *spriteRenderer_2;
 		}
-	}
+	}*/
 }
 
 void Scene::ApplySavedData()
 {
-	for (auto it : m_GameObjectsData)
+	/*for (auto it : m_GameObjectsData)
 	{
 		if (typeid(*(std::get<0>(it))) == typeid(Transform))
 		{
@@ -255,79 +267,7 @@ void Scene::ApplySavedData()
 			SpriteRenderer* spriteRenderer_2 = static_cast<SpriteRenderer*>(std::get<1>(it).get());
 			*spriteRenderer_2 = *spriteRenderer_1;
 		}
-	}
-}
-
-void Scene::Serialize() const
-{
-	/*using namespace nlohmann;
-	std::ofstream fileStream(m_Name + ".json", std::ofstream::binary);
-
-	json serializer =
-	{
-		{ "Scene", {
-			{ "Name", m_Name},
-			{ "Object amount", m_GameObjects.size() },
-			{ "Gravity",{{"X", m_Gravity.x}, {"Y", m_Gravity.y}}}
-		}}
-	};
-
-	for (auto object : m_GameObjects)
-	{
-		serializer["Object"]["Name"] = object->m_Name;
-		serializer["Object"]["ID"] = object->m_ID;
-		serializer["Object"]["IsActive"] = object->m_IsActive;
-
-		//	Transform* transform = object->transform.get();
-		//	serializer +=
-		//	{
-		//		{"Transform",
-		//			{ "Position",
-		//				{"X", transform->position.x},
-		//				{"Y", transform->position.y } 
-		//			},
-		//			{ "Angle", transform->angle },
-		//			{ "Scale", 
-		//				{"X", transform->scale.x },
-		//				{"Y", transform->scale.y }
-		//			}
-		//		}
-		//	};
-	}
-
-	fileStream << serializer;
-
-	fileStream.close();*/
-}
-
-void Scene::Deserialize()
-{
-	/*using namespace nlohmann;
-	std::ifstream fileStream(m_Name + ".json", std::ofstream::binary);
-
-	if (!fileStream.is_open())
-	{
-		ERROR("Failed to open the file!!!");
-		return;
-	}
-	json deserializer;
-	fileStream >> deserializer;
-
-	m_Name = deserializer["Scene"]["Name"];
-	m_GameObjects.resize(deserializer["Scene"]["Object amount"]);
-	m_Gravity.x = deserializer["Scene"]["Gravity"]["X"];
-	m_Gravity.y = deserializer["Scene"]["Gravity"]["Y"];
-
-	for (size_t i = 0; i < m_GameObjects.size(); i++)
-	{
-		auto newGameObject = std::make_shared<GameObject>(this);
-		strcpy_s(newGameObject->m_Name, 20, std::string(deserializer["Object"]["Name"]).c_str());
-		newGameObject->m_ID = deserializer["Object"]["ID"];
-		newGameObject->m_IsActive = deserializer["Object"]["IsActive"];
-		m_GameObjects[i] = newGameObject;
-	};
-
-	std::cout << "Name: " << m_Name;*/
+	}*/
 }
 
 Scene::~Scene()

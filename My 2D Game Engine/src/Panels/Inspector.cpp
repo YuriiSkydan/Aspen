@@ -29,7 +29,7 @@ void Inspector::ImGuiRender()
 
 		//m_SelectedGameObject->UpdateComponentsGUI();
 
-		for (auto component : m_SelectedGameObject->GetComponents())
+		for (auto& component : m_SelectedGameObject->GetComponents())
 		{
 			/*std::string componentName = typeid(*component).name();
 			if (componentName == typeid(SpriteRenderer).name())

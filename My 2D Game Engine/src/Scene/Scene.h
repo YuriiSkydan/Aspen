@@ -20,19 +20,21 @@ class Scene
 private:
 	std::string m_Name = "Scene";
 
-	//when vector is resized object will be destory that why you use shared_ptr
-	std::vector<std::shared_ptr<GameObject>> m_GameObjects;
-	std::vector<SpriteRenderer*> m_RenderObjects;
+	//when vector is resized object will be destory that why you use unique_ptr
+	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
+	std::vector<SpriteRenderer*>             m_RenderObjects;
 
-	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
 	std::unique_ptr<b2World> m_PhysicsWorld;
+	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
 
-	unsigned int m_ViewportWidth = 0, m_ViewportHeigth = 0;
-	
+	unsigned int m_ViewportWidth = 0;
+	unsigned int m_ViewportHeigth = 0;
+
 	//change it later
-	std::vector<std::tuple<std::shared_ptr<Component>, std::shared_ptr<Component>>> m_GameObjectsData;
+	//std::vector<std::tuple<std::unique_ptr<Component>, std::shared_ptr<Component>>> m_GameObjectsData;
 
 	friend class HierarchyPanel;
+	friend class SceneSerializer;
 private:
 	//delete later
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -45,31 +47,28 @@ public:
 	GameObject* GetObjectWithID(int ID);
 	//void DestroyGameObject();
 
-	void RuntimeStart();
-	void RuntimePause(); // I'm not sure whether I will use this function
-	void RuntimeStop();
-	void UpdateOnRuntime();
+	void Start();
+	void Pause(); // I'm not sure whether I will use this function
+	void Stop();
+	void Update();
+	void Render();
 	void UpdateOnEditor(EditorCamera& camera);
 	void Resize(unsigned int width, unsigned int heigth);
-	void Render();
 
 	void SaveGameObjectsData();
 	void ApplySavedData();
 
-	void Serialize() const;
-	void Deserialize();
-
 	template<typename T>
-	void OnComponentAdded(std::shared_ptr<T>& component)
+	void OnComponentAdded(std::unique_ptr<T>& component)
 	{
 		if (typeid(T) == typeid(SpriteRenderer))
-			m_RenderObjects.emplace_back ((SpriteRenderer*)component.get());
+			m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
 
-		m_GameObjectsData.push_back({ std::make_shared<T>(*component), component });
+		//m_GameObjectsData.push_back({ std::make_unique<T>(*component), component });
 	}
 
 	template<typename T>
-	void OnComponentRemoved(std::shared_ptr<T>& component)
+	void OnComponentRemoved(std::unique_ptr<T>& component)
 	{
 
 	}

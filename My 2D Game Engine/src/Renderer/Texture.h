@@ -21,7 +21,8 @@ public:
 	void Bind(unsigned int slot) const;
 	void UnBind() const;
 
-	unsigned int GetID() { return m_ID; }
+	unsigned int GetID() const { return m_ID; }
+	const std::string& GetPath() const { return m_Path; }
 
 	~Texture() = default;
 };

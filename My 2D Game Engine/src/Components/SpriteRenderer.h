@@ -43,10 +43,12 @@ public:
 	SpriteRenderer(GameObject* gameObject, Transform* transform);
 
 	void SetColor(const Color& color);
-	void SetSprite(std::string_view& path);
-	void SetSprite(Texture id);
+	void SetSprite(const std::string_view path);
+	void SetSprite(const Texture& id);
 
 	int GetPixel();
+	const Color& GetColor() const { return m_Color; }
+	const Texture& GetTexture() const { return m_Sprite; }
 	Shader& GetShader() { return m_Shader; }
 
 	void Draw();

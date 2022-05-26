@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Panels\ProjectPanel.cpp" />
     <ClCompile Include="src\Components\Camera.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="src\Engine\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Panels\ProjectPanel.h" />
     <ClInclude Include="src\Components\Camera.h" />
     <ClInclude Include="src\Editor\EditorCamera.h" />

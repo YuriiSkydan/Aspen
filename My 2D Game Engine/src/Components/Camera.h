@@ -12,7 +12,9 @@ private:
 	float m_Size = 1;
 	float m_AspectRation;
 
-	unsigned int m_Width = 0, m_Heigth = 0;
+	unsigned int m_Width = 0;
+	unsigned int m_Heigth = 0;
+
 private:
 	void UpdateGui() override;
 

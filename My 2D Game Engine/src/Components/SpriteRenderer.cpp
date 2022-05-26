@@ -111,6 +111,13 @@ void SpriteRenderer::SetColor(const Color& color)
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 }
 
+void SpriteRenderer::SetSprite(const std::string_view path)
+{
+	// here's bug if you created denstructor in Texture
+	Texture newSprite(path);
+	m_Sprite = newSprite; 
+}
+
 void SpriteRenderer::Draw()
 {
 	m_Shader.Bind();
