@@ -337,8 +337,9 @@ public:
 			ImGui::Spacing();
 
 			ImGui::NextColumn();
-			ImGui::SetColumnWidth(0, ImGui::GetWindowSize().x - columnWidth);
+			ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
 
+			ImGui::SetNextItemWidth(itemWidth);
 			ImGui::DragFloat("##Radius", &radius, 0.001f, 0.0f);
 
 			ImGui::Columns(1);

@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix.h"
+#include <iostream> // delete it
 
 template<typename T>
 Matrix<T, 3> Translate(const Matrix<T, 3>& m, const Vector2<T>& position)
@@ -14,10 +15,10 @@ Matrix<T, 3> Translate(const Matrix<T, 3>& m, const Vector2<T>& position)
 template<typename T>
 Matrix<T, 3> Rotate(const Matrix<T, 3>& matrix, float angle)
 {
-	Matrix<T, 3> rotation(1.0f);
+	Matrix<T, 2> rotation(1.0f);
 
-	float cosValue = cos(angle * (std::numbers::pi / 180));
-	float sinValue = sin(angle * (std::numbers::pi / 180));
+	float cosValue = cos(angle * (std::numbers::pi / 180.0f));
+	float sinValue = sin(angle * (std::numbers::pi / 180.0f));
 
 	rotation[0][0] = cosValue;
 	rotation[0][1] = sinValue;
@@ -25,20 +26,23 @@ Matrix<T, 3> Rotate(const Matrix<T, 3>& matrix, float angle)
 	rotation[1][0] = -sinValue;
 	rotation[1][1] = cosValue;
 
-	return matrix * rotation;
+	Matrix<T, 3> result = matrix;
+	result = rotation * Matrix<T, 2>(matrix);
+
+	return result;
 }
 
 template<typename T>
 Matrix<T, 3> Scale(const Matrix<T, 3>& matrix, const Vector2<T>& vector)
 {
-	Matrix<T, 3> scaled(1.0f);
-	scaled[0][0] *= vector.x;
-	scaled[1][0] *= vector.x;
+	Matrix<T, 2> scaled;
+	scaled[0][0] = vector.x;
+	scaled[1][1] = vector.y;
 
-	scaled[0][1] *= vector.y;
-	scaled[1][1] *= vector.y;
+	Matrix<T, 3> result = matrix;
+	result = scaled * Matrix<T, 2>(matrix);
 
-	return matrix * scaled;
+	return result;
 }
 
 template<typename T>

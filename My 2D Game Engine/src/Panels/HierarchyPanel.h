@@ -10,6 +10,7 @@ private:
 
 	char findInput[20];
 	std::string findStr;
+
 public:
 	HierarchyPanel(Ptr<GameObject>& gameObjectRef);
 	HierarchyPanel(Scene* scene, Ptr<GameObject>& gameObjectRef);

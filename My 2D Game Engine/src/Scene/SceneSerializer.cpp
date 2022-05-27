@@ -2,118 +2,13 @@
 #include "../src/GameObject/GameObject.h"
 #include "../Log/Log.h"
 
-void SceneSerializer::SerializeGameObject(json& out, std::unique_ptr<GameObject>& gameObject)
-{
-	out =
-	{
-		{ "Name",  gameObject->m_Name },
-		{ "ID",  gameObject->m_ID },
-		{ "IsActive",  gameObject->m_IsActive }
-	};
-
-	Transform* transform = gameObject->transform;
-	if (transform != nullptr)
-	{
-		out["Transform"] =
-		{
-			{ "Position",
-				{{ "X", transform->position.x },
-				 { "Y", transform->position.y }}},
-			{ "Angle", transform->angle },
-			{ "Scale",
-				{{"X", transform->scale.x},
-				 {"Y", transform->scale.y }}}
-		};
-	}
-
-	if (gameObject->HasComponent<SpriteRenderer>())
-	{
-		SpriteRenderer* renderer = gameObject->GetComponent<SpriteRenderer>();
-		const Color& color = renderer->GetColor();
-		out["SpriteRenderer"] =
-		{
-			{ "Color",
-				{{ "R", color.r },
-				 { "G", color.g },
-				 { "B", color.b },
-				 { "A", color.a }}},
-			{ "Texture", renderer->GetTexture().GetPath() }
-		};
-	}
-
-	if (gameObject->HasComponent<BoxCollider>())
-	{
-		BoxCollider* boxCollider = gameObject->GetComponent<BoxCollider>();
-		out["BoxCollider"] =
-		{
-			{ "Size",
-			{ { "X", boxCollider->size.x },
-			  { "Y", boxCollider->size.y } }},
-			{ "Offset",
-			{ { "X", boxCollider->offset.x },
-			  { "Y", boxCollider->offset.y } }}
-		};
-	}
-
-	if (gameObject->HasComponent<Rigidbody>())
-	{
-		Rigidbody* rigidbody = gameObject->GetComponent<Rigidbody>();
-		out["Rigidbody"] =
-		{
-			{ "Mass", rigidbody->GetMass() }
-		};
-	}
-}
-
-void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject)
-{
-	strcpy_s(gameObject->m_Name, 20, std::string(in["Name"]).c_str());
-	gameObject->m_ID = in["ID"];
-	gameObject->m_IsActive = in["IsActive"];
-
-	Transform* transform = gameObject->transform;
-	transform->position.x = in["Transform"]["Position"]["X"];
-	transform->position.y = in["Transform"]["Position"]["Y"];
-
-	transform->angle = in["Transform"]["Angle"];
-
-	transform->scale.x = in["Transform"]["Scale"]["X"];
-	transform->scale.y = in["Transform"]["Scale"]["Y"];
-
-	if (in.find("SpriteRenderer") != in.end())
-	{
-		SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
-		Color color;
-		color.r = in["SpriteRenderer"]["Color"]["R"];
-		color.g = in["SpriteRenderer"]["Color"]["G"];
-		color.b = in["SpriteRenderer"]["Color"]["B"];
-		color.a = in["SpriteRenderer"]["Color"]["A"];
-
-		spriteRenderer->SetColor(color);
-		spriteRenderer->SetSprite(in["SpriteRenderer"]["Texture"]);
-	}
-
-	if (in.find("BoxCollider") != in.end())
-	{
-		BoxCollider* boxCollider = gameObject->AddComponent<BoxCollider>();
-		boxCollider->size.x = in["BoxCollider"]["Size"]["X"];
-		boxCollider->size.y = in["BoxCollider"]["Size"]["Y"];
-
-		boxCollider->offset.x = in["BoxCollider"]["Offset"]["X"];
-		boxCollider->offset.y = in["BoxCollider"]["Offset"]["Y"];
-	}
-
-	if (in.find("Rigidbody") != in.end())
-	{
-		Rigidbody* rigidbody = gameObject->AddComponent<Rigidbody>();
-		//rigidbody->SetMass(in["Rigidbody"]["Mass"]);
-	}
-}
 
 SceneSerializer::SceneSerializer(Scene* scene)
 	:m_Scene(scene)
 {
 }
+
+#pragma region Serialization
 
 void SceneSerializer::Serialize()
 {
@@ -144,6 +39,101 @@ void SceneSerializer::Serialize()
 	fileStream.close();
 }
 
+void SceneSerializer::SerializeGameObject(json& out, std::unique_ptr<GameObject>& gameObject)
+{
+	out =
+	{
+		{ "Name",  gameObject->m_Name },
+		{ "ID",  gameObject->m_ID },
+		{ "IsActive",  gameObject->m_IsActive }
+	};
+
+	Transform* transform = gameObject->transform;
+	if (transform != nullptr)
+	{
+		SerializeComponent(out, transform);
+	}
+
+	if (gameObject->HasComponent<SpriteRenderer>())
+	{
+		SpriteRenderer* renderer = gameObject->GetComponent<SpriteRenderer>();
+		SerializeComponent(out, renderer);
+	}
+
+	if (gameObject->HasComponent<BoxCollider>())
+	{
+		BoxCollider* boxCollider = gameObject->GetComponent<BoxCollider>();
+		SerializeComponent(out, boxCollider);
+	}
+
+	if (gameObject->HasComponent<Rigidbody>())
+	{
+		Rigidbody* rigidbody = gameObject->GetComponent<Rigidbody>();
+		SerializeComponent(out, rigidbody);
+	}
+}
+
+void SceneSerializer::SerializeComponent(json& out, Transform* transform)
+{
+	out["Transform"] =
+	{
+		{ "Position",
+			{{ "X", transform->position.x },
+			 { "Y", transform->position.y }}},
+		{ "Angle", transform->angle },
+		{ "Scale",
+			{{"X", transform->scale.x},
+			 {"Y", transform->scale.y }}}
+	};
+}
+
+void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRenderer)
+{
+	const Color& color = spriteRenderer->GetColor();
+	out["SpriteRenderer"] =
+	{
+		{ "Color",
+			{{ "R", color.r },
+			 { "G", color.g },
+			 { "B", color.b },
+			 { "A", color.a }}},
+		{ "Texture", spriteRenderer->GetTexture().GetPath() }
+	};
+}
+
+void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider)
+{
+	out["BoxCollider"] =
+	{
+		{ "Size",
+		{ { "X", boxCollider->size.x },
+		  { "Y", boxCollider->size.y } }},
+		{ "Offset",
+		{ { "X", boxCollider->offset.x },
+		  { "Y", boxCollider->offset.y } }}
+	};
+}
+
+void SceneSerializer::SerializeComponent(json& out, CircleCollider* circleCollider)
+{
+}
+
+void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody)
+{
+	out["Rigidbody"] =
+	{
+		{ "Mass", rigidbody->GetMass() }
+	};
+}
+
+void SceneSerializer::SerializeComponent(json& out, Camera* camera)
+{
+}
+
+#pragma endregion
+
+#pragma region Deserialization
+
 void SceneSerializer::Deserialize()
 {
 	using namespace nlohmann;
@@ -172,3 +162,90 @@ void SceneSerializer::Deserialize()
 
 	fileStream.close();
 }
+
+void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject)
+{
+	strcpy_s(gameObject->m_Name, 20, std::string(in["Name"]).c_str());
+	gameObject->m_ID = in["ID"];
+	gameObject->m_IsActive = in["IsActive"];
+
+	DeserializeComponent(in["Transform"], gameObject->transform);
+
+	if (in.find("SpriteRenderer") != in.end())
+	{
+		SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
+		DeserializeComponent(in["SpriteRenderer"], spriteRenderer);
+	}
+
+	if (in.find("BoxCollider") != in.end())
+	{
+		BoxCollider* collider = gameObject->AddComponent<BoxCollider>();
+		DeserializeComponent(in["BoxCollider"], collider);
+	}
+
+	if (in.find("CircleCollider") != in.end())
+	{
+		CircleCollider* collider = gameObject->AddComponent<CircleCollider>();
+		DeserializeComponent(in["CircleCollider"], collider);
+	}
+
+	if (in.find("Rigidbody") != in.end())
+	{
+		Rigidbody* rigidbody = gameObject->AddComponent<Rigidbody>();
+		DeserializeComponent(in["Rigidbody"], rigidbody);
+	}
+
+	if (in.find("Camera") != in.end())
+	{
+		Camera* camera = gameObject->AddComponent<Camera>();
+		DeserializeComponent(in["Rigidbody"], camera);
+	}
+}
+
+void SceneSerializer::DeserializeComponent(json& in, Transform* transform)
+{
+	transform->position.x = in["Position"]["X"];
+	transform->position.y = in["Position"]["Y"];
+
+	transform->angle = in["Angle"];
+
+	transform->scale.x = in["Scale"]["X"];
+	transform->scale.y = in["Scale"]["Y"];
+}
+
+void SceneSerializer::DeserializeComponent(json& in, SpriteRenderer* spriteRenderer)
+{
+	Color color;
+	color.r = in["Color"]["R"];
+	color.g = in["Color"]["G"];
+	color.b = in["Color"]["B"];
+	color.a = in["Color"]["A"];
+
+	spriteRenderer->SetColor(color);
+	spriteRenderer->SetSprite(in["Texture"]);
+}
+
+void SceneSerializer::DeserializeComponent(json& in, BoxCollider* collider)
+{
+	collider->size.x = in["Size"]["X"];
+	collider->size.y = in["Size"]["Y"];
+
+	collider->offset.x = in["Offset"]["X"];
+	collider->offset.y = in["Offset"]["Y"];
+}
+
+void SceneSerializer::DeserializeComponent(json& in, CircleCollider* collider)
+{
+	collider->radius = in["Radius"];
+}
+
+void SceneSerializer::DeserializeComponent(json& in, Rigidbody* rigidbody)
+{
+
+}
+
+void SceneSerializer::DeserializeComponent(json& in, Camera* camera)
+{
+}
+
+#pragma endregion

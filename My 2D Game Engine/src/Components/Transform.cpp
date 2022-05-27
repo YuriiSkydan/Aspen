@@ -42,8 +42,8 @@ Matrix3x3f Transform::GetTransform() const
 	Matrix3x3f transform = Matrix3x3f(1.0f);
 
 	transform = Translate(transform, position);
-	transform = Rotate(transform, angle);
 	transform = Scale(transform, scale);
+	transform = Rotate(transform, angle);
 
 	return transform;
 }

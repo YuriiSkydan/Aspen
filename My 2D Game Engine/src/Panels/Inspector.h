@@ -7,6 +7,9 @@ class Inspector
 private:
 	Ptr<GameObject>& m_SelectedGameObject;
 
+	float m_MinWindowWidth = 200;
+	ImVec2 m_PanelSize;
+
 public:
 	Inspector(Ptr<GameObject>& gameObjectRef);
 	void ImGuiRender();

@@ -47,7 +47,7 @@ inline Matrix<T, SIZE>::Matrix()
 
 template<typename T, size_t SIZE>
 inline Matrix<T, SIZE>::Matrix(T diagonal)
-	: matrix { 0 }
+	: matrix{ 0 }
 {
 	for (size_t i = 0; i < SIZE; i++)
 		matrix[i][i] = diagonal;
@@ -57,9 +57,11 @@ template<typename T, size_t SIZE>
 template<size_t S>
 inline Matrix<T, SIZE>::Matrix(const Matrix<T, S>& other)
 {
-	for (size_t i = 0; i < SIZE; i++)
+	size_t size = (S <= SIZE) ? S : SIZE;
+
+	for (size_t i = 0; i < size; i++)
 	{
-		for (size_t j = 0; j < SIZE; j++)
+		for (size_t j = 0; j < size; j++)
 			matrix[i][j] = other[i][j];
 	}
 }
@@ -68,12 +70,11 @@ template<typename T, size_t SIZE>
 template<size_t S>
 inline const Matrix<T, SIZE>& Matrix<T, SIZE>::operator=(const Matrix<T, S>& other)
 {
-	if (S < SIZE)
-		return;
+	size_t size = (S <= SIZE) ? S : SIZE;
 
-	for (size_t i = 0; i < SIZE; i++)
+	for (size_t i = 0; i < size; i++)
 	{
-		for (size_t j = 0; j < SIZE; j++)
+		for (size_t j = 0; j < size; j++)
 			matrix[i][j] = other[i][j];
 	}
 
@@ -305,6 +306,7 @@ inline Matrix<T, SIZE> operator*(T scalar, const Matrix<T, SIZE>& m)
 }
 
 //--------- Matrix3x3 ------------
+
 template<typename T>
 inline Vector2<T> operator*(const Matrix<T, 3>& m, const Vector2<T>& v)
 {

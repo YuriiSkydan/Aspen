@@ -58,12 +58,12 @@ void HierarchyPanel::ImGuiRender()
 		ImGui::EndPopup();
 	}
 
-	
+
 	ImGui::SameLine();
 
 	ImGui::InputText("##", findInput, 20);
 
-	
+
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
 		if (strlen(findInput) != 0)
@@ -77,16 +77,37 @@ void HierarchyPanel::ImGuiRender()
 		}
 		else
 		{
-			for (auto& object : m_Scene->m_GameObjects)
+			auto& gameObjects = (m_Scene->m_GameObjects);
+			for (size_t i = 0; i < gameObjects.size(); i++)
 			{
 				ImGui::Text("   ");
 				ImGui::SameLine();
-				if (ImGui::MenuItem(object->GetName()))
-					m_SelectedGameObject = object.get();
+				if (ImGui::MenuItem((gameObjects[i])->GetName()))
+				{
+					m_SelectedGameObject = gameObjects[i].get();
+				}
+				else if (ImGui::IsItemHovered() &&
+					ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				{
+					ImGui::OpenPopup("Object Properties");
+				}
+
+				if (ImGui::BeginPopup("Object Properties"))
+				{
+					if (ImGui::MenuItem("Delete"))
+					{
+						//change it later
+						gameObjects.erase(gameObjects.begin() + i);
+
+						//m_Scene->DestroyGameObject(object);
+						m_SelectedGameObject = nullptr;
+					}
+					ImGui::EndPopup();
+				}
 			}
 		}
 	}
-	
+
 	ImGui::End();
 }
 

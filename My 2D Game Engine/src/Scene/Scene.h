@@ -45,6 +45,8 @@ public:
 
 	GameObject* CreateGameObject();
 	GameObject* GetObjectWithID(int ID);
+
+	void DestroyGameObject(std::unique_ptr<GameObject>);
 	//void DestroyGameObject();
 
 	void Start();

@@ -28,13 +28,18 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 {
 	for (auto& renderObj : m_RenderObjects)
 	{
-		if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
+		//remove this if statement and remove renderer
+		//from vector if object destroyed
+		if (renderObj != nullptr)
 		{
-			Shader& shader = renderObj->GetShader();
-			shader.Bind();
-			shader.SetMat3("camera", camera.GetCameraMatrix());
+			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
+			{
+				Shader& shader = renderObj->GetShader();
+				shader.Bind();
+				shader.SetMat3("camera", camera.GetCameraMatrix());
 
-			renderObj->Draw();
+				renderObj->Draw();
+			}
 		}
 	}
 }
@@ -123,7 +128,7 @@ void Scene::Start()
 
 void Scene::Stop()
 {
-	m_PhysicsWorld.release();
+	m_PhysicsWorld.reset();
 }
 
 void Scene::Update()
@@ -218,15 +223,18 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for (auto it : m_RenderObjects)
+		for (auto& it : m_RenderObjects)
 		{
-			if (it->gameObject->IsActive() && it->IsEnabled())
+			if (it != nullptr)
 			{
-				Shader& shader = it->GetShader();
-				shader.Bind();
-				shader.SetMat3("camera", mainCamera->GetCameraMatrix());
+				if (it->gameObject->IsActive() && it->IsEnabled())
+				{
+					Shader& shader = it->GetShader();
+					shader.Bind();
+					shader.SetMat3("camera", mainCamera->GetCameraMatrix());
 
-				it->Draw();
+					it->Draw();
+				}
 			}
 		}
 	}

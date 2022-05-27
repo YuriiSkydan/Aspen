@@ -40,10 +40,19 @@ void Camera::SetRatio(float aspectRation)
 Matrix3x3f Camera::GetCameraMatrix()
 {
 	Matrix3x3f cameraMatrix(1.0f);
-	cameraMatrix[0][0] = m_AspectRation;
-	cameraMatrix = Rotate(cameraMatrix, transform->angle);
+	
+	cameraMatrix = Rotate(cameraMatrix, -transform->angle);
+	cameraMatrix = Scale(cameraMatrix, Vector2f(m_AspectRation, 1.0f));
 	cameraMatrix = Translate(cameraMatrix, -transform->position);
+	
+	std::cout << "Matrix:\n";
+	for (size_t i = 0; i < 3; i++)
+	{
+		for (size_t j = 0; j < 3; j++)
+			std::cout << cameraMatrix[i][j] << "\t";
 
+		std::cout << std::endl;
+	}
 
 	//Matrix3x3f cameraMatrix(1.0f);
 	//cameraMatrix = CameraMatrix(-transform->position, m_AspectRation);
