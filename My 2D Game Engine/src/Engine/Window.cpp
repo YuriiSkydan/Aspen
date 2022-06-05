@@ -44,11 +44,6 @@ void Window::Init(const WindowData& data)
 	glEnable(GL_DEBUG_OUTPUT);
 }
 
-std::unique_ptr<Window> Window::Create(const WindowData& data)
-{
-	return std::unique_ptr<Window>(std::make_unique<Window>(data));
-}
-
 void Window::Update()
 {
 	glfwPollEvents();

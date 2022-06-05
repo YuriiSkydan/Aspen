@@ -7,13 +7,14 @@
 class Camera : public Component
 {
 private:
-	Color m_Background;
-
-	float m_Size = 1;
 	float m_AspectRation;
 
 	unsigned int m_Width = 0;
 	unsigned int m_Heigth = 0;
+
+public:
+	float size = 1;
+	Color backgroundColor;
 
 private:
 	void UpdateGui() override;
@@ -22,8 +23,8 @@ public:
 	Camera(GameObject* gameObject, Transform* transform);
 
 	void SetRatio(float aspectRation);
-	Matrix3x3f GetCameraMatrix();
 
-	Color GetBackgroundColor() const { return m_Background; }
+	float GetAspectRation() const { return m_AspectRation; }
+	Matrix3x3f GetCameraMatrix() const;
 };
 

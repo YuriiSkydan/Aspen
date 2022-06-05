@@ -4,16 +4,10 @@
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
 {
-
 }
 
 void Inspector::ImGuiRender()
 {
-	if (m_PanelSize.x != 0 && m_PanelSize.x < m_MinWindowWidth)
-	{
-		ImGui::SetNextWindowSize(ImVec2{ m_MinWindowWidth, m_PanelSize.y });
-	}
-
 	ImGui::Begin("Inspector");
 
 	if (m_SelectedGameObject != nullptr)

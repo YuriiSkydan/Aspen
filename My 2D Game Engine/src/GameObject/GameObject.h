@@ -8,6 +8,8 @@
 #include <string>
 #include <iostream>
 
+#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider
+
 class GameObject
 {
 private:
@@ -24,7 +26,6 @@ private:
 	friend class Scene;
 	friend class SceneSerializer;
 public:
-	//TODO Change to simple pointer 
 	Transform* transform;
 
 private:
@@ -35,10 +36,32 @@ private:
 	void ComponentsUpdate();
 	void ComponentsFixedUpdate();
 	void ComponentsLateUpdate();
-	void UpdateComponentsGUI(); // delete later // maybe
 
+	template<typename... Components>
+	void CopyComponents(const GameObject& other)
+	{
+		([&]()
+			{
+				if (other.HasComponent<Components>())
+				{
+					Components* component = AddComponent<Components>();
+					*component = *(other.GetComponent<Components>());
+				}
+			}(), ...);
+	}
 public:
 	GameObject(Scene* scene);
+	GameObject(Scene* scene, const GameObject& other);
+	GameObject(const GameObject& other);
+
+	void SetName(const char* newName);
+	const char* GetName() const { return m_Name; }
+	unsigned int GetID() const { return m_ID; }
+
+	bool IsActive() { return m_IsActive; }
+	void SetActive(bool active) { m_IsActive = active; }
+
+	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
 
 	template<typename T>
 	T* AddComponent()
@@ -57,7 +80,7 @@ public:
 
 			auto newComponent = std::make_unique<T>(this, transform);
 			T* returnComponent = newComponent.get();
-			
+
 			m_Scene->OnComponentAdded<T>(newComponent);
 			m_Components.push_back(std::move(newComponent));
 
@@ -68,7 +91,23 @@ public:
 	}
 
 	template<typename T>
-	bool HasComponent()
+	void RemoveComponent() // method isn't finished
+	{
+		for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+		{
+			T* component = dynamic_cast<T*>(it->get());
+			if (component != nullptr)
+			{
+				m_Components.erase(it);
+				return;
+			}
+		}
+
+		WARN("Component doesn't exist.");
+	}
+
+	template<typename T>
+	bool HasComponent() const
 	{
 		for (auto& component : m_Components)
 		{
@@ -80,20 +119,7 @@ public:
 	}
 
 	template<typename T>
-	void RemoveComponent() // method isn't finished
-	{
-		if (HasComponent<T>())
-		{
-			std::cout << "Componet exist but you need to finish the method!!!\n";
-		}
-		else
-		{
-			std::cerr << "Component isn't added!!!\n";
-		}
-	}
-
-	template<typename T>
-	T* GetComponent()
+	T* GetComponent() const
 	{
 		for (auto& it : m_Components)
 		{
@@ -104,15 +130,6 @@ public:
 
 		return nullptr;
 	}
-
-	void SetName(const char* newName);
-	const char* GetName() const { return m_Name; }
-	unsigned int GetID() const { return m_ID; }
-
-	bool IsActive() { return m_IsActive; }
-	void SetActive(bool active) { m_IsActive = active; }
-
-	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
 
 	~GameObject()
 	{

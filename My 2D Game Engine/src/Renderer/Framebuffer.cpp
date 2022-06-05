@@ -63,6 +63,12 @@ unsigned int Framebuffer::GetColorAttachmentID(unsigned int attachment)
 	return m_ColorAttachments[attachment];
 }
 
+Framebuffer::~Framebuffer()
+{
+	INFO("Framebuffer Destructor");
+	glDeleteFramebuffers(1, &m_ID);
+}
+
 //int Framebuffer::GetPixel(int x, int y)
 //{
 //	int pixelData;

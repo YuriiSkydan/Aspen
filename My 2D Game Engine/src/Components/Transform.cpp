@@ -4,8 +4,8 @@ void Transform::UpdateGui() // optimize this function
 {
 	if (ImGui::CollapsingHeader("Transform"))
 	{
-		int columnWidth = 110;
-		int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 10;
+		unsigned int columnWidth = 110;
+		unsigned int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 10;
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, columnWidth);
 
@@ -17,7 +17,7 @@ void Transform::UpdateGui() // optimize this function
 		ImGui::Text("Scale");
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
 		
 		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
@@ -35,6 +35,11 @@ Transform::Transform(GameObject* gameObject)
 	 scale{ 1.0f, 1.0f }, angle(0)
 {
 
+}
+
+Transform::Transform(GameObject* gameObject, Transform* transform)
+	:Component(gameObject, this) 
+{
 }
 
 Matrix3x3f Transform::GetTransform() const

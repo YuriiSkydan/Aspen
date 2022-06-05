@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <glad/glad.h>
+#include "../Log/Log.h"
 
 class Framebuffer
 {
@@ -25,4 +26,6 @@ public:
 	//int GetPixel(int x, int y);
 	unsigned int GetID() { return m_ID; }
 	//virtual int Get
+
+	~Framebuffer();
 };

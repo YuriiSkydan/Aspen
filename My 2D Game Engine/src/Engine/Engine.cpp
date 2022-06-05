@@ -66,24 +66,24 @@ Engine::Engine()
 	INFO("Engine Start");
 
 	s_Instance = this;
-	m_Window = Window::Create();
-	m_Editor = std::make_unique<Editor>();
+	m_Window = std::make_unique<Window>();
 
 	InitImGui();
+	m_Editor = std::make_unique<Editor>();
 }
 
 void Engine::Run()
 {
 	while (m_Running)
 	{
+		auto start = std::chrono::high_resolution_clock::now();
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		ImGuiBegin();
 
-		auto start = std::chrono::high_resolution_clock::now();
 		m_Editor->Update();
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration = end - start;
+		
 		m_Editor->ImGuiRender();
 
 		ImGuiEnd();
@@ -91,7 +91,9 @@ void Engine::Run()
 		m_Window->Update();
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
-	
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
 		std::string title = "Aspen " + std::to_string(1.0f / duration.count());
 		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());
 	}

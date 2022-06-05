@@ -24,6 +24,8 @@ private:
 
 public:
 	Component(GameObject* gameObject, Transform* transform);
+	Component(const Component& other) = delete;
+	const Component& operator=(const Component& other);
 
 	virtual void Awake() {}
 	virtual void Start() {}

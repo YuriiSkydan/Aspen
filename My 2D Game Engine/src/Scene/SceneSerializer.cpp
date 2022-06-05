@@ -1,5 +1,4 @@
 #include "SceneSerializer.h"
-#include "../src/GameObject/GameObject.h"
 #include "../Log/Log.h"
 
 
@@ -10,7 +9,7 @@ SceneSerializer::SceneSerializer(Scene* scene)
 
 #pragma region Serialization
 
-void SceneSerializer::Serialize()
+void SceneSerializer::Serialize() const
 {
 	std::ofstream fileStream(m_Scene->m_Name + ".json", std::ofstream::binary);
 
@@ -39,7 +38,7 @@ void SceneSerializer::Serialize()
 	fileStream.close();
 }
 
-void SceneSerializer::SerializeGameObject(json& out, std::unique_ptr<GameObject>& gameObject)
+void SceneSerializer::SerializeGameObject(json& out, const std::unique_ptr<GameObject>& gameObject) const
 {
 	out =
 	{
@@ -47,33 +46,11 @@ void SceneSerializer::SerializeGameObject(json& out, std::unique_ptr<GameObject>
 		{ "ID",  gameObject->m_ID },
 		{ "IsActive",  gameObject->m_IsActive }
 	};
-
-	Transform* transform = gameObject->transform;
-	if (transform != nullptr)
-	{
-		SerializeComponent(out, transform);
-	}
-
-	if (gameObject->HasComponent<SpriteRenderer>())
-	{
-		SpriteRenderer* renderer = gameObject->GetComponent<SpriteRenderer>();
-		SerializeComponent(out, renderer);
-	}
-
-	if (gameObject->HasComponent<BoxCollider>())
-	{
-		BoxCollider* boxCollider = gameObject->GetComponent<BoxCollider>();
-		SerializeComponent(out, boxCollider);
-	}
-
-	if (gameObject->HasComponent<Rigidbody>())
-	{
-		Rigidbody* rigidbody = gameObject->GetComponent<Rigidbody>();
-		SerializeComponent(out, rigidbody);
-	}
+	
+	SerializeComponents<AllComponents>(out, gameObject);
 }
 
-void SceneSerializer::SerializeComponent(json& out, Transform* transform)
+void SceneSerializer::SerializeComponent(json& out, Transform* transform) const
 {
 	out["Transform"] =
 	{
@@ -87,7 +64,7 @@ void SceneSerializer::SerializeComponent(json& out, Transform* transform)
 	};
 }
 
-void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRenderer)
+void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRenderer) const
 {
 	const Color& color = spriteRenderer->GetColor();
 	out["SpriteRenderer"] =
@@ -101,7 +78,7 @@ void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRender
 	};
 }
 
-void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider)
+void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider) const
 {
 	out["BoxCollider"] =
 	{
@@ -114,11 +91,15 @@ void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider)
 	};
 }
 
-void SceneSerializer::SerializeComponent(json& out, CircleCollider* circleCollider)
+void SceneSerializer::SerializeComponent(json& out, CircleCollider* circleCollider) const
 {
+	out["CircleCollider"] =
+	{
+		{ "Radius", circleCollider->radius }
+	};
 }
 
-void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody)
+void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody) const
 {
 	out["Rigidbody"] =
 	{
@@ -126,8 +107,18 @@ void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody)
 	};
 }
 
-void SceneSerializer::SerializeComponent(json& out, Camera* camera)
+void SceneSerializer::SerializeComponent(json& out, Camera* camera) const
 {
+	out["Camera"] =
+	{
+		{ "Size", camera->size},
+		{ "Aspect ration", camera->GetAspectRation()},
+		{ "Background color",
+		{ { "R", camera->backgroundColor.r},
+		  { "G", camera->backgroundColor.g},
+		  { "B", camera->backgroundColor.b},
+		  { "A", camera->backgroundColor.a} }}
+	};
 }
 
 #pragma endregion
@@ -145,18 +136,18 @@ void SceneSerializer::Deserialize()
 		return;
 	}
 
-	json deserializer;
-	fileStream >> deserializer;
+	json in;
+	fileStream >> in;
 
-	m_Scene->m_Name = deserializer["Scene"]["Name"];
-	m_Scene->m_GameObjects.resize(deserializer["Scene"]["Objects amount"]);
-	m_Scene->m_Gravity.x = deserializer["Scene"]["Gravity"]["X"];
-	m_Scene->m_Gravity.y = deserializer["Scene"]["Gravity"]["Y"];
+	m_Scene->m_Name = in["Scene"]["Name"];
+	m_Scene->m_GameObjects.resize(in["Scene"]["Objects amount"]);
+	m_Scene->m_Gravity.x = in["Scene"]["Gravity"]["X"];
+	m_Scene->m_Gravity.y = in["Scene"]["Gravity"]["Y"];
 
 	for (size_t i = 0; i < m_Scene->m_GameObjects.size(); i++)
 	{
 		auto newGameObject = std::make_unique<GameObject>(m_Scene);
-		DeserializeGameObject(deserializer[std::to_string(i)], newGameObject);
+		DeserializeGameObject(in[std::to_string(i)], newGameObject);
 		m_Scene->m_GameObjects[i] = std::move(newGameObject);
 	};
 
@@ -188,7 +179,7 @@ void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject
 		CircleCollider* collider = gameObject->AddComponent<CircleCollider>();
 		DeserializeComponent(in["CircleCollider"], collider);
 	}
-
+	
 	if (in.find("Rigidbody") != in.end())
 	{
 		Rigidbody* rigidbody = gameObject->AddComponent<Rigidbody>();
@@ -198,7 +189,7 @@ void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject
 	if (in.find("Camera") != in.end())
 	{
 		Camera* camera = gameObject->AddComponent<Camera>();
-		DeserializeComponent(in["Rigidbody"], camera);
+		DeserializeComponent(in["Camera"], camera);
 	}
 }
 
@@ -246,6 +237,15 @@ void SceneSerializer::DeserializeComponent(json& in, Rigidbody* rigidbody)
 
 void SceneSerializer::DeserializeComponent(json& in, Camera* camera)
 {
+	camera->size = in["Size"];
+	camera->SetRatio(in["Aspect ration"]);
+
+	Color color;
+	color.r = in["Background color"]["R"];
+	color.g = in["Background color"]["G"];
+	color.b = in["Background color"]["B"];
+	color.a = in["Background color"]["A"];
+	camera->backgroundColor = color;
 }
 
 #pragma endregion

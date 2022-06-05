@@ -3,21 +3,21 @@
 #include "../Log/Log.h"
 
 
-HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
-	:m_SelectedGameObject(gameObjectRef)
+//HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
+//	:m_SelectedGameObject(gameObjectRef)
+//{
+//}
+
+HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
+	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
 {
+
 }
 
-HierarchyPanel::HierarchyPanel(Scene* scene, Ptr<GameObject>& gameObjectRef)
-	:m_SelectedGameObject(gameObjectRef)
-{
-
-}
-
-void HierarchyPanel::SetScene(Scene* scene)
-{
-	m_Scene = scene;
-}
+//void HierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene)
+//{
+//	m_Scene = scene;
+//}
 
 void HierarchyPanel::ImGuiRender()
 {
@@ -89,23 +89,26 @@ void HierarchyPanel::ImGuiRender()
 				else if (ImGui::IsItemHovered() &&
 					ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
+					m_SelectedGameObject = gameObjects[i].get();
 					ImGui::OpenPopup("Object Properties");
 				}
 
-				if (ImGui::BeginPopup("Object Properties"))
-				{
-					if (ImGui::MenuItem("Delete"))
-					{
-						//change it later
-						gameObjects.erase(gameObjects.begin() + i);
-
-						//m_Scene->DestroyGameObject(object);
-						m_SelectedGameObject = nullptr;
-					}
-					ImGui::EndPopup();
-				}
+			
 			}
 		}
+	}
+
+	if (ImGui::BeginPopup("Object Properties"))
+	{
+		if (ImGui::MenuItem("Delete"))
+		{
+			//change it later
+			//gameObjects.erase(gameObjects.begin() + i);
+
+			//m_Scene->DestroyGameObject(object);
+			m_SelectedGameObject = nullptr;
+		}
+		ImGui::EndPopup();
 	}
 
 	ImGui::End();

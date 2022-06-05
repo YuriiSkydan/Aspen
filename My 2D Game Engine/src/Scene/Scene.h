@@ -18,7 +18,7 @@
 class Scene
 {
 private:
-	std::string m_Name = "Scene";
+	std::string m_Name = "Sample Scene";
 
 	//when vector is resized object will be destory that why you use unique_ptr
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
@@ -26,12 +26,6 @@ private:
 
 	std::unique_ptr<b2World> m_PhysicsWorld;
 	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
-
-	unsigned int m_ViewportWidth = 0;
-	unsigned int m_ViewportHeigth = 0;
-
-	//change it later
-	//std::vector<std::tuple<std::unique_ptr<Component>, std::shared_ptr<Component>>> m_GameObjectsData;
 
 	friend class HierarchyPanel;
 	friend class SceneSerializer;
@@ -42,6 +36,7 @@ private:
 
 public:
 	Scene() = default;
+	Scene(const Scene& other);
 
 	GameObject* CreateGameObject();
 	GameObject* GetObjectWithID(int ID);
@@ -56,9 +51,7 @@ public:
 	void Render();
 	void UpdateOnEditor(EditorCamera& camera);
 	void Resize(unsigned int width, unsigned int heigth);
-
-	void SaveGameObjectsData();
-	void ApplySavedData();
+	std::string GetName() const { return m_Name; }
 
 	template<typename T>
 	void OnComponentAdded(std::unique_ptr<T>& component)
@@ -75,7 +68,21 @@ public:
 
 	}
 
-	std::string GetName() const { return m_Name; }
+	//template<typename... Components>
+	//void CopyComponents(std::unique_ptr<GameObject>& dist, const std::unique_ptr<GameObject>& source)
+	//{
+	//	//([&]()
+	//	//	{
+	//	//		if (source->HasComponent<Components>())
+	//	//		{
+	//	//			Components* component =  dist->AddComponent<Components>();
+	//	//			*component = *(source->GetComponent<Components>());
+	//	//		}
+	//	//	}(), ....);
+	//}
+
+
+	const Scene& operator=(const Scene& other) = delete;
 
 	~Scene();
 };

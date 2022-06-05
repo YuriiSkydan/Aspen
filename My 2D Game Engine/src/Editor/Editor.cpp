@@ -13,12 +13,13 @@
 
 #include "../Renderer/Renderer.h" // delete later
 
+
 glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::mat4 Projection = glm::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 1000.0f);
 glm::mat4 objectTransform = glm::mat4(1.0f);
 
 Editor::Editor()
-	: m_HierarchyPanel(m_SelectedObject)
+	: m_HierarchyPanel(m_ActiveScene, m_SelectedObject)
 	, m_InspectorPanel(m_SelectedObject)
 	, m_EditorCamera(1080.0f / 1920.0f)
 	, m_PlayButtonIcon("Resources/PlayIcon.png")
@@ -30,9 +31,10 @@ Editor::Editor()
 	glDebugMessageCallback(DebugMessageCallback, nullptr);
 	glfwSetErrorCallback(ErrorCallback);
 
-	m_ActiveScene = std::make_unique<Scene>();
+	m_EditorScene = std::make_shared<Scene>();
+	m_ActiveScene = m_EditorScene;
 
-	m_HierarchyPanel.SetScene(m_ActiveScene.get());
+	//m_HierarchyPanel.SetScene(m_ActiveScene);
 
 	m_SceneFramebuffer.Bind();
 	m_SceneFramebuffer.AddColorAttachment(GL_RGBA8, GL_RGBA);
@@ -41,6 +43,8 @@ Editor::Editor()
 
 	m_GameFramebuffer.Bind();
 	m_GameFramebuffer.AddColorAttachment(GL_RGBA8, GL_RGBA);
+
+	DarkStyle();
 }
 
 void Editor::Update()
@@ -111,14 +115,15 @@ void Editor::GameWindow()
 
 void Editor::OpenScene()
 {
-	auto newScene = std::make_unique<Scene>();
+	auto newScene = std::make_shared<Scene>();
 	SceneSerializer serializer(newScene.get());
 
 	serializer.Deserialize();
 	if (newScene != nullptr)
 	{
-		m_ActiveScene = std::move(newScene);
-		m_HierarchyPanel.SetScene(m_ActiveScene.get());
+		m_EditorScene = newScene;
+		m_ActiveScene = m_EditorScene;
+		//m_HierarchyPanel.SetScene(m_ActiveScene);
 	}
 }
 
@@ -126,6 +131,11 @@ void Editor::SaveScene()
 {
 	SceneSerializer serializer(m_ActiveScene.get());
 	serializer.Serialize();
+}
+
+void Editor::SaveSceneAs()
+{
+	
 }
 
 void Editor::SceneWindow()
@@ -215,7 +225,7 @@ void Editor::SceneWindow()
 void Editor::Toolbar()
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 20));
+	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 19));
 	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, m_ToolbarHeight));
 	ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -240,8 +250,11 @@ void Editor::Toolbar()
 			m_SceneState = SceneState::PLAY;
 			m_Pause = false;
 
-			m_ActiveScene->SaveGameObjectsData();
+			auto m_RuntimeScene = std::make_shared<Scene>(*m_EditorScene);
+			m_ActiveScene = m_RuntimeScene;
 			m_ActiveScene->Start();
+
+			m_SelectedObject = nullptr;
 		}
 	}
 	else
@@ -251,8 +264,10 @@ void Editor::Toolbar()
 			m_SceneState = SceneState::EDIT;
 			m_Pause = false;
 
-			m_ActiveScene->ApplySavedData();
 			m_ActiveScene->Stop();
+			m_ActiveScene = m_EditorScene;
+
+			m_SelectedObject = nullptr;
 		}
 	}
 
@@ -300,10 +315,8 @@ void Editor::DockSpace()
 
 void Editor::MainMenuBar()
 {
-	ImGui::StyleColorsLight();
 	if (ImGui::BeginMainMenuBar())
 	{
-		ImGui::SetWindowSize(ImVec2(1080, 100));
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New Scene"));
@@ -340,15 +353,15 @@ void Editor::MainMenuBar()
 			if (ImGui::BeginMenu("Themes"))
 			{
 				if (ImGui::MenuItem("Black Style"))
-					m_CurrentTheme = Theme::Black;
+					BlackStyle();
 				if (ImGui::MenuItem("Corporate Grey Style"))
-					m_CurrentTheme = Theme::CorporateGray;
+					CorporateGreyStyle();
 				if (ImGui::MenuItem("Dark Style"))
-					m_CurrentTheme = Theme::Dark;
+					DarkStyle();
 				if (ImGui::MenuItem("Dark Night Style"))
-					m_CurrentTheme = Theme::DarkNight;
+					DarkNightStyle();
 				if (ImGui::MenuItem("Light Style"))
-					m_CurrentTheme = Theme::Light;
+					ImGui::StyleColorsLight();
 
 				ImGui::EndMenu();
 			}
@@ -357,8 +370,6 @@ void Editor::MainMenuBar()
 
 		ImGui::EndMainMenuBar();
 	}
-
-	SetCurrentTheme();
 }
 
 void Editor::BlackStyle()
@@ -632,26 +643,4 @@ void Editor::DarkNightStyle()
 	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 	style.GrabRounding = style.FrameRounding = 2.3f;
-}
-
-void Editor::SetCurrentTheme()
-{
-	switch (m_CurrentTheme)
-	{
-	case Theme::Dark:
-		DarkStyle();
-		break;
-	case Theme::Black:
-		BlackStyle();
-		break;
-	case Theme::CorporateGray:
-		CorporateGreyStyle();
-		break;
-	case Theme::DarkNight:
-		DarkNightStyle();
-		break;
-	case Theme::Light:
-		ImGui::StyleColorsLight();
-		break;
-	}
 }

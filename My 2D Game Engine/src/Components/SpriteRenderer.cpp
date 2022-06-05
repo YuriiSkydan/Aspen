@@ -1,6 +1,5 @@
 #include "../GameObject/GameObject.h"
 #include "SpriteRenderer.h"
-#include "../Input/Input.h" // delete later
 
 #include <filesystem>
 
@@ -15,27 +14,25 @@ float square[]
 unsigned int indicies[]
 {
 	0, 1, 2,
-	0, 3, 2
+	0, 3, 2 
 };
 
 void SpriteRenderer::UpdateGui()
 {
-	bool isOpen = ImGui::CollapsingHeader("Sprite Renderer");
-	//ImGui::SameLine();
-	//ImGui::Checkbox("##Is Enabled", &m_IsEnabled);
-	//ImGui::SameLine();
-	//ImGui::Text("Sprite Renderer");
+	bool isOpen = ImGui::CollapsingHeader("##Sprite Renderer", ImGuiTreeNodeFlags_AllowItemOverlap);
+	ImGui::SameLine();
+	ImGui::Checkbox("##Is Enabled", &m_IsEnabled);
+	ImGui::SameLine();
+	ImGui::Text("Sprite Renderer");
 
 	if (isOpen)
 	{
-		int columnWidth = 110;
-		float itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 20;
+		unsigned int columnWidth = 110;
+		unsigned int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 20;
 
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, columnWidth);
 		
-		//ImGui::Spacing();
-		//ImGui::Text("Layer");
 		ImGui::Spacing();
 		ImGui::Text("Order In Layer");
 		ImGui::Spacing();
@@ -44,7 +41,7 @@ void SpriteRenderer::UpdateGui()
 		ImGui::Text("Texture");
 
 		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x - columnWidth);
+		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
 
 		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragInt("##Order In Layer", &orderInLayer, 1, 0);
@@ -56,7 +53,7 @@ void SpriteRenderer::UpdateGui()
 			m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 		}
 
-		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { itemWidth, itemWidth }, { 0, 1 }, { 1, 0 });
+		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { float(itemWidth), float(itemWidth) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -64,6 +61,7 @@ void SpriteRenderer::UpdateGui()
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				std::filesystem::path texturePath = "Assets";
 				texturePath /= path;
+
 				std::wstring wPath = texturePath.c_str();
 				std::string sPath(wPath.begin(), wPath.end());
 				m_Sprite = Texture(sPath);
@@ -94,11 +92,6 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
-	//m_Color.r = (rand() % 100) / 100.0f;
-	//m_Color.g = (rand() % 100) / 100.0f;
-	//m_Color.b = (rand() % 100) / 100.0f;
-	//m_Color.a = (rand() % 100) / 100.0f;
-
 	m_Shader.Bind();
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.r, m_Color.a);
 	m_Shader.SetInt("gameObjectID", gameObject->GetID());
@@ -127,14 +120,6 @@ void SpriteRenderer::Draw()
 	m_Sprite.Bind(0);
 	m_Shader.SetInt("sprite", 0);
 
-	m_Sprite.Bind(0);
-
-	//int pixelData;
-	//glReadPixels(Input::GetMousePosition().x, Input::GetMousePosition().y
-	//	, 1, 1, GL_RED, GL_INT, &pixelData);
-	//std::cout << "Sprite Pixel Data: " << pixelData << std::endl;
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-
-	//ImGui::GetWindowDrawList()->AddCallback(Draw, NULL);
 }

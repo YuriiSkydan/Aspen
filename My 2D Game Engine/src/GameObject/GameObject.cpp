@@ -17,6 +17,36 @@ GameObject::GameObject(Scene* scene)
 	s_Objects++;
 }
 
+GameObject::GameObject(Scene* scene, const GameObject& other)
+	:m_Scene(scene)
+{
+	auto newComponent = std::make_unique<Transform>(this);
+	transform = newComponent.get();
+	m_Components.push_back(std::move(newComponent));
+
+	strcpy_s(m_Name, 20, other.m_Name);
+	m_IsActive = other.m_IsActive;
+	m_ID = other.m_ID;
+
+	CopyComponents<AllComponents>(other);
+}
+
+//maybe change copy constructor later
+GameObject::GameObject(const GameObject& other)
+{
+	auto newComponent = std::make_unique<Transform>(this);
+	transform = newComponent.get();
+	m_Components.push_back(std::move(newComponent));
+
+	strcpy_s(m_Name, 20, other.m_Name);
+
+	m_Scene = other.m_Scene;
+	m_IsActive = other.m_IsActive;
+	m_ID = other.m_ID;
+
+	CopyComponents<AllComponents>(other);
+}
+
 void GameObject::SetName(const char* newName)
 {
 	strcpy_s(m_Name, 20, newName);
@@ -70,9 +100,4 @@ void GameObject::ComponentsLateUpdate()
 		if (it->IsEnabled())
 			it->LateUpdate();
 	}
-}
-
-void GameObject::UpdateComponentsGUI()
-{
-
 }

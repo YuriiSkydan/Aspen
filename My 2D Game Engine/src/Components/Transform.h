@@ -18,6 +18,7 @@ private:
 
 public:
 	Transform(GameObject* gameObject);
+	Transform(GameObject* gameObject, Transform* transform);
 
 	//void Translate(Vector2<float> translation);
 	//void Rotate();

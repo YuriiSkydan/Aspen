@@ -4,12 +4,25 @@
 #include "../Math/Math.h"
 
 
+Scene::Scene(const Scene& other)
+{
+	m_Name = other.m_Name;
+	std::cout << "Scene coping!!!\n" << m_Name << std::endl;
+
+	m_GameObjects.resize(other.m_GameObjects.size());
+	m_Gravity = other.m_Gravity;
+
+	for (size_t i = 0; i < other.m_GameObjects.size(); i++)
+	{
+		m_GameObjects[i] = std::make_unique<GameObject>(this, *other.m_GameObjects[i]);
+	}
+}
+
 GameObject* Scene::CreateGameObject()
 {
 	WARN("Game Object created");
 
 	m_GameObjects.push_back(std::make_unique<GameObject>(this));
-	//m_GameObjects.push_back(std::shared_ptr<GameObject>(new GameObject(this)));
 	return m_GameObjects.back().get();
 }
 
@@ -28,8 +41,6 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 {
 	for (auto& renderObj : m_RenderObjects)
 	{
-		//remove this if statement and remove renderer
-		//from vector if object destroyed
 		if (renderObj != nullptr)
 		{
 			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
@@ -219,7 +230,7 @@ void Scene::Render()
 
 	if (mainCamera != nullptr)
 	{
-		Color color = mainCamera->GetBackgroundColor();
+		Color color = mainCamera->backgroundColor;
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -238,44 +249,6 @@ void Scene::Render()
 			}
 		}
 	}
-}
-
-void Scene::SaveGameObjectsData() // think about another solution to this problem
-{
-	/*for (auto it : m_GameObjectsData)
-	{
-		if (typeid(*(std::get<0>(it))) == typeid(Transform))
-		{
-			Transform* transform_1 = static_cast<Transform*>(std::get<0>(it).get());
-			Transform* transform_2 = static_cast<Transform*>(std::get<1>(it).get());
-			*transform_1 = *transform_2;
-		}
-		else if (typeid(*(std::get<0>(it))) == typeid(SpriteRenderer))
-		{ 
-			SpriteRenderer* spriteRenderer_1 = static_cast<SpriteRenderer*>(std::get<0>(it).get());
-			SpriteRenderer* spriteRenderer_2 = static_cast<SpriteRenderer*>(std::get<1>(it).get());
-			*spriteRenderer_1 = *spriteRenderer_2;
-		}
-	}*/
-}
-
-void Scene::ApplySavedData()
-{
-	/*for (auto it : m_GameObjectsData)
-	{
-		if (typeid(*(std::get<0>(it))) == typeid(Transform))
-		{
-			Transform* transform_1 = static_cast<Transform*>(std::get<0>(it).get());
-			Transform* transform_2 = static_cast<Transform*>(std::get<1>(it).get());
-			*transform_2 = *transform_1;
-		}
-		else if (typeid(*(std::get<0>(it))) == typeid(SpriteRenderer))
-		{
-			SpriteRenderer* spriteRenderer_1 = static_cast<SpriteRenderer*>(std::get<0>(it).get());
-			SpriteRenderer* spriteRenderer_2 = static_cast<SpriteRenderer*>(std::get<1>(it).get());
-			*spriteRenderer_2 = *spriteRenderer_1;
-		}
-	}*/
 }
 
 Scene::~Scene()

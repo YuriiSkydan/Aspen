@@ -33,8 +33,6 @@ private:
 public:
 	Window(const WindowData& data = WindowData());
 
-	static std::unique_ptr<Window> Create(const WindowData& data = WindowData());
-
 	void Update();
 
 	GLFWwindow* GetNativeWindow() const { return m_Window; }

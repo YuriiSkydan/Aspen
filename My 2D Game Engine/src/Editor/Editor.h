@@ -7,16 +7,18 @@
 class Editor
 {
 private:
-	enum class SceneState { PLAY = 0, EDIT = 1 };
-
 	HierarchyPanel m_HierarchyPanel;
 	Inspector      m_InspectorPanel;
 	ProjectPanel   m_ProjectPanel;
 
 	EditorCamera m_EditorCamera;
 
+	enum class SceneState { PLAY = 0, EDIT = 1 };
 	SceneState m_SceneState = SceneState::EDIT;
-	std::unique_ptr<Scene> m_ActiveScene;
+	
+	std::shared_ptr<Scene> m_EditorScene;
+	std::shared_ptr<Scene> m_ActiveScene;
+
 	bool m_Pause = false;
 
 	Texture m_PlayButtonIcon;
@@ -33,15 +35,11 @@ private:
 	float m_ToolbarHeight;
 	float m_MenuBarHeight;
 
-	enum class Theme { Dark, Black, DarkNight, CorporateGray, Light };
-	Theme m_CurrentTheme = Theme::Dark;
-
 private:
 	void BlackStyle();
 	void CorporateGreyStyle();
 	void DarkStyle();
 	void DarkNightStyle();
-	void SetCurrentTheme();
 
 	void Toolbar();
 	void DockSpace();
@@ -51,6 +49,7 @@ private:
 	
 	void OpenScene();
 	void SaveScene();
+	void SaveSceneAs(); 
 
 public:
 	Editor();
