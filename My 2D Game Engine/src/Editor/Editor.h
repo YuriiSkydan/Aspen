@@ -36,6 +36,10 @@ private:
 	float m_MenuBarHeight;
 
 private:
+	void InitImGui();
+	void ImGuiBegin();
+	void ImGuiEnd();
+
 	void BlackStyle();
 	void CorporateGreyStyle();
 	void DarkStyle();

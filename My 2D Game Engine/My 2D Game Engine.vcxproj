@@ -86,6 +86,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\Script.cpp" />
+    <ClCompile Include="src\ScriptManager.cpp" />
     <ClCompile Include="src\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Math\Math.cpp" />
     <ClCompile Include="src\Panels\ProjectPanel.cpp" />
@@ -130,6 +132,8 @@
     <ClCompile Include="src\Engine\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\Script.h" />
+    <ClInclude Include="src\ScriptManager.h" />
     <ClInclude Include="src\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Panels\ProjectPanel.h" />
     <ClInclude Include="src\Components\Camera.h" />

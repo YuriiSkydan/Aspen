@@ -1,15 +1,14 @@
 #include "ProjectPanel.h"
 #include "imgui.h"
-
+using namespace std::string_literals;
 
 ProjectPanel::ProjectPanel()
-	:m_CurrentDirectory("Assets")
-	,m_BackArrowIcon("Resources/BackArrow.png")
-	,m_FolderIcon("Resources/FolderIcon.png")
-	,m_FileIcon("Resources/FileIcon.png")
-
+	: m_CurrentDirectory("Assets")
+	, m_BackArrowIcon("Resources/BackArrow.png")
+	, m_FolderIcon("Resources/FolderIcon.png")
+	, m_FileIcon("Resources/FileIcon.png")
+	, m_CppFileIcon("Resources/CppFileIcon.png")
 {
-
 }
 
 void ProjectPanel::ImGuiRender()
@@ -21,14 +20,11 @@ void ProjectPanel::ImGuiRender()
 	ImGui::ImageButton((ImTextureID)m_BackArrowIcon.GetID(), { 30, 30 });
 	ImGui::PopStyleColor();
 
-	for (auto& directoryEntity : std::filesystem::path("Assets"))
+	if (ImGui::IsItemClicked() && m_CurrentDirectory != "Assets")
 	{
-		if (ImGui::IsItemClicked() && m_CurrentDirectory != "Assets")
-		{
-			m_CurrentDirectory = m_CurrentDirectory.parent_path();
-		}
+		m_CurrentDirectory = m_CurrentDirectory.parent_path();
 	}
-	
+
 	float padding = 15;
 	float iconSize = 90;
 	float cellSize = iconSize + padding;
@@ -37,7 +33,7 @@ void ProjectPanel::ImGuiRender()
 	int columnCount = (int)(panelWidth / cellSize);
 	if (columnCount < 1)
 		columnCount = 1;
-	
+
 	ImGui::Columns(columnCount, 0, false);
 
 	for (auto& directory : std::filesystem::directory_iterator(m_CurrentDirectory))
@@ -47,9 +43,19 @@ void ProjectPanel::ImGuiRender()
 		std::string filenameString = relativePath.filename().string();
 
 		ImGui::PushID(filenameString.c_str());
-		Texture& icon = directory.is_directory() ? m_FolderIcon : m_FileIcon;
+
+		Texture* icon = &m_FolderIcon;
+
+		if (!directory.is_directory())
+		{
+			if (directory.path().extension() == ".cpp"s)
+				icon = &m_CppFileIcon;
+			else
+				icon = &m_FileIcon;
+		}
+
 		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
-		ImGui::ImageButton((ImTextureID)icon.GetID(), { iconSize, iconSize }, { 0, 1 }, {1, 0});
+		ImGui::ImageButton((ImTextureID)icon->GetID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
 		ImGui::PopStyleColor();
 
 		if (ImGui::BeginDragDropSource())

@@ -18,11 +18,6 @@ private:
 
 	//bool OnWindowClose(WindowCloseEvent& e);
 	//bool OnWindowResize(WindowResizeEvent& e);
-private:
-	void InitImGui();
-	void ImGuiBegin();
-	void ImGuiEnd();
-
 public:
 	Engine();
 

@@ -45,6 +45,9 @@ GameObject::GameObject(const GameObject& other)
 	m_ID = other.m_ID;
 
 	CopyComponents<AllComponents>(other);
+
+	for (auto& script : other.m_Scripts)
+		m_Scripts.emplace_back(script->Create());
 }
 
 void GameObject::SetName(const char* newName)
@@ -64,11 +67,23 @@ void GameObject::ComponentsAwake()
 		if (it->IsEnabled())
 			it->Awake();
 	}
+
+	for (auto& it : m_Scripts)
+	{
+		if (it->IsEnabled())
+			it->Awake();
+	}
 }
 
 void GameObject::ComponentsStart()
 {
 	for (auto& it : m_Components)
+	{
+		if (it->IsEnabled())
+			it->Start();
+	}
+
+	for (auto& it : m_Scripts)
 	{
 		if (it->IsEnabled())
 			it->Start();
@@ -82,11 +97,23 @@ void GameObject::ComponentsUpdate()
 		if (it->IsEnabled())
 			it->Update();
 	}
+
+	for (auto& it : m_Scripts)
+	{
+		if (it->IsEnabled())
+			it->Update();
+	}
 }
 
 void GameObject::ComponentsFixedUpdate()
 {
 	for (auto& it : m_Components)
+	{
+		if (it->IsEnabled())
+			it->FixedUpdate();
+	}
+
+	for (auto& it : m_Scripts)
 	{
 		if (it->IsEnabled())
 			it->FixedUpdate();
@@ -100,4 +127,15 @@ void GameObject::ComponentsLateUpdate()
 		if (it->IsEnabled())
 			it->LateUpdate();
 	}
+
+	for (auto& it : m_Scripts)
+	{
+		if (it->IsEnabled())
+			it->LateUpdate();
+	}
+}
+
+void GameObject::AddScript(Script* script)
+{
+	m_Scripts.emplace_back(script);
 }

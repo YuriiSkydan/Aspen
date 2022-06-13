@@ -12,7 +12,7 @@
 #include "../Input/Input.h"
 
 #include "../Renderer/Renderer.h" // delete later
-
+#include "../Engine/Engine.h"
 
 glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::mat4 Projection = glm::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 1000.0f);
@@ -27,6 +27,7 @@ Editor::Editor()
 	, m_PauseButtonIcon("Resources/PauseIcon.png")
 	, m_ToolbarHeight(33)
 {
+	InitImGui();
 	//Move somewhere later
 	glDebugMessageCallback(DebugMessageCallback, nullptr);
 	glfwSetErrorCallback(ErrorCallback);
@@ -50,7 +51,6 @@ Editor::Editor()
 void Editor::Update()
 {
 	m_SceneFramebuffer.Bind();
-
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, 1920, 1080);
@@ -63,21 +63,19 @@ void Editor::Update()
 	Vector2f mPos = Input::GetMousePosition();
 	int pData = m_SceneFramebuffer.ReadPixel(1, mPos.x, mPos.y);
 	m_HoveredObject = m_ActiveScene->GetObjectWithID(pData);
-
 	m_SceneFramebuffer.Unbind();
 
 
 	m_GameFramebuffer.Bind();
-
 	glViewport(0, 0, 1920, 1080);
-
 	m_ActiveScene->Render();
-
 	m_GameFramebuffer.Unbind();
 }
 
 void Editor::ImGuiRender()
 {
+	ImGuiBegin();
+
 	MainMenuBar();
 	DockSpace();
 	Toolbar();
@@ -90,6 +88,8 @@ void Editor::ImGuiRender()
 
 	GameWindow();
 	SceneWindow();
+
+	ImGuiEnd();
 }
 
 void Editor::GameWindow()
@@ -369,6 +369,59 @@ void Editor::MainMenuBar()
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+}
+
+void Editor::InitImGui()
+{
+	const char* glslVersion = "#version 130";
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	ImGui_ImplGlfw_InitForOpenGL(Engine::Get().GetWindow().GetNativeWindow(), true);
+	ImGui_ImplOpenGL3_Init(glslVersion);
+
+	//io.Fonts->AddFontFromFileTTF("Fonts/SpaceMono-Regular.ttf", 18);
+}
+
+void Editor::ImGuiBegin()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Editor::ImGuiEnd()
+{
+	Window& window = Engine::Get().GetWindow();
+	ImGuiIO& io = ImGui::GetIO();
+
+	float windowWidth = window.GetWidth();
+	float windowHeight = window.GetHeight();
+	io.DisplaySize = ImVec2(windowWidth, windowHeight);
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backupCurrentContext);
 	}
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "../Components/Transform.h"
 #include "../Components/SpriteRenderer.h"
+#include "../Components/Script.h"
 #include "../Scene/Scene.h"
 #include "../Log/Log.h"
 
@@ -14,6 +15,7 @@ class GameObject
 {
 private:
 	std::vector<std::unique_ptr<Component>> m_Components;
+	std::vector<std::unique_ptr<Script>> m_Scripts;
 	Scene* m_Scene = nullptr;
 
 	char m_Name[20];
@@ -36,6 +38,8 @@ private:
 	void ComponentsUpdate();
 	void ComponentsFixedUpdate();
 	void ComponentsLateUpdate();
+
+	void AddScript(Script* script);
 
 	template<typename... Components>
 	void CopyComponents(const GameObject& other)

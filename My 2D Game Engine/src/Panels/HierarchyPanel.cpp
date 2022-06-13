@@ -71,8 +71,13 @@ void HierarchyPanel::ImGuiRender()
 			for (auto& object : m_Scene->m_GameObjects)
 			{
 				findStr = object->GetName();
-				if (!findStr.find(findInput) && ImGui::Button(object->GetName()))
-					m_SelectedGameObject = object.get();
+				if (!findStr.find(findInput))
+				{
+					ImGui::Text("   ");
+					ImGui::SameLine();
+					if (ImGui::MenuItem(object->GetName()))
+						m_SelectedGameObject = object.get();
+				}
 			}
 		}
 		else
@@ -93,7 +98,7 @@ void HierarchyPanel::ImGuiRender()
 					ImGui::OpenPopup("Object Properties");
 				}
 
-			
+
 			}
 		}
 	}

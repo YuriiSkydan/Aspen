@@ -252,6 +252,7 @@
 //#endif
 
 #include "src/Components/Transform.h"
+#include "src/Math/Math.h"
 #include "box2d/b2_body.h"
 
 struct Material
@@ -365,6 +366,12 @@ public:
 	Rigidbody(GameObject* gameObject, Transform* transform) :
 		Component(gameObject, transform)
 	{
+	}
+
+	void Update() override
+	{
+		transform->position = (float*)&body->GetPosition();
+		transform->angle = -ToDegrees(body->GetAngle());
 	}
 
 	void UpdateGui() override

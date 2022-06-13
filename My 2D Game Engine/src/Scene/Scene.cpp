@@ -64,18 +64,6 @@ void Scene::Start()
 		if (object->HasComponent<Rigidbody>())
 		{
 			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-
-			Vector2f pos = object->transform->position;
-			bodyDef.position = b2Vec2(pos.x, pos.y);
-
-			float angle = ToRads(-object->transform->angle);
-			bodyDef.angle = angle;
-			bodyDef.fixedRotation = false;
-
-			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-
 
 			b2FixtureDef fixtureDef;
 			fixtureDef.density = 1.0f;
@@ -104,6 +92,17 @@ void Scene::Start()
 				fixtureDef.shape = &circle;
 			}
 
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+
+			Vector2f pos = object->transform->position;
+			float angle = ToRads(-object->transform->angle);
+
+			bodyDef.position = b2Vec2(pos.x, pos.y);
+			bodyDef.angle = angle;
+			bodyDef.fixedRotation = false;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
 			body->CreateFixture(&fixtureDef);
 
 			rigidbody->body = body;
@@ -129,10 +128,17 @@ void Scene::Start()
 		}
 		else if (object->HasComponent<CircleCollider>())
 		{
-			CircleCollider* collider = object->GetComponent<CircleCollider>();
+			/*CircleCollider* collider = object->GetComponent<CircleCollider>();
 
 			b2BodyDef bodyDef;
 			Vector2f pos = object->transform->position;
+			bodyDef.position.Set(pos.x, pos.y);
+			
+			b2Body* circle = m_PhysicsWorld->CreateBody(&bodyDef);
+			b2CircleShape circleBody;
+			circleBody.m_radius = collider->radius;
+
+			circle->CreateFixture(&circle, 0.0f);*/
 		}
 	}
 }
@@ -150,9 +156,6 @@ void Scene::Update()
 			object->ComponentsUpdate();
 	}
 
-	end = std::chrono::steady_clock::now();
-	int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-
 	//Want to make objects moveble in editor while game is running 
 	//for (auto& object : m_GameObjects)
 	//{
@@ -168,29 +171,19 @@ void Scene::Update()
 	//	}
 	//}
 
+	begin = std::chrono::steady_clock::now();
+	int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(begin - end).count();
+	
 	if (duration >= 15)
 	{
-		begin = std::chrono::steady_clock::now();
-		end = begin;
-
 		m_PhysicsWorld->Step(0.015f, 6, 2);
+		end = std::chrono::steady_clock::now();
+	}
 
-		for (auto& object : m_GameObjects)
-		{
-			if (object->IsActive())
-				object->ComponentsFixedUpdate();
-		}
-
-		for (auto& object : m_GameObjects)
-		{
-			if (object->HasComponent<Rigidbody>())
-			{
-				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
-				b2Body* body = rigidbody->body;
-				object->transform->position = (float*)&body->GetPosition();
-				object->transform->angle = -ToDegrees(body->GetAngle());
-			}
-		}
+	for (auto& object : m_GameObjects)
+	{
+		if (object->IsActive())
+			object->ComponentsFixedUpdate();
 	}
 
 	//end = std::chrono::steady_clock::now();

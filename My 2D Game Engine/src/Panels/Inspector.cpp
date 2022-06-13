@@ -1,5 +1,7 @@
 #include "Inspector.h"
 #include "../Log/Log.h"
+#include "../ScriptManager.h"
+#include "../Components/Script.h"
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
@@ -66,6 +68,23 @@ void Inspector::ImGuiRender()
 
 			if (ImGui::MenuItem("Camera"))
 				m_SelectedGameObject->AddComponent<Camera>();
+
+			ImGui::Separator();
+
+			for (auto& it : ScriptManager::GetInstance().GetScripts())
+			{
+				std::wstring n = it.first.filename();
+				std::string scriptName(n.begin(), n.end());
+				scriptName = scriptName.substr(0, scriptName.find_last_of('.'));
+				
+				if (ImGui::MenuItem(scriptName.c_str()))
+				{
+					ScriptFunctionPtr ptr;
+					ptr = ScriptFunctionPtr(GetProcAddress(it.second->m_DLL, "Create"));
+					Script* script = ptr();
+					m_SelectedGameObject->AddScript(script);
+				}
+			}
 
 			ImGui::EndPopup();
 		}
