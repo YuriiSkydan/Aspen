@@ -39,9 +39,6 @@ void Engine::Run()
 		std::chrono::duration<double> duration = end - start;
 		std::string title = "Aspen " + std::to_string(1.0f / duration.count());
 		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());
-	
-		//Think about moving it to editor
-		ScriptManager::GetInstance().Update();
 	}
 }
 

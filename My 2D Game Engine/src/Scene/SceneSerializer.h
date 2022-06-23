@@ -1,13 +1,16 @@
 #pragma once
 #include "Scene.h"
 #include "../src/GameObject/GameObject.h"
+#include "../src/Components/Rigidbody.h"
+#include "../src/Components/BoxCollider.h"
+#include "../src/Components/CircleCollider.h"
 #include "JSON/json.hpp"
 using namespace nlohmann;
 
 class SceneSerializer
 {
 private:
-	Scene* m_Scene;
+	std::shared_ptr<Scene>& m_Scene;
 
 private:
 	template<typename... Components>
@@ -39,7 +42,7 @@ private:
 	void DeserializeComponent(json& in, Camera* camera);
 
 public:
-	SceneSerializer(Scene* scene);
+	SceneSerializer(std::shared_ptr<Scene>& scene);
 
 	void Serialize() const;
 	void Deserialize();

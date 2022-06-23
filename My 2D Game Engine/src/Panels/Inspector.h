@@ -1,6 +1,7 @@
 #pragma once
 #include "HierarchyPanel.h"
 #include "../GameObject/GameObject.h"
+#include "imgui/imgui.h"
 
 class Inspector
 {

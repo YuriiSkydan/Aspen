@@ -1,9 +1,4 @@
 #pragma once
-
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
-
 #include <iostream> // for debug
 
 class Transform;
@@ -12,13 +7,14 @@ class GameObject;
 class Component
 {
 public:
-	GameObject* gameObject;
+	//GameObject* gameObject;
 	Transform* transform;
 
 	bool m_IsEnabled = true;
 
 	friend class GameObject;
 	friend class Inspector;
+
 private:
 	virtual void UpdateGui() {};
 
@@ -35,7 +31,7 @@ public:
 	virtual void OnDestroy() {}
 	bool IsEnabled() const { return m_IsEnabled; }
 
-	~Component()
+	virtual ~Component()
 	{
 		std::cout << "Component destructor!!!\n";
 	}

@@ -3,7 +3,6 @@
 #include "../Editor/EditorCamera.h"
 #include "../Components/SpriteRenderer.h"
 #include "../Components/Camera.h"
-#include "../Physics.h"
 #include "../box2d/b2_api.h" // maybe move it to the physics
 #include "../box2d/b2_body.h"
 #include "../box2d/b2_world.h"
@@ -11,6 +10,10 @@
 #include "../box2d/b2_polygon_shape.h"
 #include "../box2d/b2_fixture.h"
 #include "../box2d/b2_circle_shape.h"
+
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Rigidbody.h"
 
 #include <chrono>
 #include <map>
@@ -34,6 +37,10 @@ private:
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
+private:
+	void PhysicsWorldStart();
+	void PhysicsWorldStop();
+
 public:
 	Scene() = default;
 	Scene(const Scene& other);
@@ -45,10 +52,14 @@ public:
 	//void DestroyGameObject();
 
 	void Start();
-	void Pause(); // I'm not sure whether I will use this function
 	void Stop();
+
+	void Pause(); // I'm not sure whether I will use this function
+	void Resume();
+
 	void Update();
 	void Render();
+
 	void UpdateOnEditor(EditorCamera& camera);
 	void Resize(unsigned int width, unsigned int heigth);
 	std::string GetName() const { return m_Name; }
@@ -68,21 +79,6 @@ public:
 
 	}
 
-	//template<typename... Components>
-	//void CopyComponents(std::unique_ptr<GameObject>& dist, const std::unique_ptr<GameObject>& source)
-	//{
-	//	//([&]()
-	//	//	{
-	//	//		if (source->HasComponent<Components>())
-	//	//		{
-	//	//			Components* component =  dist->AddComponent<Components>();
-	//	//			*component = *(source->GetComponent<Components>());
-	//	//		}
-	//	//	}(), ....);
-	//}
-
-
 	const Scene& operator=(const Scene& other) = delete;
-
 	~Scene();
 };

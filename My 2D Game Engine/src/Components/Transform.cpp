@@ -1,5 +1,8 @@
 #include "Transform.h"
 
+#ifndef SCRIPT
+#include "imgui/imgui.h"
+
 void Transform::UpdateGui() // optimize this function
 {
 	if (ImGui::CollapsingHeader("Transform"))
@@ -18,7 +21,7 @@ void Transform::UpdateGui() // optimize this function
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
-		
+
 		ImGui::SetNextItemWidth(itemWidth);
 		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
 		ImGui::SetNextItemWidth(itemWidth);
@@ -29,42 +32,80 @@ void Transform::UpdateGui() // optimize this function
 		ImGui::Columns(1);
 	}
 }
+#else 
+void Transform::UpdateGui() {}
+#endif
 
 Transform::Transform(GameObject* gameObject)
-	:Component(gameObject, this), position{0.0f, 0.0f},
-	 scale{ 1.0f, 1.0f }, angle(0)
-{
-
-}
+	: Component(gameObject, this)
+	, position{ 0.0f, 0.0f }
+	, scale{ 1.0f, 1.0f }
+	, angle(0)
+{ }
 
 Transform::Transform(GameObject* gameObject, Transform* transform)
-	:Component(gameObject, this) 
-{
-}
+	:Component(gameObject, this)
+{ }
 
-Matrix3x3f Transform::GetTransform() const
+Matrix3x3f Transform::GetTransformMatrix() const
 {
 	Matrix3x3f transform = Matrix3x3f(1.0f);
 
-	transform = Translate(transform, position);
-	transform = Scale(transform, scale);
-	transform = Rotate(transform, angle);
+	transform = MatrixTransform::Translate(transform, position);
+	transform = MatrixTransform::Scale(transform, scale);
+	transform = MatrixTransform::Rotate(transform, angle);
 
 	return transform;
 }
 
 Vector2f Transform::Right() const
 {
-	Matrix3x3f trans = GetTransform();
+	Matrix3x3f trans = GetTransformMatrix();
 	Vector2f right(trans[0][0], trans[1][0]);
 	right.Normalize();
+
 	return right;
 }
 
 Vector2f Transform::Up() const
 {
-	Matrix3x3f trans = GetTransform();
+	Matrix3x3f trans = GetTransformMatrix();
 	Vector2f up(trans[0][1], trans[1][1]);
 	up.Normalize();
+
 	return up;
+}
+
+void Transform::Translate(const Vector2f& translation, Space relativeTo)
+{
+	if (relativeTo == Space::World)
+	{
+		position += translation;
+	}
+	else
+	{
+		position += GetTransformMatrix() * translation;
+	}
+}
+
+void Transform::Rotate(float angle, Space relativeTo)
+{
+	if (relativeTo == Space::World)
+	{
+
+	}
+	else
+	{
+		this->angle += angle;
+	}
+}
+
+bool Transform::operator==(const Transform* other)
+{
+	return (this == other);
+}
+
+bool Transform::operator!=(const Transform* other)
+{
+	return (this != other);
 }

@@ -3,6 +3,75 @@
 #include "../Log/Log.h"
 #include "../Math/Math.h"
 
+void Scene::PhysicsWorldStart()
+{
+	for (auto& object : m_GameObjects)
+	{
+		Vector2f position = object->transform->position;
+		float angle = ToRads(-object->transform->angle);
+
+		b2BodyDef bodyDef;
+		bodyDef.position = b2Vec2(position.x, position.y);
+		bodyDef.angle = angle;
+		
+		b2Body* body = nullptr;
+		if (object->HasComponent<Rigidbody>())
+		{
+			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
+			bodyDef.type = b2BodyType(rigidbody->type);
+			bodyDef.gravityScale = rigidbody->gravityScale;
+			bodyDef.fixedRotation = rigidbody->fixedRotation;
+			bodyDef.linearDamping = rigidbody->GetLinearDrag();
+			bodyDef.angularDamping = rigidbody->GetAngularDrag();
+		
+			body = m_PhysicsWorld->CreateBody(&bodyDef);
+			rigidbody->SetBody(body);
+		}
+
+		if (object->HasComponent<BoxCollider>())
+		{
+			BoxCollider* collider = object->GetComponent<BoxCollider>();
+
+			float sizeX = collider->size.x * object->transform->scale.x;
+			float sizeY = collider->size.y * object->transform->scale.y;
+			b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
+
+			b2PolygonShape boxShape;
+			boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &boxShape;
+			fixtureDef.density = collider->material.dencity;
+			fixtureDef.restitution = collider->material.restitution;
+			fixtureDef.friction = collider->material.friction;
+			fixtureDef.isSensor = collider->isTrigger;
+
+			if (body == nullptr)
+				body = m_PhysicsWorld->CreateBody(&bodyDef);
+
+			body->CreateFixture(&fixtureDef);
+		}
+
+		if (object->HasComponent<CircleCollider>())
+		{
+			CircleCollider* collider = object->GetComponent<CircleCollider>();
+			b2CircleShape circleShape;
+			circleShape.m_radius = collider->radius;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = collider->material.dencity;
+			fixtureDef.restitution = collider->material.restitution;
+			fixtureDef.friction = collider->material.friction;
+			fixtureDef.isSensor = collider->isTrigger;
+
+			if (body == nullptr)
+				body = m_PhysicsWorld->CreateBody(&bodyDef);
+
+			body->CreateFixture(&fixtureDef);
+		}
+	}
+}
 
 Scene::Scene(const Scene& other)
 {
@@ -43,14 +112,14 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	{
 		if (renderObj != nullptr)
 		{
-			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
-			{
+			/*if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
+			{*/
 				Shader& shader = renderObj->GetShader();
 				shader.Bind();
 				shader.SetMat3("camera", camera.GetCameraMatrix());
 
 				renderObj->Draw();
-			}
+			//}
 		}
 	}
 }
@@ -58,89 +127,90 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 void Scene::Start()
 {
 	m_PhysicsWorld = std::make_unique<b2World>(m_Gravity);
-
-	for (auto& object : m_GameObjects)
+	PhysicsWorldStart();
+	/*for (auto& object : m_GameObjects)
+{
+	if (object->HasComponent<Rigidbody>())
 	{
-		if (object->HasComponent<Rigidbody>())
-		{
-			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
+		Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.density = 1.0f;
-			fixtureDef.friction = rigidbody->material.friction;
-			fixtureDef.restitution = rigidbody->material.restitution;
+		b2FixtureDef fixtureDef;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = rigidbody->material.friction;
+		fixtureDef.restitution = rigidbody->material.restitution;
 
-			b2PolygonShape shape;
-			if (object->HasComponent<BoxCollider>())
-			{
-				BoxCollider* collider = object->GetComponent<BoxCollider>();
-
-				float hx = collider->size.x * object->transform->scale.x;
-				float hy = collider->size.y * object->transform->scale.y;
-				b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
-				shape.SetAsBox(abs(hx), abs(hy));
-
-				fixtureDef.shape = &shape;
-			}
-
-			b2CircleShape circle;
-			if (object->HasComponent<CircleCollider>())
-			{
-				CircleCollider* collider = object->GetComponent<CircleCollider>();
-
-				circle.m_radius = collider->radius;
-				fixtureDef.shape = &circle;
-			}
-
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-
-			Vector2f pos = object->transform->position;
-			float angle = ToRads(-object->transform->angle);
-
-			bodyDef.position = b2Vec2(pos.x, pos.y);
-			bodyDef.angle = angle;
-			bodyDef.fixedRotation = false;
-
-			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			body->CreateFixture(&fixtureDef);
-
-			rigidbody->body = body;
-		}
-		else if (object->HasComponent<BoxCollider>())
+		b2PolygonShape boxShape;
+		if (object->HasComponent<BoxCollider>())
 		{
 			BoxCollider* collider = object->GetComponent<BoxCollider>();
 
-			b2BodyDef bodyDef;
-			Vector2f pos = object->transform->position;
-			bodyDef.position.Set(pos.x, pos.y);
-
-			float angle = ToRads(-object->transform->angle);
-			bodyDef.angle = angle;
-
-			b2Body* groundBody = m_PhysicsWorld->CreateBody(&bodyDef);
-			b2PolygonShape groundBox;
 			float hx = collider->size.x * object->transform->scale.x;
 			float hy = collider->size.y * object->transform->scale.y;
 			b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
-			groundBox.SetAsBox(abs(hx), abs(hy));
-			groundBody->CreateFixture(&groundBox, 0.0f);
+			boxShape.SetAsBox(abs(hx), abs(hy), center, 0);
+
+			fixtureDef.shape = &boxShape;
 		}
-		else if (object->HasComponent<CircleCollider>())
+
+		b2CircleShape circleShape;
+		if (object->HasComponent<CircleCollider>())
 		{
-			/*CircleCollider* collider = object->GetComponent<CircleCollider>();
+			CircleCollider* collider = object->GetComponent<CircleCollider>();
 
-			b2BodyDef bodyDef;
-			Vector2f pos = object->transform->position;
-			bodyDef.position.Set(pos.x, pos.y);
-			
-			b2Body* circle = m_PhysicsWorld->CreateBody(&bodyDef);
-			b2CircleShape circleBody;
-			circleBody.m_radius = collider->radius;
-
-			circle->CreateFixture(&circle, 0.0f);*/
+			circleShape.m_radius = collider->radius;
+			fixtureDef.shape = &circleShape;
 		}
+
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+
+		Vector2f pos = object->transform->position;
+		float angle = ToRads(-object->transform->angle);
+
+		bodyDef.position = b2Vec2(pos.x, pos.y);
+		bodyDef.angle = angle;
+		bodyDef.fixedRotation = false;
+
+		b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+		body->CreateFixture(&fixtureDef);
+
+		rigidbody->body = body;
 	}
+	else if (object->HasComponent<BoxCollider>())
+	{
+		BoxCollider* collider = object->GetComponent<BoxCollider>();
+
+		b2BodyDef bodyDef;
+		Vector2f pos = object->transform->position;
+		float angle = ToRads(-object->transform->angle);
+
+		bodyDef.position = b2Vec2(pos.x, pos.y);
+		bodyDef.angle = angle;
+
+		b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+		float sizeX = collider->size.x * object->transform->scale.x;
+		float sizeY = collider->size.y * object->transform->scale.y;
+		b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
+		b2PolygonShape box;
+		box.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
+
+		body->CreateFixture(&box, 0.0f);
+	}
+	else if (object->HasComponent<CircleCollider>())
+	{
+		/*CircleCollider* collider = object->GetComponent<CircleCollider>();
+
+		b2BodyDef bodyDef;
+		Vector2f pos = object->transform->position;
+		bodyDef.position.Set(pos.x, pos.y);
+
+		b2Body* circle = m_PhysicsWorld->CreateBody(&bodyDef);
+		b2CircleShape circleBody;
+		circleBody.m_radius = collider->radius;
+
+		circle->CreateFixture(&circle, 0.0f);
+	}
+}*/
 }
 
 void Scene::Stop()
@@ -179,7 +249,7 @@ void Scene::Update()
 		m_PhysicsWorld->Step(0.015f, 6, 2);
 		end = std::chrono::steady_clock::now();
 	}
-
+	
 	for (auto& object : m_GameObjects)
 	{
 		if (object->IsActive())
@@ -231,14 +301,14 @@ void Scene::Render()
 		{
 			if (it != nullptr)
 			{
-				if (it->gameObject->IsActive() && it->IsEnabled())
-				{
+				/*if (it->gameObject->IsActive() && it->IsEnabled())
+				{*/
 					Shader& shader = it->GetShader();
 					shader.Bind();
 					shader.SetMat3("camera", mainCamera->GetCameraMatrix());
 
 					it->Draw();
-				}
+				//}
 			}
 		}
 	}

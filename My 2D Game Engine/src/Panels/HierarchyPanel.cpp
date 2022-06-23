@@ -1,7 +1,10 @@
 #include "HierarchyPanel.h"
 #include "../GameObject/GameObject.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Rigidbody.h"
 #include "../Log/Log.h"
-
+#include "imgui/imgui.h"
 
 //HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
 //	:m_SelectedGameObject(gameObjectRef)
@@ -10,9 +13,7 @@
 
 HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
 	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
-{
-
-}
+{}
 
 //void HierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene)
 //{
@@ -55,14 +56,13 @@ void HierarchyPanel::ImGuiRender()
 			gameObject->AddComponent<Rigidbody>();
 			gameObject->AddComponent<BoxCollider>();
 		}
+
 		ImGui::EndPopup();
 	}
-
 
 	ImGui::SameLine();
 
 	ImGui::InputText("##", findInput, 20);
-
 
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
@@ -97,8 +97,6 @@ void HierarchyPanel::ImGuiRender()
 					m_SelectedGameObject = gameObjects[i].get();
 					ImGui::OpenPopup("Object Properties");
 				}
-
-
 			}
 		}
 	}

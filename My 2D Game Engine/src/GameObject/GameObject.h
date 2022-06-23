@@ -1,9 +1,9 @@
 #pragma once
 #include "../Components/Transform.h"
 #include "../Components/SpriteRenderer.h"
-#include "../Components/Script.h"
 #include "../Scene/Scene.h"
 #include "../Log/Log.h"
+#include "../Components/Script.h"
 
 #include <list>
 #include <string>
@@ -15,7 +15,7 @@ class GameObject
 {
 private:
 	std::vector<std::unique_ptr<Component>> m_Components;
-	std::vector<std::unique_ptr<Script>> m_Scripts;
+	std::vector<Script*> m_Scripts;
 	Scene* m_Scene = nullptr;
 
 	char m_Name[20];
@@ -53,6 +53,7 @@ private:
 				}
 			}(), ...);
 	}
+
 public:
 	GameObject(Scene* scene);
 	GameObject(Scene* scene, const GameObject& other);
@@ -66,6 +67,7 @@ public:
 	void SetActive(bool active) { m_IsActive = active; }
 
 	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
+	std::vector<Script*>& GetScripts() { return m_Scripts; }
 
 	template<typename T>
 	T* AddComponent()
@@ -135,8 +137,5 @@ public:
 		return nullptr;
 	}
 
-	~GameObject()
-	{
-		std::cout << "GameObject destructor!!!\n";
-	}
+	~GameObject();
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glad/glad.h"
 #include "../Renderer/IndexBuffer.h"
 #include "../Renderer/VertexBuffer.h"
 #include "../Renderer/Texture.h"

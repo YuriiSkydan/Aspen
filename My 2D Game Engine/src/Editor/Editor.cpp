@@ -14,6 +14,8 @@
 #include "../Renderer/Renderer.h" // delete later
 #include "../Engine/Engine.h"
 
+#include "../ScriptManager.h"
+
 glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::mat4 Projection = glm::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 1000.0f);
 glm::mat4 objectTransform = glm::mat4(1.0f);
@@ -28,6 +30,8 @@ Editor::Editor()
 	, m_ToolbarHeight(33)
 {
 	InitImGui();
+	ScriptManager::Init(m_ActiveScene);
+
 	//Move somewhere later
 	glDebugMessageCallback(DebugMessageCallback, nullptr);
 	glfwSetErrorCallback(ErrorCallback);
@@ -70,6 +74,9 @@ void Editor::Update()
 	glViewport(0, 0, 1920, 1080);
 	m_ActiveScene->Render();
 	m_GameFramebuffer.Unbind();
+
+//	if (m_SceneState == SceneState::EDIT)
+//		ScriptManager::GetInstance().Update();
 }
 
 void Editor::ImGuiRender()
@@ -79,8 +86,6 @@ void Editor::ImGuiRender()
 	MainMenuBar();
 	DockSpace();
 	Toolbar();
-
-	//ImGui::ShowDemoWindow();
 
 	m_HierarchyPanel.ImGuiRender();
 	m_InspectorPanel.ImGuiRender();
@@ -116,7 +121,7 @@ void Editor::GameWindow()
 void Editor::OpenScene()
 {
 	auto newScene = std::make_shared<Scene>();
-	SceneSerializer serializer(newScene.get());
+	SceneSerializer serializer(newScene);
 
 	serializer.Deserialize();
 	if (newScene != nullptr)
@@ -129,13 +134,13 @@ void Editor::OpenScene()
 
 void Editor::SaveScene()
 {
-	SceneSerializer serializer(m_ActiveScene.get());
+	SceneSerializer serializer(m_ActiveScene);
 	serializer.Serialize();
 }
 
 void Editor::SaveSceneAs()
 {
-	
+
 }
 
 void Editor::SceneWindow()

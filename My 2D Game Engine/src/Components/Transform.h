@@ -1,18 +1,22 @@
 #pragma once
 
+#ifndef SCRIPT
 #include "Component.h"
+#endif
+
 #include "../Math/MatrixTransform.h"
 
-#include <iostream> // don't forget to delete
+enum class Space { Self, World };
 
 class Transform : public Component
 {
 public:
 	Vector2f position;
 	Vector2f scale;
-
 	float angle;
 
+	Transform* parent;
+	Transform* child;
 private:
 	void UpdateGui() override;
 
@@ -20,21 +24,23 @@ public:
 	Transform(GameObject* gameObject);
 	Transform(GameObject* gameObject, Transform* transform);
 
-	//void Translate(Vector2<float> translation);
-	//void Rotate();
+	void Awake() override {}
+	void Start() override {}
+	void Update() override {}
+	void FixedUpdate() override {}
+	void LateUpdate() override {}
+	void OnDestroy() override {}
 
-	//void SetParent(Transform* parent);
-	//void SetChild(Transform* child);
-	
-	//void GetParent() const;
-	//void GetChild() const;
-
-	Matrix3x3f GetTransform() const;
+	Matrix3x3f GetTransformMatrix() const;
 	Vector2f Right() const;
 	Vector2f Up() const;
 
-	//bool operator==(const Transform* transform);
-	//bool operator!=(const Transform* transform);
+	void Translate(const Vector2f& translation, Space relativeTo = Space::Self);
+	void Rotate(float angle, Space relativeTo = Space::Self);
+	//void LookAt();
+
+	bool operator==(const Transform* other);
+	bool operator!=(const Transform* other);
 
 	~Transform() = default;
 };

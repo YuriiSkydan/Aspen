@@ -2,10 +2,9 @@
 #include "../Log/Log.h"
 
 
-SceneSerializer::SceneSerializer(Scene* scene)
+SceneSerializer::SceneSerializer(std::shared_ptr<Scene>& scene)
 	:m_Scene(scene)
-{
-}
+{ }
 
 #pragma region Serialization
 
@@ -103,7 +102,12 @@ void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody) const
 {
 	out["Rigidbody"] =
 	{
-		{ "Mass", rigidbody->GetMass() }
+		{ "Mass", rigidbody->GetMass() },
+		{ "LinearDrag", rigidbody->GetLinearDrag() },
+		{ "AngularDrag", rigidbody->GetAngularDrag() },
+		{ "BodyType", int(rigidbody->type) },
+		{ "GravityScale", rigidbody->gravityScale },
+		{ "FixedRotation", rigidbody->fixedRotation }
 	};
 }
 
@@ -146,7 +150,7 @@ void SceneSerializer::Deserialize()
 
 	for (size_t i = 0; i < m_Scene->m_GameObjects.size(); i++)
 	{
-		auto newGameObject = std::make_unique<GameObject>(m_Scene);
+		auto newGameObject = std::make_unique<GameObject>(m_Scene.get());
 		DeserializeGameObject(in[std::to_string(i)], newGameObject);
 		m_Scene->m_GameObjects[i] = std::move(newGameObject);
 	};
@@ -232,7 +236,12 @@ void SceneSerializer::DeserializeComponent(json& in, CircleCollider* collider)
 
 void SceneSerializer::DeserializeComponent(json& in, Rigidbody* rigidbody)
 {
-
+	rigidbody->SetMass(in["Mass"]);
+	rigidbody->SetLinearDrag(in["LinearDrag"]);
+	rigidbody->SetAngularDrag(in["AngularDrag"]);
+	rigidbody->type = BodyType(in["BodyType"]);
+	rigidbody->gravityScale = in["GravityScale"];
+	rigidbody->fixedRotation = in["FixedRotation"];
 }
 
 void SceneSerializer::DeserializeComponent(json& in, Camera* camera)

@@ -4,47 +4,68 @@
 #include <string_view>
 #include "windows.h"
 #include "Log/Log.h"
+#include "Scene/Scene.h"
+#include "Components/Script.h"
 
 #include <iostream>
-
-typedef void(__stdcall* Function)();
 
 class ScriptManager
 {
 private:
-	class DLL
+	typedef Script* (__stdcall* ScriptCreatePtr)();
+	typedef void(__stdcall* ScriptDestroyPtr)(Script*);
+
+	class ScriptDLL
 	{
 	private:
 		std::string m_Path;
 
-	public:
+		ScriptCreatePtr m_CreateFunction;
+		ScriptDestroyPtr m_DestroyFunction;
+
 		HINSTANCE m_DLL;
 
 	public:
-		DLL(std::string_view path)
-			: m_Path(path), m_DLL(LoadLibraryA(m_Path.c_str()))
+		ScriptDLL(HINSTANCE dll)
+			: m_DLL(dll)
 		{
-			if (!m_DLL)
-				ERROR("Failed to load dll!!!\n");
-			
+			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
+			m_DestroyFunction = ScriptDestroyPtr(GetProcAddress(m_DLL, "Destroy"));
 		}
-		~DLL()
+
+		Script* Create() const
+		{
+			return m_CreateFunction();
+		}
+		void Destroy(Script* script)
+		{
+			m_DestroyFunction(script);
+		}
+
+		~ScriptDLL()
 		{
 			std::cout << "Free DLL!!!\n";
 			FreeLibrary(m_DLL);
 		}
 	};
-
-	std::unordered_map<std::filesystem::path, std::unique_ptr<DLL>> m_Scripts;
+	
+	std::shared_ptr<Scene>& m_Scene;
+	//std::unordered_map<std::string, std::pair<std::filesystem::path, std::unique_ptr<ScriptDLL>>> m_Scripts;
+	std::unordered_map<std::string, std::unique_ptr<ScriptDLL>> m_Scripts;
 	std::filesystem::file_time_type m_LastChangeTime;
+
+	inline static ScriptManager* m_Instance;
 
 private:
 	void FindScriptsInDirectory(const std::filesystem::path& directory);
 
 public:
+	ScriptManager(std::shared_ptr<Scene>& scene);
 	void Update();
 
 	const auto& GetScripts() { return m_Scripts; }
+
+	static void Init(std::shared_ptr<Scene>& scene);
 	static ScriptManager& GetInstance();
 };
 

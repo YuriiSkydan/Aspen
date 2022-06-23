@@ -1,5 +1,6 @@
 #include "../GameObject/GameObject.h"
 #include "SpriteRenderer.h"
+#include "imgui/imgui.h"
 
 #include <filesystem>
 
@@ -114,7 +115,7 @@ void SpriteRenderer::SetSprite(const std::string_view path)
 void SpriteRenderer::Draw()
 {
 	m_Shader.Bind();
-	m_Shader.SetMat3("transform", transform->GetTransform());
+	m_Shader.SetMat3("transform", transform->GetTransformMatrix());
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 
 	m_Sprite.Bind(0);

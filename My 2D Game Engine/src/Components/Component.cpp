@@ -6,7 +6,7 @@
 //}
 
 Component::Component(GameObject* gameObject, Transform* transform)
-	: gameObject(gameObject), transform(transform)
+	: /*gameObject(gameObject),*/ transform(transform)
 {
 }
 

@@ -3,6 +3,7 @@
 #include "../src/Panels/Inspector.h"
 #include "../src/Panels/ProjectPanel.h"
 #include "../src/Renderer/Framebuffer.h"
+#include "imgui/imgui.h"
 
 class Editor
 {
@@ -45,7 +46,7 @@ private:
 	void DarkStyle();
 	void DarkNightStyle();
 
-	void Toolbar();
+	void Toolbar(); // move it to seperate class later
 	void DockSpace();
 	void MainMenuBar();
 	void SceneWindow();  // maybe move it to seperate class

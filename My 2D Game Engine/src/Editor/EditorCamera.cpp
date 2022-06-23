@@ -36,7 +36,7 @@ void EditorCamera::Update()
 
 Matrix3x3f EditorCamera::GetCameraMatrix() const
 {
-	Matrix3x3f cameraMatrix = CameraMatrix(-m_Position, m_Ratio);
+	Matrix3x3f cameraMatrix = MatrixTransform::CameraMatrix(-m_Position, m_Ratio);
 	cameraMatrix[0][0] *= m_Scale;
 	cameraMatrix[1][1] *= m_Scale;
 	return cameraMatrix;

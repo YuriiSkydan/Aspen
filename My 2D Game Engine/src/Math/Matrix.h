@@ -1,6 +1,5 @@
 #pragma once
-#include <numbers>
-#include "Vector2.h";
+#include "Vector2.h"
 
 template<typename T, size_t SIZE>
 struct Matrix

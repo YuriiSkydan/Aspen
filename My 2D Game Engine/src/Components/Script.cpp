@@ -1,8 +1,9 @@
 #include "Script.h"
 
-void Script::SetCreateFunction(ScriptFunctionPtr function)
+
+void Script::SetName(const std::string& name)
 {
-	m_CreateFunction = function;
+	m_Name = name;
 }
 
 Script::Script(GameObject* gameObject, Transform* transform)

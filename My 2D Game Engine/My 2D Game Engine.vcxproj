@@ -62,7 +62,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\include;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib\Box2D\Debug;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\include;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -82,10 +82,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\include;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib\Box2D\Release;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\include;C:\Users\skida\source\repos\My 2D Game Engine\My 2D Game Engine\Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\Collision.cpp" />
+    <ClCompile Include="src\Components\BoxCollider.cpp" />
+    <ClCompile Include="src\Components\CircleCollider.cpp" />
+    <ClCompile Include="src\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Components\Script.cpp" />
     <ClCompile Include="src\ScriptManager.cpp" />
     <ClCompile Include="src\Scene\SceneSerializer.cpp" />
@@ -102,7 +106,6 @@
     <ClCompile Include="src\Log\Log.cpp" />
     <ClCompile Include="src\Engine\Engine.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
@@ -116,6 +119,7 @@
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Components\Transform.cpp" />
+    <ClCompile Include="src\Components\Trigger.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
@@ -132,6 +136,11 @@
     <ClCompile Include="src\Engine\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\Collision.h" />
+    <ClInclude Include="src\Components\BoxCollider.h" />
+    <ClInclude Include="src\Components\CircleCollider.h" />
+    <ClInclude Include="src\Components\Material.h" />
+    <ClInclude Include="src\Components\Rigidbody.h" />
     <ClInclude Include="src\Components\Script.h" />
     <ClInclude Include="src\ScriptManager.h" />
     <ClInclude Include="src\Scene\SceneSerializer.h" />
@@ -149,7 +158,6 @@
     <ClInclude Include="src\Log\Log.h" />
     <ClInclude Include="src\Engine\Engine.h" />
     <ClInclude Include="src\Input\Input.h" />
-    <ClInclude Include="Physics.h" />
     <ClInclude Include="src\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />
@@ -166,6 +174,7 @@
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Components\Transform.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Components\Trigger.h" />
     <ClInclude Include="vendor\box2d\b2_api.h" />
     <ClInclude Include="vendor\box2d\b2_block_allocator.h" />
     <ClInclude Include="vendor\box2d\b2_body.h" />

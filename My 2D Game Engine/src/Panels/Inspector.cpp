@@ -2,11 +2,14 @@
 #include "../Log/Log.h"
 #include "../ScriptManager.h"
 #include "../Components/Script.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Rigidbody.h"
+#include "imgui/imgui.h"
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
-{
-}
+{}
 
 void Inspector::ImGuiRender()
 {
@@ -43,6 +46,13 @@ void Inspector::ImGuiRender()
 			ImGui::Separator();
 		}
 
+		for (auto& script : m_SelectedGameObject->GetScripts())
+		{
+			ImGui::CollapsingHeader(script->GetName().c_str());
+			ImGui::Separator();
+		}
+		
+
 		ImGui::NewLine();
 		ImGui::NewLine();
 		int center = ImGui::GetWindowSize().x / 2;
@@ -73,15 +83,10 @@ void Inspector::ImGuiRender()
 
 			for (auto& it : ScriptManager::GetInstance().GetScripts())
 			{
-				std::wstring n = it.first.filename();
-				std::string scriptName(n.begin(), n.end());
-				scriptName = scriptName.substr(0, scriptName.find_last_of('.'));
-				
-				if (ImGui::MenuItem(scriptName.c_str()))
+				if (ImGui::MenuItem(it.first.c_str()))
 				{
-					ScriptFunctionPtr ptr;
-					ptr = ScriptFunctionPtr(GetProcAddress(it.second->m_DLL, "Create"));
-					Script* script = ptr();
+					Script* script = it.second->Create();
+					script->SetName(it.first);
 					m_SelectedGameObject->AddScript(script);
 				}
 			}

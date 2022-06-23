@@ -1,22 +1,29 @@
 #pragma once
 #include "Component.h"
+#include <iostream>
+#include <memory>
 
 class Script;
 
-typedef Script*(__stdcall* ScriptFunctionPtr)();
+class GameObject;
+class Inspector;
 
 class Script : public Component
 {
 private:
-	ScriptFunctionPtr m_CreateFunction;
+	std::string m_Name;
 
 	friend GameObject;
+	friend Inspector;
+
 private:
-	void SetCreateFunction(ScriptFunctionPtr function);
-	Script* Create() const { return m_CreateFunction(); }
+	void SetName(const std::string& name);
+	const std::string GetName() const { return m_Name; }
 
 public:
-	Script() = default;
+	Script()
+		:Component(nullptr, nullptr)
+	{ }
 	Script(GameObject* gameObject, Transform* transform);
 
 	virtual	void OnCollisionEnter() {}

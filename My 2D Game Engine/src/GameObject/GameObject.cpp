@@ -1,4 +1,8 @@
 #include "GameObject.h"
+#include "../ScriptManager.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Rigidbody.h"
 
 unsigned int GameObject::s_Objects = 0;
 
@@ -8,7 +12,7 @@ GameObject::GameObject(Scene* scene)
 	auto newComponent = std::make_unique<Transform>(this);
 	transform = newComponent.get();
 	m_Components.push_back(std::move(newComponent));
-	
+
 	std::stringstream name;
 	name << "GameObject" << s_Objects << '\0';
 	name >> m_Name;
@@ -29,6 +33,17 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 	m_ID = other.m_ID;
 
 	CopyComponents<AllComponents>(other);
+
+	for (auto& it : other.m_Scripts)
+	{
+		auto& scripts = ScriptManager::GetInstance().GetScripts();
+		Script* newScript = scripts.find(it->GetName())->second->Create();
+		//newScript->gameObject = this;
+		newScript->SetName(it->GetName());
+		newScript->transform = transform;
+		
+		m_Scripts.push_back(newScript);
+	}
 }
 
 //maybe change copy constructor later
@@ -46,8 +61,11 @@ GameObject::GameObject(const GameObject& other)
 
 	CopyComponents<AllComponents>(other);
 
-	for (auto& script : other.m_Scripts)
-		m_Scripts.emplace_back(script->Create());
+	//for (auto& script : other.m_Scripts)
+	//{
+	//	script->Update();
+		//m_Scripts.push_back(script->Create());
+	//}
 }
 
 void GameObject::SetName(const char* newName)
@@ -137,5 +155,21 @@ void GameObject::ComponentsLateUpdate()
 
 void GameObject::AddScript(Script* script)
 {
-	m_Scripts.emplace_back(script);
+	//script->Update();
+
+	//script->gameObject = this;
+	script->transform = transform;
+	m_Scripts.push_back(script);
+}
+
+GameObject::~GameObject()
+{
+	auto& scripts = ScriptManager::GetInstance().GetScripts();
+	for (size_t i = 0; i < m_Scripts.size(); i++)
+	{
+		auto pair = scripts.find(m_Scripts[i]->GetName());
+		pair->second->Destroy(m_Scripts[i]);
+	}
+
+	std::cout << "GameObject destructor!!!\n";
 }
