@@ -1,0 +1,120 @@
+#include "ScriptManager.h"
+using namespace std::string_literals;
+
+#include "Components/Script.h"
+
+ScriptManager::ScriptManager(std::shared_ptr<Scene>& scene)
+	: m_Scene(scene)
+{
+}
+
+void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& directory)
+{
+	for (auto& it : std::filesystem::directory_iterator(directory))
+	{
+		if (it.is_directory())
+			FindScriptsInDirectory(it.path());
+
+		if (it.path().extension() == ".cpp")
+		{
+			if (std::filesystem::last_write_time(it.path()) > m_LastChangeTime)
+			{
+				std::wstring path = it.path();
+				std::string filePath(path.begin(), path.end());
+
+				size_t lastDot = filePath.find_last_of('.');
+				std::string filePathDLL(filePath.substr(0, lastDot) + ".dll");
+
+				size_t end = filePath.find_last_of('\\') + 1;
+				std::string filename(filePath.substr(end, lastDot - end));
+
+				if (m_Scripts.find(filename) != m_Scripts.end())
+				{
+					std::cout << "Script is already created!!!\n";
+					m_Scripts.erase(filename);
+				}
+
+				//system(("g++ -shared -MD -MP -MF -o "s + filePathDLL + " " + filePath + " -D DLL_BUILD").c_str());
+
+				//system("g++ -c src/Components/Component.cpp src/Components/Component.h");
+				//system(("g++ -std=c++17 -shared -o "s + filePathDLL + " " + filePath + " -D DLL_BUILD").c_str());
+				std::cout << "Compiling file Version 1.5!!!\n";
+
+				std::string compileCommand = "call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
+				compileCommand += " cl /std:c++20";
+
+				//Additional dependecies
+				compileCommand += " /I ..\\Aspen";
+				compileCommand += " /I ..\\Aspen\\Libraries\\include";
+				compileCommand += " /I ..\\Aspen\\Libraries\\include\\glad";
+				compileCommand += " /I ..\\Aspen\\Libraries\\include\\GLFW";
+				compileCommand += " /I ..\\Aspen\\vendor";
+				compileCommand += " /I ..\\Aspen\\vendor\\imgui";
+				compileCommand += " /I ..\\Aspen\\vendor\\spdlog-1.x\\include";
+
+				//Compile properties
+				compileCommand += " /EHsc /MDd /LD " + filePath;
+
+				//Link properties
+				//compileCommand += " /link glfw3.lib";
+				//compileCommand += " box2d.lib";
+				compileCommand += " /link Aspen.lib";
+				compileCommand += " /LIBPATH:..\\x64\\Debug";
+
+				//compileCommand += " opengl32.lib";
+				//compileCommand += " Gdi32.lib";
+				//compileCommand += " User32.lib";
+				//compileCommand += " Shell32.lib";
+
+				//system(("call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && cl /I ..\\Aspen /EHsc /MDd /LD "s + filePath + "  /link Aspen.lib glfw3.lib box2d.lib").c_str());
+
+				system(compileCommand.c_str());
+				system("move \"Player.dll\" \"\Assets\"");
+				system("move \"Player.lib\" \"\Assets\"");
+				system("move \"Player.obj\" \"\Assets\"");
+				system("move \"Player.exp\" \"\Assets\"");
+				//system(("cl /EHsc /LD "s + filePath).c_str());
+
+				HINSTANCE dll;
+				dll = LoadLibraryA(filePathDLL.c_str());
+
+				if (dll)
+				{
+					//std::pair<std::filesystem::path, std::unique_ptr<ScriptDLL>> newElement;
+					//newElement = std::make_pair(filePath, std::make_unique<ScriptDLL>(dll));
+					//m_Scripts.insert(std::move(newElement));
+
+					std::pair<std::string, std::unique_ptr<ScriptDLL>> newElement;
+					newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll));
+					m_Scripts.insert(std::move(newElement));
+				}
+				else
+				{
+					ERROR("Failed to load DLL!!!\n");
+				}
+			}
+		}
+	}
+}
+
+void ScriptManager::Init(std::shared_ptr<Scene>& scene)
+{
+	static ScriptManager scriptManager(scene);
+	m_Instance = &scriptManager;
+}
+
+void ScriptManager::Update()
+{
+	if (std::filesystem::last_write_time("Assets") > m_LastChangeTime)
+	{
+		//system("g++ -shared -o Assets\\Test.dll Assets\\Test.cpp");
+
+		FindScriptsInDirectory("Assets");
+		m_LastChangeTime = std::filesystem::last_write_time("Assets");
+	}
+}
+
+ScriptManager& ScriptManager::GetInstance()
+{
+	return *m_Instance;
+}

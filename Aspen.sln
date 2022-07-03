@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Editor.vcxproj", "{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Aspen", "Aspen\Aspen.vcxproj", "{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Debug|x64.ActiveCfg = Debug|x64
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Debug|x64.Build.0 = Debug|x64
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Debug|x86.ActiveCfg = Debug|x64
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Release|x64.ActiveCfg = Release|x64
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Release|x64.Build.0 = Release|x64
+		{BC3D0DA7-E36D-46D0-9674-4062CBFDD536}.Release|x86.ActiveCfg = Release|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Debug|x64.ActiveCfg = Debug|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Debug|x64.Build.0 = Debug|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Debug|x86.ActiveCfg = Debug|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Release|x64.ActiveCfg = Release|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Release|x64.Build.0 = Release|x64
+		{E7A5B949-1EF9-4C49-B2A3-AA304E78F656}.Release|x86.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB8929DB-A197-4AF2-992C-4DC00675F27A}
+	EndGlobalSection
+EndGlobal
