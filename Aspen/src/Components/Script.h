@@ -16,15 +16,12 @@ class ASPEN Script : public Component
 private:
 	std::string m_Name;
 
-	friend GameObject;
-	friend Inspector;
-
+	friend class GameObject;
+	friend class Inspector;
+	friend class ScriptDeleter;
 private:
 	void SetName(const std::string& name);
 	const std::string GetName() const { return m_Name; }
-
-protected:
-	virtual void UpdateGui() override {}
 
 public:
 	Script() : Component(nullptr, nullptr)

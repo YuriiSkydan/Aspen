@@ -3,8 +3,8 @@
 
 void Input::Init()
 {
-	GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
-	glfwSetKeyCallback(window, Input::KeyPressCallback);
+	//GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
+	//glfwSetKeyCallback(window, Input::KeyPressCallback);
 }
 
 int Input::GetKeyState(KeyCode key)

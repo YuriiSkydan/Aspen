@@ -31,11 +31,9 @@ private:
 	Shader m_Shader;
 	Color m_Color;
 
+	friend class Inspector;
 public:
 	int orderInLayer = 0;
-
-private:
-	void UpdateGui() override;
 
 public:
 	SpriteRenderer(GameObject* gameObject, Transform* transform);

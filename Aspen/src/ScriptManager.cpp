@@ -1,7 +1,6 @@
 #include "ScriptManager.h"
-using namespace std::string_literals;
 
-#include "Components/Script.h"
+using namespace std::string_literals;
 
 ScriptManager::ScriptManager(std::shared_ptr<Scene>& scene)
 	: m_Scene(scene)
@@ -33,6 +32,7 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 					std::cout << "Script is already created!!!\n";
 					m_Scripts.erase(filename);
 				}
+
 
 				//system(("g++ -shared -MD -MP -MF -o "s + filePathDLL + " " + filePath + " -D DLL_BUILD").c_str());
 

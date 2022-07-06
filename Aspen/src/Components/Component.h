@@ -8,17 +8,12 @@ class GameObject;
 
 class ASPEN Component
 {
+private:
+	bool m_IsEnabled = true;
+
 public:
 	GameObject* gameObject;
 	Transform* transform;
-
-	bool m_IsEnabled = true;
-
-	friend class GameObject;
-	friend class Inspector;
-
-protected:
-	virtual void UpdateGui() {};
 
 public:
 	Component(GameObject* gameObject, Transform* transform);
@@ -30,7 +25,11 @@ public:
 	virtual void Update() {}
 	virtual void FixedUpdate() {}
 	virtual void LateUpdate() {}
+	virtual void OnEnabled() {}
+	virtual void OnDisabled() {}
 	virtual void OnDestroy() {}
+
+	void SetEnabled(bool enabled);
 	bool IsEnabled() const { return m_IsEnabled; }
 
 	template<typename T>

@@ -15,13 +15,13 @@ private:
 	float m_AngularDrag = 0.05f;
 
 	friend class Scene;
+	friend class Inspector;
 public:
 	BodyType type = BodyType::Dynamic;
 	float gravityScale = 1.0f;
 	bool fixedRotation = false;
 
 private:
-	void UpdateGui() override;
 	void SetBody(b2Body* body);
 
 public:

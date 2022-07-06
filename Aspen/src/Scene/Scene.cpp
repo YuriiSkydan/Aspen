@@ -41,17 +41,18 @@ void Scene::PhysicsWorldStart()
 
 			b2PolygonShape boxShape;
 			boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
-
+			
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = &boxShape;
 			fixtureDef.density = collider->material.dencity;
 			fixtureDef.restitution = collider->material.restitution;
 			fixtureDef.friction = collider->material.friction;
 			fixtureDef.isSensor = collider->isTrigger;
+			fixtureDef.userData.pointer = object->GetID();
 
 			if (body == nullptr)
 				body = m_PhysicsWorld->CreateBody(&bodyDef);
-			
+
 			body->CreateFixture(&fixtureDef);
 		}
 
@@ -129,38 +130,41 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, 1920, 1080);
 
-	//for (auto& renderObj : m_RenderObjects)
-	//{
-	//	if (renderObj != nullptr)
-	//	{
-	//		/*if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
-	//		{*/
-	//		Shader& shader = renderObj->GetShader();
-	//		shader.Bind();
-	//		shader.SetMat3("camera", camera.GetCameraMatrix());
-
-	//		renderObj->Draw();
-	//		//}
-	//	}
-	//}
-
-	auto renderObjects = GetObjectsComponent<SpriteRenderer>();
-	for (auto& renderObj : renderObjects)
+	for (auto& renderObj : m_RenderObjects)
 	{
 		if (renderObj != nullptr)
 		{
-			Shader& shader = renderObj->GetShader();
-			shader.Bind();
-			shader.SetMat3("camera", camera.GetCameraMatrix());
-			renderObj->Draw();
+			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
+			{
+				Shader& shader = renderObj->GetShader();
+				shader.Bind();
+				shader.SetMat3("camera", camera.GetCameraMatrix());
+
+				renderObj->Draw();
+			}
 		}
 	}
+
+	//auto renderObjects = GetObjectsComponent<SpriteRenderer>();
+	//for (auto& renderObj : renderObjects)
+	//{
+	//	if (renderObj != nullptr)
+	//	{
+	//		Shader& shader = renderObj->GetShader();
+	//		shader.Bind();
+	//		shader.SetMat3("camera", camera.GetCameraMatrix());
+	//		renderObj->Draw();
+	//	}
+	//}
 }
 
 void Scene::Start()
 {
 	m_PhysicsWorld = std::make_unique<b2World>(m_Gravity);
-	m_PhysicsWorld->SetContactListener(&m_ContactListener);
+	m_ContactListener = std::make_unique<ContactListener>(this);
+
+	m_PhysicsWorld->SetContactListener(m_ContactListener.get());
+
 	PhysicsWorldStart();
 
 	for (auto& object : m_GameObjects)
@@ -254,6 +258,7 @@ void Scene::Start()
 void Scene::Stop()
 {
 	m_PhysicsWorld.reset();
+	m_ContactListener.reset();
 }
 
 void Scene::Update()
@@ -320,30 +325,18 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//for (auto& it : m_RenderObjects)
-		//{
-		//	if (it != nullptr)
-		//	{
-		//		/*if (it->gameObject->IsActive() && it->IsEnabled())
-		//		{*/
-		//		Shader& shader = it->GetShader();
-		//		shader.Bind();
-		//		shader.SetMat3("camera", mainCamera->GetCameraMatrix());
-
-		//		it->Draw();
-		//		//}
-		//	}
-		//}
-
-		auto renderObjects = GetObjectsComponent<SpriteRenderer>();
-		for (auto& renderObj : renderObjects)
+		for (auto& it : m_RenderObjects)
 		{
-			if (renderObj != nullptr)
+			if (it != nullptr)
 			{
-				Shader& shader = renderObj->GetShader();
-				shader.Bind();
-				shader.SetMat3("camera", mainCamera->GetCameraMatrix());
-				renderObj->Draw();
+				if (it->gameObject->IsActive() && it->IsEnabled())
+				{
+					Shader& shader = it->GetShader();
+					shader.Bind();
+					shader.SetMat3("camera", mainCamera->GetCameraMatrix());
+
+					it->Draw();
+				}
 			}
 		}
 	}
@@ -352,4 +345,109 @@ void Scene::Render()
 Scene::~Scene()
 {
 	std::cout << "Scene Destructor!!!\n";
+}
+
+
+//Contact Listener
+void ContactListener::OnTriggerEnter(GameObject* gameObject)
+{
+	auto& scripts = gameObject->GetScripts();
+	Trigger* trigger = gameObject->GetComponent<Trigger>();
+
+	if (trigger != nullptr)
+	{
+		for (auto& script : scripts)
+			script->OnTriggerEnter(trigger);
+	}
+}
+
+void ContactListener::OnTriggerExit(GameObject* gameObject)
+{
+	auto& scripts = gameObject->GetScripts();
+	Trigger* trigger = gameObject->GetComponent<Trigger>();
+
+	if (trigger != nullptr)
+	{
+		for (auto& script : scripts)
+			script->OnTriggerExit(trigger);
+	}
+}
+
+void ContactListener::OnCollisionEnter(GameObject* gameObject)
+{
+	auto& scripts = gameObject->GetScripts();
+	Collision* collision = gameObject->GetComponent<Collision>();
+
+	if (collision != nullptr)
+	{
+		for (auto& script : scripts)
+			script->OnCollisionEnter(collision);
+	}
+}
+
+void ContactListener::OnCollisionExit(GameObject* gameObject)
+{
+	auto& scripts = gameObject->GetScripts();
+	Collision* collision = gameObject->GetComponent<Collision>();
+
+	if (collision != nullptr)
+	{
+		for (auto& script : scripts)
+			script->OnCollisionExit(collision);
+	}
+}
+
+ContactListener::ContactListener(Scene* scene)
+	: m_ScenePtr(scene)
+{
+}
+
+void ContactListener::BeginContact(b2Contact* contact)
+{
+	int objectAID = contact->GetFixtureA()->GetUserData().pointer;
+	int objectBID = contact->GetFixtureB()->GetUserData().pointer;
+	GameObject* objectA = m_ScenePtr->GetObjectWithID(objectAID);
+	GameObject* objectB = m_ScenePtr->GetObjectWithID(objectBID);
+
+	if (!contact->GetFixtureA()->IsSensor() || !contact->GetFixtureB()->IsSensor())
+	{
+		if (contact->GetFixtureA()->IsSensor())
+		{
+			OnTriggerEnter(objectA);
+		}
+		else if (contact->GetFixtureB()->IsSensor())
+		{
+			OnTriggerEnter(objectB);
+		}
+		else
+		{
+			OnCollisionEnter(objectA);
+			OnCollisionEnter(objectB);
+		}
+	}
+}
+
+void ContactListener::EndContact(b2Contact* contact)
+{
+	int objectAID = contact->GetFixtureA()->GetUserData().pointer;
+	int objectBID = contact->GetFixtureB()->GetUserData().pointer;
+	GameObject* objectA = m_ScenePtr->GetObjectWithID(objectAID);
+	GameObject* objectB = m_ScenePtr->GetObjectWithID(objectBID);
+
+	if (!contact->GetFixtureA()->IsSensor() || !contact->GetFixtureB()->IsSensor())
+	{
+		if (contact->GetFixtureA()->IsSensor())
+		{
+			OnTriggerExit(objectA);
+		}
+		else if (contact->GetFixtureB()->IsSensor())
+		{
+			OnTriggerExit(objectB);
+		}
+		else
+		{
+			OnCollisionExit(objectA);
+			OnCollisionExit(objectB);
+		}
+	}
 }

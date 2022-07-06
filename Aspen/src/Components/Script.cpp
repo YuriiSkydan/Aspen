@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "../ScriptManager.h"
 
 void Script::SetName(const std::string& name)
 {

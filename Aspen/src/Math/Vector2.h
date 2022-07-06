@@ -265,7 +265,6 @@ struct Vector2
 	float Magnitude();
 };
 
-
 template<typename T>
 inline Vector2<T>::Vector2()
 	:x(0), y(0)

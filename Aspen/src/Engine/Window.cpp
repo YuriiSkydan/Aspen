@@ -46,6 +46,7 @@ void Window::Init(const WindowData& data)
 
 void Window::ShutDown()
 {
+	
 }
 
 void Window::Update()

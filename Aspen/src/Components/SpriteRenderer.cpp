@@ -18,64 +18,6 @@ unsigned int indicies[]
 	0, 3, 2 
 };
 
-void SpriteRenderer::UpdateGui()
-{
-	bool isOpen = ImGui::CollapsingHeader("##Sprite Renderer", ImGuiTreeNodeFlags_AllowItemOverlap);
-	ImGui::SameLine();
-	ImGui::Checkbox("##Is Enabled", &m_IsEnabled);
-	ImGui::SameLine();
-	ImGui::Text("Sprite Renderer");
-
-	if (isOpen)
-	{
-		unsigned int columnWidth = 110;
-		unsigned int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 20;
-
-		ImGui::Columns(2, 0, false);
-		ImGui::SetColumnWidth(0, columnWidth);
-		
-		ImGui::Spacing();
-		ImGui::Text("Order In Layer");
-		ImGui::Spacing();
-		ImGui::Text("Color");
-		ImGui::Spacing();
-		ImGui::Text("Texture");
-
-		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
-
-		ImGui::SetNextItemWidth(itemWidth);
-		ImGui::DragInt("##Order In Layer", &orderInLayer, 1, 0);
-
-		ImGui::SetNextItemWidth(itemWidth);
-		if (ImGui::ColorEdit4("##Color", (float*)&m_Color))
-		{
-			m_Shader.Bind();
-			m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
-		}
-
-		ImGui::ImageButton((ImTextureID)m_Sprite.GetID(), { float(itemWidth), float(itemWidth) }, { 0, 1 }, { 1, 0 });
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
-			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
-				std::filesystem::path texturePath = "Assets";
-				texturePath /= path;
-
-				std::wstring wPath = texturePath.c_str();
-				std::string sPath(wPath.begin(), wPath.end());
-				m_Sprite = Texture(sPath);
-				//m_Sprite = Texture(path);
-				//ImGui::GetDragDropPayload();
-				ImGui::EndDragDropTarget();
-			}
-		}
-
-		ImGui::Columns(1);
-	}
-}
-
 SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform), m_Shader("Shaders/StandartShader.vs", "Shaders/StandartShader.fs"),
 	m_Sprite("Assets/Sprites/StandartSprite.png")

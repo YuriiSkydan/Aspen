@@ -8,6 +8,6 @@ public:
 
 protected:
 	Trigger(GameObject* gameObject, Transform* transform);
-	~Trigger() = default;
+	virtual ~Trigger() = default;
 };
 

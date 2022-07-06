@@ -82,6 +82,8 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="src\Components\Collider.cpp" />
+    <ClCompile Include="src\Components\PolygonCollider.cpp" />
     <ClCompile Include="src\Components\BoxCollider.cpp" />
     <ClCompile Include="src\Components\Camera.cpp" />
     <ClCompile Include="src\Components\CircleCollider.cpp" />
@@ -109,11 +111,6 @@
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\ScriptManager.cpp" />
-    <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
-    <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
-    <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
-    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
-    <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
     <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
@@ -129,6 +126,8 @@
     <ClInclude Include="Libraries\include\GLFW\glfw3.h" />
     <ClInclude Include="Libraries\include\GLFW\glfw3native.h" />
     <ClInclude Include="Libraries\include\KHR\khrplatform.h" />
+    <ClInclude Include="src\Components\Collider.h" />
+    <ClInclude Include="src\Components\PolygonCollider.h" />
     <ClInclude Include="src\Components\BoxCollider.h" />
     <ClInclude Include="src\Components\Camera.h" />
     <ClInclude Include="src\Components\CircleCollider.h" />
@@ -165,12 +164,6 @@
     <ClInclude Include="src\Scene\Scene.h" />
     <ClInclude Include="src\Scene\SceneSerializer.h" />
     <ClInclude Include="src\ScriptManager.h" />
-    <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
-    <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
-    <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
-    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
-    <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
-    <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_glfw.h" />

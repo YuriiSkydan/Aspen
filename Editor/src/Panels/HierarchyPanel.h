@@ -8,7 +8,7 @@ private:
 	std::shared_ptr<Scene>& m_Scene;
 	Ptr<GameObject>& m_SelectedGameObject;
 
-	char findInput[20];
+	char m_FindInput[20];
 	std::string findStr;
 public:
 	//HierarchyPanel(Ptr<GameObject>& gameObjectRef);

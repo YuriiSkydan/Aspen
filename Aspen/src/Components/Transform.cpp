@@ -1,35 +1,4 @@
 #include "Transform.h"
-#include "imgui/imgui.h"
-
-void Transform::UpdateGui() // optimize this function
-{
-	if (ImGui::CollapsingHeader("Transform"))
-	{
-		unsigned int columnWidth = 110;
-		unsigned int itemWidth = (ImGui::GetWindowSize().x - columnWidth) - 10;
-		ImGui::Columns(2, 0, false);
-		ImGui::SetColumnWidth(0, columnWidth);
-
-		ImGui::Spacing();
-		ImGui::Text("Position");
-		ImGui::Spacing();
-		ImGui::Text("Rotation");
-		ImGui::Spacing();
-		ImGui::Text("Scale");
-
-		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
-
-		ImGui::SetNextItemWidth(itemWidth);
-		ImGui::DragFloat2("##Position ", (float*)&position, 0.02f);
-		ImGui::SetNextItemWidth(itemWidth);
-		ImGui::DragFloat("##Rotation", &angle, 0.02f);
-		ImGui::SetNextItemWidth(itemWidth);
-		ImGui::DragFloat2("##Scale  ", (float*)&scale.x, 0.01f);
-
-		ImGui::Columns(1);
-	}
-}
 
 Transform::Transform(GameObject* gameObject)
 	: Component(gameObject, this)

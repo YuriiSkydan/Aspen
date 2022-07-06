@@ -40,7 +40,8 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 		newScript->SetName(it->GetName());
 		newScript->gameObject = this;
 		newScript->transform = transform;
-		
+
+		m_Components.push_back(std::unique_ptr<Component>(newScript));
 		m_Scripts.push_back(newScript);
 	}
 }
@@ -72,20 +73,23 @@ void GameObject::SetName(const char* newName)
 	strcpy_s(m_Name, 20, newName);
 }
 
-void GameObject::ComponentsUpdateOnEditor()
+void GameObject::SetActive(bool active)
 {
-
+	if (m_IsActive == true && active == false)
+	{
+		m_IsActive = active;
+		ComponentsDisable();
+	}
+	else if (m_IsActive == false && active == true)
+	{
+		m_IsActive = active;
+		ComponentsEnable();
+	}
 }
 
 void GameObject::ComponentsAwake()
 {
 	for (auto& it : m_Components)
-	{
-		if (it->IsEnabled())
-			it->Awake();
-	}
-
-	for (auto& it : m_Scripts)
 	{
 		if (it->IsEnabled())
 			it->Awake();
@@ -99,23 +103,11 @@ void GameObject::ComponentsStart()
 		if (it->IsEnabled())
 			it->Start();
 	}
-
-	for (auto& it : m_Scripts)
-	{
-		if (it->IsEnabled())
-			it->Start();
-	}
 }
 
 void GameObject::ComponentsUpdate()
 {
 	for (auto& it : m_Components)
-	{
-		if (it->IsEnabled())
-			it->Update();
-	}
-
-	for (auto& it : m_Scripts)
 	{
 		if (it->IsEnabled())
 			it->Update();
@@ -129,12 +121,6 @@ void GameObject::ComponentsFixedUpdate()
 		if (it->IsEnabled())
 			it->FixedUpdate();
 	}
-
-	for (auto& it : m_Scripts)
-	{
-		if (it->IsEnabled())
-			it->FixedUpdate();
-	}
 }
 
 void GameObject::ComponentsLateUpdate()
@@ -144,31 +130,36 @@ void GameObject::ComponentsLateUpdate()
 		if (it->IsEnabled())
 			it->LateUpdate();
 	}
+}
 
-	for (auto& it : m_Scripts)
+void GameObject::ComponentsEnable()
+{
+	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())
-			it->LateUpdate();
+			it->OnEnabled();
+	}
+}
+
+void GameObject::ComponentsDisable()
+{
+	for (auto& it : m_Components)
+	{
+		if (it->IsEnabled())
+			it->OnDisabled();
 	}
 }
 
 void GameObject::AddScript(Script* script)
 {
-	//script->Update();
-
-	//script->gameObject = this;
+	script->gameObject = this;
 	script->transform = transform;
+
+	m_Components.push_back(std::unique_ptr<Component>(script));
 	m_Scripts.push_back(script);
 }
 
 GameObject::~GameObject()
 {
-	auto& scripts = ScriptManager::GetInstance().GetScripts();
-	for (size_t i = 0; i < m_Scripts.size(); i++)
-	{
-		auto pair = scripts.find(m_Scripts[i]->GetName());
-		pair->second->Destroy(m_Scripts[i]);
-	}
-
 	std::cout << "GameObject destructor!!!\n";
 }

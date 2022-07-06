@@ -14,9 +14,6 @@ public:
 	float size = 1;
 	Color backgroundColor;
 
-private:
-	void UpdateGui() override;
-
 public:
 	Camera(GameObject* gameObject, Transform* transform);
 

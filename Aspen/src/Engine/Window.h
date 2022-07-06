@@ -14,14 +14,12 @@ struct ASPEN WindowData
 
 	WindowData(const std::string& title = "Aspen", unsigned int width = 1920, unsigned int height = 1080)
 		: title(title), width(width), height(height)
-	{}
+	{
+	}
 };
 
 class ASPEN Window
 {
-public:
-	
-
 private:
 	GLFWwindow* m_Window;
 	WindowData m_Data;

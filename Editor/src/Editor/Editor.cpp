@@ -113,22 +113,36 @@ void Editor::GameWindow()
 
 void Editor::OpenScene()
 {
-	auto newScene = std::make_shared<Scene>();
-	SceneSerializer serializer(newScene);
-
-	serializer.Deserialize();
-	if (newScene != nullptr)
+	if (m_SceneState != SceneState::PLAY)
 	{
-		m_EditorScene = newScene;
-		m_ActiveScene = m_EditorScene;
-		//m_HierarchyPanel.SetScene(m_ActiveScene);
+		auto newScene = std::make_shared<Scene>();
+		SceneSerializer serializer(newScene);
+
+		serializer.Deserialize();
+		if (newScene != nullptr)
+		{
+			m_EditorScene = newScene;
+			m_ActiveScene = m_EditorScene;
+			//m_HierarchyPanel.SetScene(m_ActiveScene);
+		}
+	}
+	else
+	{
+		WARN("Exit play mode to open scene.");
 	}
 }
 
 void Editor::SaveScene()
 {
-	SceneSerializer serializer(m_ActiveScene);
-	serializer.Serialize();
+	if (m_SceneState != SceneState::PLAY)
+	{
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Serialize();
+	}
+	else
+	{
+		WARN("Exit play mode to save scene.");
+	}
 }
 
 void Editor::SaveSceneAs()

@@ -6,6 +6,8 @@
 #include "src/Log/Log.h"
 #include "imgui/imgui.h"
 
+using namespace std::string_literals;
+
 //HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
 //	:m_SelectedGameObject(gameObjectRef)
 //{
@@ -24,7 +26,6 @@ void HierarchyPanel::ImGuiRender()
 {
 	ImGui::Begin("Hierarchy");
 
-	//Add here scene name
 	ImGuiTreeNodeFlags flags = 0;
 	flags |= ImGuiTreeNodeFlags_DefaultOpen;
 
@@ -62,16 +63,16 @@ void HierarchyPanel::ImGuiRender()
 
 	ImGui::SameLine();
 
-	ImGui::InputText("##", findInput, 20);
+	ImGui::InputText("##", m_FindInput, 20);
 
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
-		if (strlen(findInput) != 0)
+		if (strlen(m_FindInput) != 0)
 		{
 			for (auto& object : m_Scene->m_GameObjects)
 			{
 				findStr = object->GetName();
-				if (!findStr.find(findInput))
+				if (!findStr.find(m_FindInput))
 				{
 					ImGui::Text("   ");
 					ImGui::SameLine();
@@ -82,21 +83,23 @@ void HierarchyPanel::ImGuiRender()
 		}
 		else
 		{
-			auto& gameObjects = (m_Scene->m_GameObjects);
-			for (size_t i = 0; i < gameObjects.size(); i++)
+			for (auto& object : m_Scene->m_GameObjects)
 			{
 				ImGui::Text("   ");
 				ImGui::SameLine();
-				if (ImGui::MenuItem((gameObjects[i])->GetName()))
+
+				ImGui::PushID(("##"s + object->GetName()).c_str());
+				if (ImGui::MenuItem(object->GetName()))
 				{
-					m_SelectedGameObject = gameObjects[i].get();
+					m_SelectedGameObject = object.get();
 				}
 				else if (ImGui::IsItemHovered() &&
 					ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
-					m_SelectedGameObject = gameObjects[i].get();
+					m_SelectedGameObject = object.get();
 					ImGui::OpenPopup("Object Properties");
 				}
+				ImGui::PopID();
 			}
 		}
 	}

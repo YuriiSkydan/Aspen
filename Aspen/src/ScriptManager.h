@@ -14,17 +14,12 @@ class ASPEN ScriptManager
 {
 private:
 	typedef Script* (__stdcall* ScriptCreatePtr)();
-	typedef void(__stdcall* ScriptDestroyPtr)(Script*);
-	typedef void(__stdcall* EngineInit)(Engine*);
 
 	class ScriptDLL
 	{
 	private:
 		std::string m_Path;
-
 		ScriptCreatePtr m_CreateFunction;
-		ScriptDestroyPtr m_DestroyFunction;
-
 		HINSTANCE m_DLL;
 
 	public:
@@ -32,16 +27,11 @@ private:
 			: m_DLL(dll)
 		{
 			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
-			m_DestroyFunction = ScriptDestroyPtr(GetProcAddress(m_DLL, "Destroy"));
 		}
 
 		Script* Create() const
 		{
 			return m_CreateFunction();
-		}
-		void Destroy(Script* script)
-		{
-			m_DestroyFunction(script);
 		}
 
 		~ScriptDLL()

@@ -1,32 +1,5 @@
 #include "Camera.h"
 #include "Transform.h"
-#include "imgui/imgui.h"
-
-void Camera::UpdateGui()
-{
-	if (ImGui::CollapsingHeader("Camera"))
-	{
-		unsigned int columnWidth = 110;
-		unsigned int itemSize = ImGui::GetWindowSize().x - columnWidth - 10;;
-		ImGui::Columns(2, 0, false);
-		ImGui::SetColumnWidth(0, columnWidth);
-
-		ImGui::Spacing();
-		ImGui::Text("Background");
-		ImGui::Spacing();
-		ImGui::Text("Size"); ImGui::SameLine();
-
-		ImGui::NextColumn();
-		ImGui::SetColumnWidth(1, std::abs(ImGui::GetWindowSize().x - columnWidth));
-
-		ImGui::SetNextItemWidth(itemSize);
-		ImGui::ColorEdit4("##Background Color", (float*)&backgroundColor);
-		ImGui::SetNextItemWidth(itemSize);
-		ImGui::DragFloat("##Size", &size, 0.001f);
-
-		ImGui::Columns(1);
-	}
-}
 
 Camera::Camera(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)

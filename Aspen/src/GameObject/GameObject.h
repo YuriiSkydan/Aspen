@@ -31,25 +31,25 @@ public:
 	Transform* transform;
 
 private:
-	void ComponentsUpdateOnEditor();
-
 	void ComponentsAwake();
 	void ComponentsStart();
 	void ComponentsUpdate();
 	void ComponentsFixedUpdate();
 	void ComponentsLateUpdate();
+	void ComponentsEnable();
+	void ComponentsDisable();
 
 	void AddScript(Script* script);
 
 	template<typename... Components>
-	void CopyComponents(const GameObject& other)
+	void CopyComponents(const GameObject& gameObject)
 	{
 		([&]()
 			{
-				if (other.HasComponent<Components>())
+				if (gameObject.HasComponent<Components>())
 				{
 					Components* component = AddComponent<Components>();
-					*component = *(other.GetComponent<Components>());
+					*component = *(gameObject.GetComponent<Components>());
 				}
 			}(), ...);
 	}
@@ -66,13 +66,44 @@ public:
 	unsigned int GetID() const { return m_ID; }
 
 	bool IsActive() { return m_IsActive; }
-	void SetActive(bool active) { m_IsActive = active; }
+	void SetActive(bool active);
 
 	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
 	std::vector<Script*>& GetScripts() { return m_Scripts; }
 
+	//In Scene.h
 	template<typename T>
 	T* AddComponent();
+	//{
+	//	if (std::is_base_of<Script, T>::value)
+	//	{
+	//		std::cout << "Adding script!!!\n";
+	//		return nullptr;
+	//	}
+
+	//	if (std::is_base_of<Component, T>::value)
+	//	{
+	//		for (auto& it : m_Components)
+	//		{
+	//			T* component = dynamic_cast<T*>(it.get());
+	//			if (component != nullptr)
+	//			{
+	//				WARN("Component is already added");
+	//				return component;
+	//			}
+	//		}
+
+	//		auto newComponent = std::make_unique<T>(this, transform);
+	//		T* returnComponent = newComponent.get();
+
+	//		//m_Scene->OnComponentAdded<T>(newComponent);
+	//		m_Components.push_back(std::move(newComponent));
+
+	//		return returnComponent;
+	//	}
+
+	//	return nullptr;
+	//}
 
 	template<typename T>
 	void RemoveComponent() // method isn't finished
@@ -98,75 +129,3 @@ public:
 
 	~GameObject();
 };
-
-#pragma region GameObject
-
-template<typename T>
-T* GameObject::AddComponent()
-{
-	if (std::is_base_of<Component, T>::value)
-	{
-		for (auto& it : m_Components)
-		{
-			T* component = dynamic_cast<T*>(it.get());
-			if (component != nullptr)
-			{
-				WARN("Component is already added");
-				return component;
-			}
-		}
-
-		auto newComponent = std::make_unique<T>(this, transform);
-		T* returnComponent = newComponent.get();
-
-		//m_Scene->OnComponentAdded<T>(newComponent);
-		m_Components.push_back(std::move(newComponent));
-
-		return returnComponent;
-	}
-
-	return nullptr;
-}
-
-template<typename T>
-bool GameObject::HasComponent() const
-{
-	for (auto& component : m_Components)
-	{
-		if (typeid(T) == typeid(*component))
-			return true;
-	}
-
-	return false;
-}
-
-template<typename T>
-T* GameObject::GetComponent() const
-{
-	for (auto& it : m_Components)
-	{
-		T* component = dynamic_cast<T*>(it.get());
-		if (component != nullptr)
-			return component;
-	}
-
-	return nullptr;
-}
-
-#pragma endregion
-
-#pragma region Component 
-
-template<typename T>
-T* Component::GetComponent()
-{
-	return gameObject->GetComponent<T>();
-}
-
-template<typename T>
-bool Component::HasComponent()
-{
-	return gameObject->HasComponent<T>();
-}
-
-#pragma endregion

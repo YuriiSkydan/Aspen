@@ -2,7 +2,6 @@
 #include "../Log/Log.h"
 #include "../Input/Input.h"
 #include "../ScriptManager.h"
-#include "ImGuizmo/ImGuizmo.h"
 
 #include <chrono>
 
@@ -16,7 +15,6 @@ Engine::Engine()
 
 	InitImGui();
 
-	//m_Editor = std::make_unique<Editor>();
 	Input::Init();
 }
 
@@ -35,6 +33,7 @@ void Engine::Run()
 		ImGuiEnd();
 
 		m_Window->Update();
+
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
 

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Window.h"
 #include "../Scene/Scene.h"
 #include "../Layer.h"
@@ -26,7 +25,6 @@ private:
 	//Move it to seperate class
 	void InitImGui()
 	{
-		const char* glslVersion = "#version 130";
 		IMGUI_CHECKVERSION();
 
 		m_Context = ImGui::CreateContext();
@@ -46,7 +44,7 @@ private:
 		}
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Get().GetWindow().GetNativeWindow(), true);
-		ImGui_ImplOpenGL3_Init(glslVersion);
+		ImGui_ImplOpenGL3_Init("#version 410");
 
 		//io.Fonts->AddFontFromFileTTF("Fonts/SpaceMono-Regular.ttf", 18);
 	}
@@ -75,6 +73,12 @@ private:
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backupCurrentContext);
 		}
+	}
+	void DestroyImGui()
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 public:

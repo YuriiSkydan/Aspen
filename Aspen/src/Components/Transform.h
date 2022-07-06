@@ -13,8 +13,6 @@ public:
 
 	Transform* parent;
 	Transform* child;
-private:
-	void UpdateGui() override;
 
 public:
 	Transform(GameObject* gameObject);
