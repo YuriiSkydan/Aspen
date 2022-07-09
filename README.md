@@ -2,6 +2,7 @@
 My first 2D Game Engine
 
 Game Engine Interface
-![image](https://user-images.githubusercontent.com/87515048/177475088-b331d5ac-981b-4892-b309-bd9e98963f1f.png)
 
-![image](https://user-images.githubusercontent.com/87515048/177475531-bafaabe9-d353-428e-9546-96198e95ec36.png)
+![image](https://user-images.githubusercontent.com/87515048/178110210-8c4b882d-6b98-4331-b797-743c92b694fb.png)
+
+![image](https://user-images.githubusercontent.com/87515048/178110253-44c9e90c-bd30-46cf-809d-9270106b761c.png)
