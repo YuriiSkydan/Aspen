@@ -25,7 +25,6 @@ void Engine::Run()
 		auto start = std::chrono::high_resolution_clock::now();
 
 		glClear(GL_COLOR_BUFFER_BIT);
-
 		m_Editor->Update();
 
 		ImGuiBegin();
@@ -36,8 +35,8 @@ void Engine::Run()
 
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
-
 		auto end = std::chrono::high_resolution_clock::now();
+
 		std::chrono::duration<double> duration = end - start;
 		std::string title = "Aspen " + std::to_string(1.0f / duration.count());
 		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());

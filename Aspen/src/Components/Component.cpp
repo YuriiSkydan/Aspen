@@ -1,10 +1,5 @@
 #include "Component.h"
 
-//Component::Component(std::shared_ptr<GameObject> gameObject, std::shared_ptr<Transform> transform)
-//	: m_GameObject(gameObject), m_Transform(transform)
-//{
-//}
-
 Component::Component(GameObject* gameObject, Transform* transform)
 	: gameObject(gameObject), transform(transform)
 {
@@ -21,12 +16,12 @@ void Component::SetEnabled(bool enabled)
 	if (m_IsEnabled == true && enabled == false)
 	{
 		m_IsEnabled = enabled;
-		OnDisabled();
+		OnDisable();
 	}
 	else if(m_IsEnabled == false && enabled == true)
 	{
 		m_IsEnabled = enabled;
-		OnEnabled();
+		OnEnable();
 	}
 }
 

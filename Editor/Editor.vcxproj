@@ -49,7 +49,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\skida\source\repos\Aspen\Aspen\vendor;C:\Users\skida\source\repos\Aspen\Aspen;C:\Users\skida\source\repos\Aspen\Aspen\vendor\box2d;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\include;C:\Users\skida\source\repos\Aspen\Aspen\src;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\skida\source\repos\Aspen\Editor\imgui;C:\Users\skida\source\repos\Aspen\Aspen\vendor;C:\Users\skida\source\repos\Aspen\Aspen;C:\Users\skida\source\repos\Aspen\Aspen\vendor\box2d;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\include;C:\Users\skida\source\repos\Aspen\Aspen\src;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -67,7 +67,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\skida\source\repos\Aspen\Aspen\vendor;C:\Users\skida\source\repos\Aspen\Aspen;C:\Users\skida\source\repos\Aspen\Aspen\vendor\box2d;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\include;C:\Users\skida\source\repos\Aspen\Aspen\src;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\skida\source\repos\Aspen\Editor\imgui;C:\Users\skida\source\repos\Aspen\Aspen\vendor;C:\Users\skida\source\repos\Aspen\Aspen;C:\Users\skida\source\repos\Aspen\Aspen\vendor\box2d;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\include;C:\Users\skida\source\repos\Aspen\Aspen\src;C:\Users\skida\source\repos\Aspen\Aspen\vendor\spdlog-1.x\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -82,13 +82,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Panels\HierarchyPanel.cpp" />
@@ -98,15 +91,6 @@
   <ItemGroup>
     <ClInclude Include="GLFW\glfw3.h" />
     <ClInclude Include="GLFW\glfw3native.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Inspector.h" />

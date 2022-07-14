@@ -15,6 +15,7 @@
 
 #include <chrono>
 #include <map>
+#include <list>
 
 //Make a seperate file for it
 class ContactListener : public b2ContactListener
@@ -26,8 +27,8 @@ private:
 	void OnTriggerEnter(GameObject* gameObject);
 	void OnTriggerStay(GameObject* gameObject);
 	void OnTriggerExit(GameObject* gameObject);
-	
-	void OnCollisionEnter(GameObject* gameObject);
+
+	void OnCollisionEnter(GameObject* gameObject, GameObject* entered);
 	void OnCollisionStay(GameObject* gameObject);
 	void OnCollisionExit(GameObject* gameObject);
 
@@ -45,7 +46,7 @@ private:
 
 	//when vector is resized object will be destory that why you use unique_ptr
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
-	std::vector<SpriteRenderer*>             m_RenderObjects;
+	//std::vector<SpriteRenderer*>             m_RenderObjects;
 
 	std::unique_ptr<b2World> m_PhysicsWorld;
 	std::unique_ptr<ContactListener> m_ContactListener;
@@ -72,7 +73,7 @@ public:
 	GameObject* CreateGameObject();
 	GameObject* GetObjectWithID(int ID);
 
-	void DestroyGameObject(std::unique_ptr<GameObject>);
+	void DestroyGameObject(GameObject* gameObject);
 	//void DestroyGameObject();
 
 	void Start();
@@ -98,7 +99,7 @@ public:
 	void OnComponentRemoved(std::unique_ptr<T>& component);
 
 	template<typename T>
-	std::vector<T*> GetObjectsComponent()
+	std::vector<T*> GetObjectsWithComponent()
 	{
 		std::vector<T*> objectsComponent;
 		for (auto& object : m_GameObjects)
@@ -120,8 +121,8 @@ public:
 template<typename T>
 void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 {
-	if (typeid(T) == typeid(SpriteRenderer))
-		m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
+	//if (typeid(T) == typeid(SpriteRenderer))
+	//	m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
 }
 
 template<typename T>
@@ -160,6 +161,24 @@ T* GameObject::AddComponent()
 
 	return nullptr;
 }
+
+//template<typename T>
+//T* GameObject::AddComponent()
+//{
+//	if (std::is_base_of<Script, T>::value)
+//	{
+//		auto newScript = std::make_unique<T>(this, transform);
+//
+//		Script* script = newScript.get();
+//		m_Scripts.push_back(newScript.get());
+//
+//		auto returnScript = newScript.get();
+//		m_Components.push_back(std::move(newScript));
+//
+//		return returnScript;
+//	}
+//}
+
 
 template<typename T>
 bool GameObject::HasComponent() const

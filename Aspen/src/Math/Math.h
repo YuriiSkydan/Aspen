@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <numbers>
+#include "../Core/Core.h"
 
-float ToRads(float degrees);
-float ToDegrees(float rads);
+float ASPEN ToRads(float degrees);
+float ASPEN ToDegrees(float rads);

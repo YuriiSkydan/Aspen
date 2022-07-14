@@ -10,6 +10,8 @@
 #include <iostream>
 #include "Engine/Engine.h"
 
+using namespace std::string_literals;
+
 class ASPEN ScriptManager
 {
 private:
@@ -18,13 +20,13 @@ private:
 	class ScriptDLL
 	{
 	private:
-		std::string m_Path;
+		std::string m_ScriptName;
 		ScriptCreatePtr m_CreateFunction;
 		HINSTANCE m_DLL;
 
 	public:
-		ScriptDLL(HINSTANCE dll)
-			: m_DLL(dll)
+		ScriptDLL(HINSTANCE dll, const std::string& scriptName)
+			: m_DLL(dll), m_ScriptName(scriptName)
 		{
 			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
 		}
@@ -41,7 +43,6 @@ private:
 		}
 	};
 	
-	std::shared_ptr<Scene>& m_Scene;
 	//std::unordered_map<std::string, std::pair<std::filesystem::path, std::unique_ptr<ScriptDLL>>> m_Scripts;
 	std::unordered_map<std::string, std::unique_ptr<ScriptDLL>> m_Scripts;
 	std::filesystem::file_time_type m_LastChangeTime;
@@ -52,7 +53,7 @@ private:
 	void FindScriptsInDirectory(const std::filesystem::path& directory);
 
 public:
-	ScriptManager(std::shared_ptr<Scene>& scene);
+	ScriptManager() = default;
 
 	ScriptManager(const ScriptManager& other) = delete;
 	const ScriptManager& operator=(const ScriptManager& other) = delete;
@@ -61,7 +62,5 @@ public:
 
 	const auto& GetScripts() { return m_Scripts; }
 
-	static void Init(std::shared_ptr<Scene>& scene);
-	static ScriptManager& GetInstance();
+	static ScriptManager& Get();
 };
-

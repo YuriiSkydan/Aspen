@@ -1,6 +1,13 @@
 #pragma once
 #include "HierarchyPanel.h"
 #include "src/GameObject/GameObject.h"
+
+#ifndef IMGUI_API
+#undef IMGUI_API
+#endif
+
+#define IMGUI_API __declspec(dllimport)
+
 #include "imgui/imgui.h"
 
 class Inspector
@@ -12,28 +19,42 @@ private:
 	unsigned int m_SecondCollumnWidth;
 	unsigned int m_ItemWidth;
 
-public:
-	Inspector(Ptr<GameObject>& gameObjectRef);
-	void ImGuiRender();
+private:
+	void DrawGameObjectProperties();
+	void DrawComponents();
 
 	template<typename... Components>
-	void DrawComponents(GameObject* gameObject)
+	void DrawComponents(Component* component)
 	{
+		bool hasDrown = false;
+
 		([&]()
 			{
-				Components* component = gameObject->GetComponent<Components>();
-				if (component != nullptr)
+				if (!hasDrown)
 				{
-					DrawComponent(component);
-					ImGui::Separator();
+					Components* castComponent = dynamic_cast<Components*>(component);
+					if (castComponent != nullptr)
+					{
+						DrawComponent(castComponent);
+						ImGui::Separator();
+						hasDrown = true;
+					}
 				}
 			}(), ...);
 	}
 
+	bool DrawComponentHeader(const std::string& componentName, Component* component, bool isEditable);
 	void DrawComponent(Transform* transform);
 	void DrawComponent(SpriteRenderer* spriteRenderer);
 	void DrawComponent(Camera* camera);
 	void DrawComponent(Rigidbody* rigidbody);
 	void DrawComponent(BoxCollider* boxCollider);
 	void DrawComponent(CircleCollider* circleCollider);
+	void DrawComponent(PolygonCollider* polygonCollider);
+
+	void ImGuiAddComponentButton();
+
+public:
+	Inspector(Ptr<GameObject>& gameObjectRef);
+	void ImGuiRender();
 };

@@ -6,10 +6,7 @@
 #include "Trigger.h"
 #include "Collision.h"
 
-class Script;
-
-class GameObject;
-class Inspector;
+#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create(){ return new className(); }}
 
 class ASPEN Script : public Component
 {
@@ -18,7 +15,6 @@ private:
 
 	friend class GameObject;
 	friend class Inspector;
-	friend class ScriptDeleter;
 private:
 	void SetName(const std::string& name);
 	const std::string GetName() const { return m_Name; }

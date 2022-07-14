@@ -4,6 +4,7 @@
 #include "../Layer.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 class ASPEN Engine
 {
@@ -43,16 +44,18 @@ private:
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
+		io.Fonts->AddFontFromFileTTF("../Editor/Fonts/Montserrat-Bold.ttf", 15);
+
+
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Get().GetWindow().GetNativeWindow(), true);
 		ImGui_ImplOpenGL3_Init("#version 410");
-
-		//io.Fonts->AddFontFromFileTTF("Fonts/SpaceMono-Regular.ttf", 18);
 	}
 	void ImGuiBegin()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 	void ImGuiEnd()
 	{
@@ -98,4 +101,10 @@ public:
 
 	static void Set(Engine* engine);
 	static Engine& Get() { return *s_Instance; }
+
+	~Engine()
+	{
+		DestroyImGui();
+		std::cout << "Engine destructor!!!\n";
+	}
 };

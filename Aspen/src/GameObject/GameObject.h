@@ -1,13 +1,14 @@
 #pragma once
+#include "../Log/Log.h"
 #include "../Components/Transform.h"
 #include "../Components/SpriteRenderer.h"
-#include "../Log/Log.h"
+#include "../Components/PolygonCollider.h"
 #include "../Components/Script.h"
 
 #include <string>
 #include <iostream>
 
-#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider
+#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider //, PolygonCollider
 
 class Scene;
 
@@ -54,6 +55,8 @@ private:
 			}(), ...);
 	}
 
+	void RemoveComponent(Component* component);
+
 public:
 	GameObject(Scene* scene);
 	GameObject(Scene* scene, const GameObject& other);
@@ -62,11 +65,12 @@ public:
 	const GameObject& operator=(const GameObject& other) = delete;
 
 	void SetName(const char* newName);
-	const char* GetName() const { return m_Name; }
-	unsigned int GetID() const { return m_ID; }
+	void SetActive(bool active);
 
 	bool IsActive() { return m_IsActive; }
-	void SetActive(bool active);
+	const char* GetName() const { return m_Name; }
+	unsigned int GetID() const { return m_ID; }
+	Scene* GetScene() const { return m_Scene; }
 
 	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
 	std::vector<Script*>& GetScripts() { return m_Scripts; }
@@ -74,36 +78,6 @@ public:
 	//In Scene.h
 	template<typename T>
 	T* AddComponent();
-	//{
-	//	if (std::is_base_of<Script, T>::value)
-	//	{
-	//		std::cout << "Adding script!!!\n";
-	//		return nullptr;
-	//	}
-
-	//	if (std::is_base_of<Component, T>::value)
-	//	{
-	//		for (auto& it : m_Components)
-	//		{
-	//			T* component = dynamic_cast<T*>(it.get());
-	//			if (component != nullptr)
-	//			{
-	//				WARN("Component is already added");
-	//				return component;
-	//			}
-	//		}
-
-	//		auto newComponent = std::make_unique<T>(this, transform);
-	//		T* returnComponent = newComponent.get();
-
-	//		//m_Scene->OnComponentAdded<T>(newComponent);
-	//		m_Components.push_back(std::move(newComponent));
-
-	//		return returnComponent;
-	//	}
-
-	//	return nullptr;
-	//}
 
 	template<typename T>
 	void RemoveComponent() // method isn't finished

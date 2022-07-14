@@ -61,4 +61,9 @@ public:
 
 	void Update();
 	void ImGuiRender();
+
+	~Editor()
+	{
+		std::cout << "Editor destructor!!!\n";
+	}
 };

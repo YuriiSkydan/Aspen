@@ -5,7 +5,8 @@
 #include "src/Components/BoxCollider.h"
 #include "src/Components/CircleCollider.h"
 #include "src/Components/Rigidbody.h"
-#include "imgui/imgui.h"
+
+using namespace std::string_literals;
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
@@ -17,78 +18,104 @@ void Inspector::ImGuiRender()
 
 	if (m_SelectedGameObject != nullptr)
 	{
-		ImGui::Checkbox("##IsActive", &m_SelectedGameObject->m_IsActive);
-		ImGui::SameLine();
-
-		ImGui::InputText("##", m_SelectedGameObject->m_Name, 20);
-
-		if (strlen(m_SelectedGameObject->m_Name) == 0)
-			m_SelectedGameObject->m_Name[0] = '\0';
-
-		if (ImGui::Button("Tags"))
-			ImGui::OpenPopup("Tags");
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Layers"))
-			ImGui::OpenPopup("Layers");
-
-		ImGui::Separator();
-
-		//Drawing components
-		m_SecondCollumnWidth = ImGui::GetWindowSize().x - m_FirstCollumnWidth;
-		m_ItemWidth = m_SecondCollumnWidth - 10;
-		DrawComponents<AllComponents>(m_SelectedGameObject);
-
-		for (auto& script : m_SelectedGameObject->GetScripts())
-		{
-			ImGui::CollapsingHeader(script->GetName().c_str());
-			ImGui::Separator();
-		}
-
-		ImGui::NewLine();
-		ImGui::NewLine();
-		int center = ImGui::GetWindowSize().x / 2;
-		ImGui::SameLine(center - 100);
-		if (ImGui::Button("Add Component", ImVec2(200, 20)))
-		{
-			ImGui::OpenPopup("Components");
-		}
-
-		if (ImGui::BeginPopup("Components"))
-		{
-			if (ImGui::MenuItem("Sprite Renderer"))
-				m_SelectedGameObject->AddComponent<SpriteRenderer>();
-
-			if (ImGui::MenuItem("Rigidbody"))
-				m_SelectedGameObject->AddComponent<Rigidbody>();
-
-			if (ImGui::MenuItem("Box Collider"))
-				m_SelectedGameObject->AddComponent<BoxCollider>();
-
-			if (ImGui::MenuItem("Circle Collider"))
-				m_SelectedGameObject->AddComponent<CircleCollider>();
-
-			if (ImGui::MenuItem("Camera"))
-				m_SelectedGameObject->AddComponent<Camera>();
-
-			ImGui::Separator();
-
-			for (auto& it : ScriptManager::GetInstance().GetScripts())
-			{
-				if (ImGui::MenuItem(it.first.c_str()))
-				{
-					Script* script = it.second->Create();
-					script->SetName(it.first);
-					m_SelectedGameObject->AddScript(script);
-				}
-			}
-
-			ImGui::EndPopup();
-		}
+		DrawGameObjectProperties();
+		DrawComponents();
+		ImGuiAddComponentButton();
 	}
 
 	ImGui::End();
+}
+
+void Inspector::DrawGameObjectProperties()
+{
+	bool active = m_SelectedGameObject->IsActive();
+	ImGui::Checkbox("##IsActive", &active);
+	m_SelectedGameObject->SetActive(active);
+
+	ImGui::SameLine();
+
+	ImGui::InputText("##", m_SelectedGameObject->m_Name, 20);
+
+	ImGui::Columns(2, "##Tags and Layers", false);
+	ImGui::SetColumnWidth(0, ImGui::GetWindowSize().x / 2.0f);
+
+	ImGui::Text("Tag");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##Tags", "Untagged"))
+	{
+		ImGui::EndCombo();
+	}
+
+	ImGui::NextColumn();
+	ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x / 2.0f);
+
+	ImGui::Text("Layer");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##Layers", "Default"))
+	{
+		ImGui::EndCombo();
+	}
+
+	ImGui::Columns(1);
+
+	ImGui::Separator();
+}
+
+void Inspector::DrawComponents()
+{
+	m_SecondCollumnWidth = ImGui::GetWindowSize().x - m_FirstCollumnWidth;
+	m_ItemWidth = m_SecondCollumnWidth - 15;
+
+	auto& components = m_SelectedGameObject->GetComponents();
+	for (auto& it : components)
+		DrawComponents<AllComponents>(it.get());
+
+	for (auto& script : m_SelectedGameObject->GetScripts())
+	{
+		ImGui::CollapsingHeader(script->GetName().c_str());
+		ImGui::Separator();
+	}
+
+	ImGui::NewLine();
+	ImGui::NewLine();
+}
+
+bool Inspector::DrawComponentHeader(const std::string& componentName, Component* component, bool isEditable)
+{
+	bool isOpen = ImGui::CollapsingHeader(("##"s + componentName).c_str(), ImGuiTreeNodeFlags_AllowItemOverlap);
+	bool deleteComponent = false;
+	ImGui::SameLine();
+
+	ImGui::PushID(componentName.c_str());
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		ImGui::OpenPopup("Component properties");
+
+	if (ImGui::BeginPopup("Component properties"))
+	{
+		if (ImGui::MenuItem("Delete"))
+			deleteComponent = true;
+
+		ImGui::EndPopup();
+	}
+	ImGui::PopID();
+
+	if (isEditable)
+	{
+		bool isEnabled = component->IsEnabled();
+		ImGui::Checkbox(("##Is Enabled"s + componentName).c_str(), &isEnabled);
+		component->SetEnabled(isEnabled);
+	}
+
+	ImGui::SameLine();
+	ImGui::Text(componentName.c_str());
+
+	if (deleteComponent)
+	{
+		m_SelectedGameObject->RemoveComponent(component);
+		return false;
+	}
+
+	return isOpen;
 }
 
 void Inspector::DrawComponent(Transform* transform)
@@ -121,15 +148,7 @@ void Inspector::DrawComponent(Transform* transform)
 
 void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 {
-	bool isOpen = ImGui::CollapsingHeader("##Sprite Renderer", ImGuiTreeNodeFlags_AllowItemOverlap);
-	ImGui::SameLine();
-
-	bool isEnabled = spriteRenderer->IsEnabled();
-	ImGui::Checkbox("##Is Enabled", &isEnabled);
-	spriteRenderer->SetEnabled(isEnabled);
-
-	ImGui::SameLine();
-	ImGui::Text("Sprite Renderer");
+	bool isOpen = DrawComponentHeader("SpriteRenderer", spriteRenderer, true);
 
 	if (isOpen)
 	{
@@ -156,7 +175,7 @@ void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 			spriteRenderer->m_Shader.Bind();
 			spriteRenderer->m_Shader.SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 		}
-		
+
 		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(m_ItemWidth), float(m_ItemWidth) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -181,7 +200,9 @@ void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 
 void Inspector::DrawComponent(Camera* camera)
 {
-	if (ImGui::CollapsingHeader("Camera"))
+	bool isOpen = DrawComponentHeader("Camera", camera, true);
+
+	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
@@ -205,7 +226,9 @@ void Inspector::DrawComponent(Camera* camera)
 
 void Inspector::DrawComponent(Rigidbody* rigidbody)
 {
-	if (ImGui::CollapsingHeader("Rigidbody"))
+	bool isOpen = DrawComponentHeader("Rigidbody", rigidbody, false);
+
+	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
@@ -271,7 +294,9 @@ void Inspector::DrawComponent(Rigidbody* rigidbody)
 
 void Inspector::DrawComponent(BoxCollider* boxCollider)
 {
-	if (ImGui::CollapsingHeader("Box Collider"))
+	bool isOpen = DrawComponentHeader("BoxCollider", boxCollider, true);
+
+	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
@@ -308,7 +333,9 @@ void Inspector::DrawComponent(BoxCollider* boxCollider)
 
 void Inspector::DrawComponent(CircleCollider* circleCollider)
 {
-	if (ImGui::CollapsingHeader("Circle Collider"))
+	bool isOpen = DrawComponentHeader("CircleCollider", circleCollider, true);
+
+	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
@@ -324,5 +351,50 @@ void Inspector::DrawComponent(CircleCollider* circleCollider)
 		ImGui::DragFloat("##Radius", &circleCollider->radius, 0.001f, 0.0f);
 
 		ImGui::Columns(1);
+	}
+}
+
+void Inspector::ImGuiAddComponentButton()
+{
+	int center = ImGui::GetWindowSize().x / 2;
+	ImGui::SameLine(center - 100);
+	if (ImGui::Button("Add Component", ImVec2(200, 20)))
+	{
+		ImGui::OpenPopup("Components");
+	}
+
+	if (ImGui::BeginPopup("Components"))
+	{
+		if (ImGui::MenuItem("Sprite Renderer"))
+			m_SelectedGameObject->AddComponent<SpriteRenderer>();
+
+		if (ImGui::MenuItem("Camera"))
+			m_SelectedGameObject->AddComponent<Camera>();
+
+		if (ImGui::MenuItem("Rigidbody"))
+			m_SelectedGameObject->AddComponent<Rigidbody>();
+
+		if (ImGui::MenuItem("Box Collider"))
+			m_SelectedGameObject->AddComponent<BoxCollider>();
+
+		if (ImGui::MenuItem("Circle Collider"))
+			m_SelectedGameObject->AddComponent<CircleCollider>();
+
+		if (ImGui::MenuItem("Polygon Collider"))
+			m_SelectedGameObject->AddComponent<PolygonCollider>();
+
+		ImGui::Separator();
+
+		for (auto& it : ScriptManager::Get().GetScripts())
+		{
+			if (ImGui::MenuItem(it.first.c_str()))
+			{
+				Script* script = it.second->Create();
+				script->SetName(it.first);
+				m_SelectedGameObject->AddScript(script);
+			}
+		}
+
+		ImGui::EndPopup();
 	}
 }

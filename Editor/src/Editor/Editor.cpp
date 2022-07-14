@@ -16,10 +16,6 @@
 
 #include "src/ScriptManager.h"
 
-glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
-glm::mat4 Projection = glm::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 1000.0f);
-glm::mat4 objectTransform = glm::mat4(1.0f);
-
 Editor::Editor()
 	: Layer("Editor")
 	, m_HierarchyPanel(m_ActiveScene, m_SelectedObject)
@@ -30,8 +26,6 @@ Editor::Editor()
 	, m_PauseButtonIcon("Resources/PauseIcon.png")
 	, m_ToolbarHeight(33)
 {
-	ScriptManager::Init(m_ActiveScene);
-
 	ImGui::SetCurrentContext(Engine::Get().GetImGuiContext());
 	//Move somewhere later
 	//glDebugMessageCallback(DebugMessageCallback, nullptr);
@@ -61,9 +55,15 @@ void Editor::Update()
 	if (m_SceneState == SceneState::PLAY && !m_Pause)
 		m_ActiveScene->Update();
 
-	Vector2f mPos = Input::GetMousePosition();
-	int pData = m_SceneFramebuffer.ReadPixel(1, mPos.x, mPos.y);
-	m_HoveredObject = m_ActiveScene->GetObjectWithID(pData);
+	//Vector2f mPos = Input::GetMousePosition();
+	//mPos.x /= m_SceneWindowSize.x;
+	//mPos.x *= 1920.0f;
+
+	//mPos.y /= m_SceneWindowSize.y;
+	//mPos.y *= 1080.0f;
+
+	//int pData = m_SceneFramebuffer.ReadPixel(1, mPos.x, mPos.y);
+	//m_HoveredObject = m_ActiveScene->GetObjectWithID(pData);
 	m_SceneFramebuffer.Unbind();
 
 
@@ -73,7 +73,7 @@ void Editor::Update()
 	m_GameFramebuffer.Unbind();
 
 	if (m_SceneState == SceneState::EDIT)
-		ScriptManager::GetInstance().Update();
+		ScriptManager::Get().Update();
 }
 
 void Editor::ImGuiRender()
@@ -106,6 +106,113 @@ void Editor::GameWindow()
 
 	ImVec2 cursorPos = ImGui::GetCursorPos();
 	//glViewport(0, 0, size.x, size.y);
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+}
+
+void Editor::SceneWindow()
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+	ImGui::Begin("Scene");
+
+	m_SceneWindowSize = ImGui::GetWindowSize();
+
+	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 size = m_SceneWindowSize;
+	ImVec2 start = ImGui::GetWindowPos();
+	ImVec2 end = ImVec2{ start.x + size.x, start.y + size.y };
+	drawList->AddImage((void*)m_SceneFramebuffer.GetColorAttachmentID(), start, end, { 0, 1 }, { 1, 0 });
+
+	
+	//Guizmos
+	Vector2f pos = m_EditorCamera.GetPosition();
+	float cameraScale = m_EditorCamera.GetScale();
+
+	ImGuizmo::SetOrthographic(true);
+	
+	{
+		auto rect = m_EditorCamera.GetCameraMatrix();
+		float XAxis = (1.0f / rect[0][0]);
+		float YAxis = (1.0f / rect[1][1]);
+
+		glm::mat4 Projection = glm::ortho(-XAxis, XAxis, -YAxis, YAxis);
+		
+		Vector2f cameraPos = m_EditorCamera.GetPosition();
+		glm::mat4 CameraView = glm::lookAt(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		CameraView = glm::translate(CameraView, glm::vec3(cameraPos.x * XAxis, 0.0f, -cameraPos.y * YAxis));
+
+		glm::mat4 matrix(10.0f);
+
+		static float grid = 0.0f;
+		if (Input::IsKeyPressed(Key::Right))
+			grid += 0.01f;
+		if (Input::IsKeyPressed(Key::Left))
+			grid -= 0.01f;
+
+		//ImGuizmo::DrawGrid((float*)&CameraView, (float*)&Projection, (float*)&matrix, 100.0f);
+	}
+
+	//ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist();
+
+	ImVec2 minRegion = ImGui::GetWindowContentRegionMin();
+	ImVec2 maxRegion = ImGui::GetWindowContentRegionMax();
+	ImVec2 offset = ImGui::GetWindowPos();
+	ImGuizmo::SetRect(minRegion.x + offset.x, minRegion.y + offset.y,
+		m_SceneWindowSize.x, m_SceneWindowSize.y);
+
+	if (m_SelectedObject != nullptr)
+	{
+		Transform* transform = m_SelectedObject->transform;
+		glm::vec3 position = glm::vec3(0.0f);
+		position.x = transform->position.x;
+		position.y = transform->position.y;
+
+		auto rect = m_EditorCamera.GetCameraMatrix();
+		float XAxis = (1.0f / rect[0][0]);
+		float YAxis = (1.0f / rect[1][1]);
+	
+		glm::mat4 Projection = glm::ortho(-XAxis, XAxis, -YAxis, YAxis);
+	
+		glm::mat4 objectTransform = glm::translate(glm::mat4(1.0f), position);
+		//objectTransform = glm::rotate(objectTransform, -ToRads(transform->angle), glm::vec3(0.0, 0.0, 1.0f));
+
+		Vector2f cameraPos = m_EditorCamera.GetPosition();
+		glm::mat4 CameraView = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		CameraView = glm::translate(CameraView, glm::vec3(-cameraPos.x * XAxis, -cameraPos.y * YAxis, 0.0f));
+		
+
+		ImGuizmo::SetLineThickness(6.3f);
+		
+		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
+			(ImGuizmo::TRANSLATE_X), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
+
+		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
+			(ImGuizmo::TRANSLATE_Y), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
+
+		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
+			(ImGuizmo::ROTATE_Z), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
+
+		transform->position.x = objectTransform[3][0];
+		transform->position.y = objectTransform[3][1];
+		
+		transform->angle -= ToDegrees(asin(objectTransform[0][1]));
+	}
+
+	if (!ImGuizmo::IsUsing())
+	{
+		if (ImGui::IsWindowHovered() && Input::IsMouseButtonPressed(Mouse::Button0))
+			m_SelectedObject = m_HoveredObject;
+	}
+	
+	float aspectRatio = float(m_SceneWindowSize.x) / float(m_SceneWindowSize.y);
+	m_EditorCamera.SetRatio(aspectRatio);
+
+	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
+	m_EditorCamera.Update();
 
 	ImGui::End();
 	ImGui::PopStyleVar();
@@ -148,90 +255,6 @@ void Editor::SaveScene()
 void Editor::SaveSceneAs()
 {
 
-}
-
-void Editor::SceneWindow()
-{
-	//ImGuizmo::BeginFrame();
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	ImGui::Begin("Scene");
-
-
-	m_SceneWindowSize = ImGui::GetWindowSize();
-
-	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
-
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
-	ImVec2 size = m_SceneWindowSize;
-	ImVec2 start = ImGui::GetWindowPos();
-	ImVec2 end = ImVec2{ start.x + size.x, start.y + size.y };
-	drawList->AddImage((void*)m_SceneFramebuffer.GetColorAttachmentID(), start, end, { 0, 1 }, { 1, 0 });
-
-	/*
-	//Guizmos
-	glm::mat4 matrix = glm::mat4(1.0f);
-	Vector2f pos = m_EditorCamera.GetPosition();
-	float cameraScale = m_EditorCamera.GetScale();
-
-	Projection = glm::perspective(45.0f, m_SceneWindowSize.x / m_SceneWindowSize.y, 0.1f, 1000.0f);
-	glm::mat4 CameraView = glm::lookAt(Position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	CameraView = glm::scale(CameraView, glm::vec3(cameraScale, cameraScale, 1.0));
-	CameraView = glm::translate(CameraView, glm::vec3(-pos.x, -pos.y * m_EditorCamera.GetRatio(), 0.0f));
-
-//	Projection = glm::ortho(float(-m_SceneWindowSize.x) / 2.0f, float(m_SceneWindowSize.x) / 2.0f,
-//		float(-m_SceneWindowSize.y) / 2.0f, float(m_SceneWindowSize.y) / 2.0f, 0.1f, 1000.0f);
-
-	ImGuizmo::SetOrthographic(true);
-	//ImGuizmo::DrawGrid((float*)&CameraView, (float*)&Projection, (float*)&matrix, 10.25);
-
-	//ImGuizmo::SetOrthographic(false);
-	ImGuizmo::SetDrawlist();
-
-	ImVec2 minRegion = ImGui::GetWindowContentRegionMin();
-	ImVec2 maxRegion = ImGui::GetWindowContentRegionMax();
-	ImVec2 offset = ImGui::GetWindowPos();
-	ImGuizmo::SetRect(minRegion.x + offset.x, minRegion.y + offset.y,
-		m_SceneWindowSize.x, m_SceneWindowSize.y);
-
-	if (m_SelectedObject != nullptr)
-	{
-		Transform* transform = m_SelectedObject->GetComponent<Transform>();
-		glm::vec3 position = glm::vec3(0.0f);
-		position.x = transform->position.x * m_EditorCamera.GetRatio();
-		position.y = transform->position.y * m_EditorCamera.GetRatio();
-
-		objectTransform = glm::translate(glm::mat4(1.0f), position);
-		objectTransform = glm::rotate(objectTransform, -ToRads(transform->angle), glm::vec3(0.0, 0.0, 1.0f));
-
-		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::TRANSLATE_X), ImGuizmo::WORLD, glm::value_ptr(objectTransform), nullptr, nullptr);
-
-		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::TRANSLATE_Y), ImGuizmo::WORLD, glm::value_ptr(objectTransform), nullptr, nullptr);
-
-		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::ROTATE_Z), ImGuizmo::WORLD, glm::value_ptr(objectTransform), nullptr, nullptr);
-
-		transform->position.x = objectTransform[3][0] * (1 / m_EditorCamera.GetRatio());
-		transform->position.y = objectTransform[3][1] * (1 / m_EditorCamera.GetRatio());
-		transform->angle = -ToDegrees(acos(objectTransform[0][0]));
-	}
-
-	if (!ImGuizmo::IsUsing())
-	{
-		if (ImGui::IsWindowHovered() && Input::IsMouseButtonPressed(Mouse::Button0))
-			m_SelectedObject = m_HoveredObject;
-	}
-	*/
-	float aspectRatio = float(m_SceneWindowSize.y) / float(m_SceneWindowSize.x);
-	m_EditorCamera.SetRatio(aspectRatio);
-
-	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
-	m_EditorCamera.Update();
-
-	ImGui::End();
-	ImGui::PopStyleVar();
 }
 
 void Editor::Toolbar()
@@ -286,6 +309,7 @@ void Editor::Toolbar()
 	}
 
 	ImGui::SameLine(xPos - 9);
+
 	if (ImGui::ImageButton((ImTextureID)m_PauseButtonIcon.GetID(), ImVec2(18, 18)))
 	{
 		m_Pause = !m_Pause;

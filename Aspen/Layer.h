@@ -17,6 +17,6 @@ public:
 	virtual void ImGuiRender() {}
 	
 	//TO DO: OnEvent method
-
+	virtual ~Layer() = default;
 };
 

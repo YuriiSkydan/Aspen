@@ -2,9 +2,10 @@
 #include "../Log/Log.h"
 
 
-SceneSerializer::SceneSerializer(std::shared_ptr<Scene>& scene)
-	:m_Scene(scene)
-{ }
+SceneSerializer::SceneSerializer(std::shared_ptr<Scene> scene)
+	: m_Scene(scene)
+{
+}
 
 #pragma region Serialization
 

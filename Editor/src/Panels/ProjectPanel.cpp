@@ -5,9 +5,9 @@ using namespace std::string_literals;
 ProjectPanel::ProjectPanel()
 	: m_CurrentDirectory("Assets")
 	, m_BackArrowIcon("Resources/BackArrow.png")
-	, m_FolderIcon("Resources/FolderIcon.png")
-	, m_FileIcon("Resources/FileIcon.png")
-	, m_CppFileIcon("Resources/CppFileIcon.png")
+	, m_FolderIcon("Resources/FolderIcon_2.png")
+	, m_FileIcon("Resources/FileIcon_2.png")
+	, m_CppFileIcon("Resources/CppFileIcon_2.png")
 {
 }
 

@@ -4,6 +4,21 @@
 #include "../Components/CircleCollider.h"
 #include "../Components/Rigidbody.h"
 
+void GameObject::RemoveComponent(Component* component)
+{
+	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+	{
+		if (it->get() == component)
+		{
+			m_Components.erase(it);
+
+			//Maybe call this function 
+			//m_Scene->OnComponentRemoved();
+			break;
+		}
+	}
+}
+
 GameObject::GameObject(Scene* scene)
 	:m_Scene(scene)
 {
@@ -34,9 +49,9 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 
 	for (auto& it : other.m_Scripts)
 	{
-		auto& scripts = ScriptManager::GetInstance().GetScripts();
+		auto& scripts = ScriptManager::Get().GetScripts();
 		Script* newScript = scripts.find(it->GetName())->second->Create();
-		
+
 		newScript->SetName(it->GetName());
 		newScript->gameObject = this;
 		newScript->transform = transform;
@@ -45,28 +60,6 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 		m_Scripts.push_back(newScript);
 	}
 }
-
-//maybe change copy constructor later
-//GameObject::GameObject(const GameObject& other)
-//{
-//	auto newComponent = std::make_unique<Transform>(this);
-//	transform = newComponent.get();
-//	m_Components.push_back(std::move(newComponent));
-//
-//	strcpy_s(m_Name, 20, other.m_Name);
-//
-//	m_Scene = other.m_Scene;
-//	m_IsActive = other.m_IsActive;
-//	m_ID = other.m_ID;
-//
-//	CopyComponents<AllComponents>(other);
-//
-//	//for (auto& script : other.m_Scripts)
-//	//{
-//	//	script->Update();
-//		//m_Scripts.push_back(script->Create());
-//	//}
-//}
 
 void GameObject::SetName(const char* newName)
 {
@@ -137,7 +130,7 @@ void GameObject::ComponentsEnable()
 	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())
-			it->OnEnabled();
+			it->OnEnable();
 	}
 }
 
@@ -146,7 +139,7 @@ void GameObject::ComponentsDisable()
 	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())
-			it->OnDisabled();
+			it->OnDisable();
 	}
 }
 

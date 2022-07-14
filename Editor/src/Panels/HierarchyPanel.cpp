@@ -15,12 +15,8 @@ using namespace std::string_literals;
 
 HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
 	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
-{}
-
-//void HierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene)
-//{
-//	m_Scene = scene;
-//}
+{
+}
 
 void HierarchyPanel::ImGuiRender()
 {
@@ -93,13 +89,14 @@ void HierarchyPanel::ImGuiRender()
 				{
 					m_SelectedGameObject = object.get();
 				}
-				else if (ImGui::IsItemHovered() &&
+				ImGui::PopID();
+
+				if (ImGui::IsItemHovered() &&
 					ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
 					m_SelectedGameObject = object.get();
 					ImGui::OpenPopup("Object Properties");
 				}
-				ImGui::PopID();
 			}
 		}
 	}
@@ -111,7 +108,7 @@ void HierarchyPanel::ImGuiRender()
 			//change it later
 			//gameObjects.erase(gameObjects.begin() + i);
 
-			//m_Scene->DestroyGameObject(object);
+			m_Scene->DestroyGameObject(m_SelectedGameObject);
 			m_SelectedGameObject = nullptr;
 		}
 		ImGui::EndPopup();

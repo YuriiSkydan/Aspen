@@ -56,7 +56,7 @@ namespace MatrixTransform
 		Matrix<T, 3> cameraMatrix = Matrix<T, 3>(1.0f);
 
 		cameraMatrix = Translate(cameraMatrix, position);
-		cameraMatrix[0][0] = ratio;
+		cameraMatrix[1][1] = ratio;
 
 		return cameraMatrix;
 	}

@@ -62,6 +62,9 @@ void SpriteRenderer::Draw()
 	m_Sprite.Bind(0);
 	m_Shader.SetInt("sprite", 0);
 
+	//std::cout << "\nColor: ";
+	//std::cout << m_Color.r << m_Color.g << m_Color.b << m_Color.a;
+
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }

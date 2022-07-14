@@ -11,8 +11,8 @@ public:
 	Vector2f scale;
 	float angle;
 
-	Transform* parent;
-	Transform* child;
+	//Transform* parent;
+	//Transform* child;
 
 public:
 	Transform(GameObject* gameObject);

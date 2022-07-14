@@ -22,9 +22,24 @@ public:
 
 	void Update() override
 	{
+		//if (Input::IsMouseButtonPressed(Mouse::Button0))
+		//{
+		//	auto created = gameObject->GetScene()->CreateGameObject();
+		//	SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+		//	//created->AddComponent<Rigidbody>();
+
+		//	Color color;
+		//	color.r = (rand() % 255) / 255.0f;
+		//	color.g = (rand() % 255) / 255.0f;
+		//	color.b = (rand() % 255) / 255.0f;
+		//	color.a = 1.0f;
+
+		//	renderer->SetColor(color);
+		//}
+
 		if (Input::IsKeyPressed(Key::A))
 			rigidbody->AddForce(Vector2f(-5.0f, 0.0f));
-		
+
 		if (Input::IsKeyPressed(Key::D))
 			rigidbody->AddForce(Vector2f(5.0f, 0.0f));
 
@@ -32,12 +47,12 @@ public:
 		{
 			rigidbody->AddForce(Vector2f(0.0f, 0.1f), ForceMode::Impulse);
 		}
+
 	}
 
 	void OnCollisionEnter(Collision* collision) override
 	{
-		//rigidbody->AddForce(Vector2f(0.0f, 10.0f), ForceMode::Impulse);
-		std::cout << "On Collision Enter!!!\n";
+
 	}
 
 	void OnTriggerEnter(Trigger* trigger) override
@@ -51,11 +66,4 @@ public:
 	}
 };
 
-extern "C"
-{
-	__declspec(dllexport) Script* Create()
-	{
-		Player* player = new Player;
-		return player;
-	}
-}
+RegisterScript(Player);

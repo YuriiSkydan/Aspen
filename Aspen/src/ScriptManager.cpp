@@ -1,11 +1,5 @@
 #include "ScriptManager.h"
 
-using namespace std::string_literals;
-
-ScriptManager::ScriptManager(std::shared_ptr<Scene>& scene)
-	: m_Scene(scene)
-{
-}
 
 void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& directory)
 {
@@ -69,10 +63,11 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				//system(("call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && cl /I ..\\Aspen /EHsc /MDd /LD "s + filePath + "  /link Aspen.lib glfw3.lib box2d.lib").c_str());
 
 				system(compileCommand.c_str());
-				system("move \"Player.dll\" \"\Assets\"");
-				system("move \"Player.lib\" \"\Assets\"");
-				system("move \"Player.obj\" \"\Assets\"");
-				system("move \"Player.exp\" \"\Assets\"");
+				system(("move \""s + filename + ".dll\" \"\Assets\"").c_str());
+				system(("move \""s + filename + ".lib\" \"\Assets\"").c_str());
+				system(("move \""s + filename + ".obj\" \"\Assets\"").c_str());
+				system(("move \""s + filename + ".exp\" \"\Assets\"").c_str());
+
 				//system(("cl /EHsc /LD "s + filePath).c_str());
 
 				HINSTANCE dll;
@@ -85,7 +80,7 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 					//m_Scripts.insert(std::move(newElement));
 
 					std::pair<std::string, std::unique_ptr<ScriptDLL>> newElement;
-					newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll));
+					newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename));
 					m_Scripts.insert(std::move(newElement));
 				}
 				else
@@ -97,24 +92,18 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 	}
 }
 
-void ScriptManager::Init(std::shared_ptr<Scene>& scene)
-{
-	static ScriptManager scriptManager(scene);
-	m_Instance = &scriptManager;
-}
-
 void ScriptManager::Update()
 {
 	if (std::filesystem::last_write_time("Assets") > m_LastChangeTime)
 	{
-		//system("g++ -shared -o Assets\\Test.dll Assets\\Test.cpp");
-
 		FindScriptsInDirectory("Assets");
 		m_LastChangeTime = std::filesystem::last_write_time("Assets");
 	}
 }
 
-ScriptManager& ScriptManager::GetInstance()
+ScriptManager& ScriptManager::Get()
 {
+	static ScriptManager scriptManager;
+	m_Instance = &scriptManager;
 	return *m_Instance;
 }

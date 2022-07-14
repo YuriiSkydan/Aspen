@@ -10,7 +10,7 @@ using namespace nlohmann;
 class ASPEN SceneSerializer
 {
 private:
-	std::shared_ptr<Scene>& m_Scene;
+	std::shared_ptr<Scene> m_Scene;
 
 private:
 	template<typename... Components>
@@ -33,6 +33,9 @@ private:
 	void SerializeComponent(json& out, Rigidbody* rigidbody) const;
 	void SerializeComponent(json& out, Camera* camera) const;
 
+	//Need to finish this function
+	void SerializeComponent(json& out, PolygonCollider* collider) const;
+
 	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
 	void DeserializeComponent(json& in, Transform* transform);
 	void DeserializeComponent(json& in, SpriteRenderer* spriteRenderer);
@@ -41,8 +44,11 @@ private:
 	void DeserializeComponent(json& in, Rigidbody* rigidbody);
 	void DeserializeComponent(json& in, Camera* camera);
 
+	//Need to finish this function
+	void DeserializeComponent(json& in, PolygonCollider* collider);
+
 public:
-	SceneSerializer(std::shared_ptr<Scene>& scene);
+	SceneSerializer(std::shared_ptr<Scene> scene);
 
 	void Serialize() const;
 	void Deserialize();

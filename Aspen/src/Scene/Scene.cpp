@@ -21,58 +21,80 @@ void Scene::PhysicsWorldStart()
 		if (object->HasComponent<Rigidbody>())
 		{
 			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
-			bodyDef.type = b2BodyType(rigidbody->type);
-			bodyDef.gravityScale = rigidbody->gravityScale;
-			bodyDef.fixedRotation = rigidbody->fixedRotation;
-			bodyDef.linearDamping = rigidbody->GetLinearDrag();
-			bodyDef.angularDamping = rigidbody->GetAngularDrag();
 
-			body = m_PhysicsWorld->CreateBody(&bodyDef);
-			rigidbody->SetBody(body);
+			if (rigidbody->IsEnabled())
+			{
+				bodyDef.type = b2BodyType(rigidbody->type);
+				bodyDef.gravityScale = rigidbody->gravityScale;
+				bodyDef.fixedRotation = rigidbody->fixedRotation;
+				bodyDef.linearDamping = rigidbody->GetLinearDrag();
+				bodyDef.angularDamping = rigidbody->GetAngularDrag();
+
+				body = m_PhysicsWorld->CreateBody(&bodyDef);
+				rigidbody->SetBody(body);
+			}
 		}
 
 		if (object->HasComponent<BoxCollider>())
 		{
 			BoxCollider* collider = object->GetComponent<BoxCollider>();
 
-			float sizeX = collider->size.x * object->transform->scale.x;
-			float sizeY = collider->size.y * object->transform->scale.y;
-			b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
+			if (collider->IsEnabled())
+			{
+				float sizeX = collider->size.x * object->transform->scale.x;
+				float sizeY = collider->size.y * object->transform->scale.y;
+				b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
 
-			b2PolygonShape boxShape;
-			boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
-			
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &boxShape;
-			fixtureDef.density = collider->material.dencity;
-			fixtureDef.restitution = collider->material.restitution;
-			fixtureDef.friction = collider->material.friction;
-			fixtureDef.isSensor = collider->isTrigger;
-			fixtureDef.userData.pointer = object->GetID();
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
 
-			if (body == nullptr)
-				body = m_PhysicsWorld->CreateBody(&bodyDef);
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = collider->material.dencity;
+				fixtureDef.restitution = collider->material.restitution;
+				fixtureDef.friction = collider->material.friction;
+				fixtureDef.isSensor = collider->isTrigger;
+				fixtureDef.userData.pointer = object->GetID();
 
-			body->CreateFixture(&fixtureDef);
+				if (body == nullptr)
+					body = m_PhysicsWorld->CreateBody(&bodyDef);
+
+				body->CreateFixture(&fixtureDef);
+			}
 		}
 
 		if (object->HasComponent<CircleCollider>())
 		{
 			CircleCollider* collider = object->GetComponent<CircleCollider>();
-			b2CircleShape circleShape;
-			circleShape.m_radius = collider->radius;
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circleShape;
-			fixtureDef.density = collider->material.dencity;
-			fixtureDef.restitution = collider->material.restitution;
-			fixtureDef.friction = collider->material.friction;
-			fixtureDef.isSensor = collider->isTrigger;
+			if (collider->IsEnabled())
+			{
+				b2CircleShape circleShape;
+				circleShape.m_radius = collider->radius;
 
-			if (body == nullptr)
-				body = m_PhysicsWorld->CreateBody(&bodyDef);
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = collider->material.dencity;
+				fixtureDef.restitution = collider->material.restitution;
+				fixtureDef.friction = collider->material.friction;
+				fixtureDef.isSensor = collider->isTrigger;
 
-			body->CreateFixture(&fixtureDef);
+				if (body == nullptr)
+					body = m_PhysicsWorld->CreateBody(&bodyDef);
+
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+
+		if (object->HasComponent<PolygonCollider>())
+		{
+			PolygonCollider* collider = object->GetComponent<PolygonCollider>();
+
+			if (collider->IsEnabled())
+			{
+				b2PolygonShape shape;
+
+			}
 		}
 	}
 }
@@ -124,13 +146,27 @@ GameObject* Scene::GetObjectWithID(int ID)
 	return nullptr;
 }
 
+void Scene::DestroyGameObject(GameObject* gameObject)
+{
+	for (auto it = m_GameObjects.begin(); it != m_GameObjects.end(); ++it)
+	{
+		if (it->get() == gameObject)
+		{
+			m_GameObjects.erase(it);
+			break;
+		}
+	}
+}
+
 void Scene::UpdateOnEditor(EditorCamera& camera)
 {
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, 1920, 1080);
 
-	for (auto& renderObj : m_RenderObjects)
+	auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
+
+	for (auto& renderObj : renderObjects)
 	{
 		if (renderObj != nullptr)
 		{
@@ -144,18 +180,6 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 			}
 		}
 	}
-
-	//auto renderObjects = GetObjectsComponent<SpriteRenderer>();
-	//for (auto& renderObj : renderObjects)
-	//{
-	//	if (renderObj != nullptr)
-	//	{
-	//		Shader& shader = renderObj->GetShader();
-	//		shader.Bind();
-	//		shader.SetMat3("camera", camera.GetCameraMatrix());
-	//		renderObj->Draw();
-	//	}
-	//}
 }
 
 void Scene::Start()
@@ -167,8 +191,11 @@ void Scene::Start()
 
 	PhysicsWorldStart();
 
-	for (auto& object : m_GameObjects)
-		object->ComponentsStart();
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsStart();
+	}
 
 	/*for (auto& object : m_GameObjects)
 {
@@ -275,25 +302,25 @@ void Scene::Update()
 		int32 positionIterations = 2;
 		m_PhysicsWorld->Step(0.015f, velocityIterations, positionIterations);
 
-		for (auto& object : m_GameObjects)
+		for (size_t i = 0; i < m_GameObjects.size(); i++)
 		{
-			if (object->IsActive())
-				object->ComponentsFixedUpdate();
+			if (m_GameObjects[i]->IsActive())
+				m_GameObjects[i]->ComponentsFixedUpdate();
 		}
 	}
 
 	//Update
-	for (auto& object : m_GameObjects)
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
 	{
-		if (object->IsActive())
-			object->ComponentsUpdate();
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsUpdate();
 	}
 
 	//Late Update
-	for (auto& object : m_GameObjects)
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
 	{
-		if (object->IsActive())
-			object->ComponentsLateUpdate();
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsLateUpdate();
 	}
 }
 
@@ -315,7 +342,11 @@ void Scene::Render()
 	{
 		if (object->HasComponent<Camera>())
 		{
-			mainCamera = object->GetComponent<Camera>();
+			Camera* camera = object->GetComponent<Camera>();
+			if (camera->IsEnabled())
+			{
+				mainCamera = object->GetComponent<Camera>();
+			}
 		}
 	}
 
@@ -325,7 +356,15 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for (auto& it : m_RenderObjects)
+		auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
+
+		std::sort(renderObjects.begin(), renderObjects.end(),
+			[](SpriteRenderer* a, SpriteRenderer* b)
+			{
+				return a->orderInLayer < b->orderInLayer;
+			});
+
+		for (auto& it : renderObjects)
 		{
 			if (it != nullptr)
 			{
@@ -339,6 +378,11 @@ void Scene::Render()
 				}
 			}
 		}
+	}
+	else
+	{
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 }
 
@@ -373,10 +417,10 @@ void ContactListener::OnTriggerExit(GameObject* gameObject)
 	}
 }
 
-void ContactListener::OnCollisionEnter(GameObject* gameObject)
+void ContactListener::OnCollisionEnter(GameObject* gameObject, GameObject* entered)
 {
 	auto& scripts = gameObject->GetScripts();
-	Collision* collision = gameObject->GetComponent<Collision>();
+	Collision* collision = entered->GetComponent<Collision>();
 
 	if (collision != nullptr)
 	{
@@ -421,8 +465,8 @@ void ContactListener::BeginContact(b2Contact* contact)
 		}
 		else
 		{
-			OnCollisionEnter(objectA);
-			OnCollisionEnter(objectB);
+			OnCollisionEnter(objectA, objectB);
+			OnCollisionEnter(objectB, objectA);
 		}
 	}
 }
