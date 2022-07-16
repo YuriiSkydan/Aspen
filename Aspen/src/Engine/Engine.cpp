@@ -2,6 +2,7 @@
 #include "../Log/Log.h"
 #include "../Input/Input.h"
 #include "../ScriptManager.h"
+#include "../Core/Time.h"
 
 #include <chrono>
 
@@ -25,6 +26,8 @@ void Engine::Run()
 		auto start = std::chrono::high_resolution_clock::now();
 
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		Time::FrameStart();
 		m_Editor->Update();
 
 		ImGuiBegin();
@@ -32,6 +35,7 @@ void Engine::Run()
 		ImGuiEnd();
 
 		m_Window->Update();
+		Time::FrameEnd();
 
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());

@@ -3,6 +3,7 @@
 #include "../../Aspen/src/GameObject/GameObject.h"
 #include "../../Aspen/src/Scene/Scene.h"
 #include "../../Aspen/src/Input/Input.h"
+#include "../../Aspen/src/Core/Time.h"
 
 class Player : public Script
 {
@@ -10,6 +11,8 @@ private:
 	SpriteRenderer* renderer;
 	Rigidbody* rigidbody;
 	float testFloat;
+
+	float m_MovingSpeed = 5.0f;
 
 public:
 	void Start() override
@@ -37,17 +40,13 @@ public:
 		//	renderer->SetColor(color);
 		//}
 
+		std::cout << "\nDelta time: " << Time::DeltaTime();
+		
 		if (Input::IsKeyPressed(Key::A))
-			rigidbody->AddForce(Vector2f(-5.0f, 0.0f));
-
-		if (Input::IsKeyPressed(Key::D))
-			rigidbody->AddForce(Vector2f(5.0f, 0.0f));
-
-		if (Input::GetKeyDown(Key::Space))
-		{
-			rigidbody->AddForce(Vector2f(0.0f, 0.1f), ForceMode::Impulse);
-		}
-
+			transform->position.x -= m_MovingSpeed * Time::DeltaTime();
+		else if (Input::IsKeyPressed(Key::D))
+			transform->position.x += m_MovingSpeed * Time::DeltaTime();
+		
 	}
 
 	void OnCollisionEnter(Collision* collision) override

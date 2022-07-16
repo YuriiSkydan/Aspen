@@ -133,17 +133,12 @@ void Shader::SetVec3i(std::string_view name, int v0, int v1, int v2)
 {
 	glUniform3i(GetUniformLocation(name), v0, v1, v2);
 }
-//
+
 void Shader::SetVec3f(std::string_view name, float v0, float v1, float v2)
 {
 	glUniform3f(GetUniformLocation(name), v0, v1, v2);
 }
-//
-//void Shader::SetVec3f(std::string_view name, const glm::vec3& vec)
-//{
-//	glUniform3f(GetUniformLocation(name), vec.x, vec.y, vec.z);
-//}
-//
+
 void Shader::SetVec4i(std::string_view name, int v0, int v1, int v2, int v3)
 {
 	glUniform4i(GetUniformLocation(name), v0, v1, v2, v3);
@@ -153,8 +148,8 @@ void Shader::SetVec4f(std::string_view name, float v0, float v1, float v2, float
 {
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
-//
-//void Shader::SetMat4(std::string_view name, const glm::mat4& mat)
-//{
-//	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat));
-//}
+
+Shader::~Shader()
+{
+	//glDeleteProgram(m_ID);
+}

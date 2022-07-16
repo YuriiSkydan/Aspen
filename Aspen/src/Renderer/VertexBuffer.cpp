@@ -21,3 +21,8 @@ void VertexBuffer::Unbind() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
+VertexBuffer::~VertexBuffer()
+{
+	//glDeleteBuffers(1, &m_ID);
+}

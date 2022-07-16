@@ -52,6 +52,9 @@ private:
 	std::unique_ptr<ContactListener> m_ContactListener;
 	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
 
+	unsigned int m_Width;
+	unsigned int m_Height;
+
 	friend class HierarchyPanel;
 	friend class SceneSerializer;
 	friend class ContactListener;
@@ -86,11 +89,13 @@ public:
 	void Render();
 
 	void UpdateOnEditor(EditorCamera& camera);
-	void Resize(unsigned int width, unsigned int heigth);
+	void Resize(unsigned int width, unsigned int height);
 
 	void Copy(const Scene& other);
 
 	std::string GetName() const { return m_Name; }
+	unsigned int GetWidth() const { return m_Width; }
+	unsigned int GetHeight() const { return m_Height; }
 
 	template<typename T>
 	void OnComponentAdded(std::unique_ptr<T>& component);
@@ -123,6 +128,14 @@ void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 {
 	//if (typeid(T) == typeid(SpriteRenderer))
 	//	m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
+	if (typeid(T) == typeid(Camera))
+	{
+		std::cout << "Camera is added!!!\n";
+		std::cout << "Scene width: " << m_Width << std::endl;
+		std::cout << "Scene height: " << m_Height << std::endl;
+		Camera* camera = (Camera*)(component.get());
+		camera->SetRatio(float(m_Height) / float(m_Width));
+	}
 }
 
 template<typename T>

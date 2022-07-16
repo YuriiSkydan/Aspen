@@ -22,5 +22,5 @@ public:
 	unsigned int GetID() const { return m_ID; }
 	const std::string& GetPath() const { return m_Path; }
 
-	~Texture() = default;
+	~Texture();
 };

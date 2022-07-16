@@ -1,8 +1,10 @@
 #include <filesystem>
 
 #include "SpriteRenderer.h"
-#include "imgui/imgui.h"
 #include "../GameObject/GameObject.h"
+
+
+#include "../Input/Input.h"
 
 float square[]
 {
@@ -51,6 +53,11 @@ void SpriteRenderer::SetSprite(const std::string_view path)
 	// here's bug if you created denstructor in Texture
 	Texture newSprite(path);
 	m_Sprite = newSprite; 
+}
+
+void SpriteRenderer::SetSprite(const Texture& sprite)
+{
+	m_Sprite = sprite;
 }
 
 void SpriteRenderer::Draw()

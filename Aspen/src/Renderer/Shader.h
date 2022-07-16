@@ -36,13 +36,11 @@ public:
 
 	void SetVec3i(std::string_view name, int v0, int v1, int v2);
 	void SetVec3f(std::string_view name, float v0, float v1, float v2);
-	//void SetVec3f(std::string_view name, const glm::vec3& vec);
 
 	void SetVec4i(std::string_view name, int v0, int v1, int v2, int v3);
 	void SetVec4f(std::string_view name, float v0, float v1, float v2, float v3);
 
-	//void SetMat4(std::string_view name, const glm::mat4& mat);
 	unsigned int GetID() { return m_ID; }
 
-	~Shader() = default;
+	~Shader();
 };

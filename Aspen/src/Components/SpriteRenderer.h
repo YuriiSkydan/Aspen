@@ -40,7 +40,7 @@ public:
 
 	void SetColor(const Color& color);
 	void SetSprite(const std::string_view path);
-	void SetSprite(const Texture& id);
+	void SetSprite(const Texture& sprite);
 
 	int GetPixel();
 	const Color& GetColor() const { return m_Color; }

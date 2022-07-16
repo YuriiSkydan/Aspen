@@ -3,8 +3,9 @@
 
 void Input::Init()
 {
-	//GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
+	GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
 	//glfwSetKeyCallback(window, Input::KeyPressCallback);
+	glfwSetScrollCallback(window, Input::ScrollCallback);
 }
 
 int Input::GetKeyState(KeyCode key)
@@ -24,6 +25,11 @@ void Input::KeyPressCallback(GLFWwindow* window, int key, int scancode, int acti
 
 	if (action == GLFW_RELEASE)
 		s_InputBuffer.erase(key);
+}
+
+void Input::ScrollCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	
 }
 
 bool Input::IsKeyPressed(KeyCode key)

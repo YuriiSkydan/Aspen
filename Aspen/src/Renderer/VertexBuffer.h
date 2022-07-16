@@ -20,5 +20,5 @@ public:
 
 	unsigned int GetID() { return m_ID; }
 
-	~VertexBuffer() = default;
+	~VertexBuffer();
 };

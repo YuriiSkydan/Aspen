@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "../Log/Log.h"
 #include "../Math/Math.h"
+#include "../Core/Time.h"
 
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"
@@ -116,6 +117,10 @@ void Scene::PhysicsWorldStart()
 void Scene::Copy(const Scene& other)
 {
 	m_Name = other.m_Name;
+
+	m_Width = other.m_Width;
+	m_Height = other.m_Height;
+
 	std::cout << "Scene coping!!!\n" << m_Name << std::endl;
 
 	m_GameObjects.resize(other.m_GameObjects.size());
@@ -162,7 +167,6 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 {
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glViewport(0, 0, 1920, 1080);
 
 	auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
 
@@ -290,17 +294,17 @@ void Scene::Stop()
 
 void Scene::Update()
 {
-	begin = std::chrono::steady_clock::now();
-	int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(begin - end).count();
+	begin = std::chrono::high_resolution_clock::now();
+	double duration = std::chrono::duration<double>(begin - end).count();
 
 	//Fixed Update
-	if (duration >= 15)
+	if (duration >= Time::FixedDeltaTime())
 	{
 		end = std::chrono::steady_clock::now();
 
 		int32 velocityIterations = 6;
 		int32 positionIterations = 2;
-		m_PhysicsWorld->Step(0.015f, velocityIterations, positionIterations);
+		m_PhysicsWorld->Step(Time::FixedDeltaTime(), velocityIterations, positionIterations);
 
 		for (size_t i = 0; i < m_GameObjects.size(); i++)
 		{
@@ -324,13 +328,16 @@ void Scene::Update()
 	}
 }
 
-void Scene::Resize(unsigned int width, unsigned int heigth)
+void Scene::Resize(unsigned int width, unsigned int height)
 {
+	m_Width = width;
+	m_Height = height;
+
 	for (auto& object : m_GameObjects)
 	{
 		if (object->HasComponent<Camera>())
 		{
-			object->GetComponent<Camera>()->SetRatio(float(heigth) / float(width));
+			object->GetComponent<Camera>()->SetRatio(float(height) / float(width));
 		}
 	}
 }

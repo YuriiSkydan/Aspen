@@ -16,5 +16,6 @@ void main()
         discard;
 
    FragColor = texColor * spriteColor;
+  // FragColor = spriteColor;
    IDColor = gameObjectID;
 }

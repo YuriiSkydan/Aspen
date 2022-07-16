@@ -14,6 +14,7 @@ private:
 private:
 	static int GetKeyState(KeyCode key);
 	static void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void ScrollCallback(GLFWwindow* window, double xpos, double ypos);
 
 public:
 	static void Init();

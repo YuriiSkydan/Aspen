@@ -1,20 +1,53 @@
 #include "Framebuffer.h"
-
-Framebuffer::Framebuffer()
+#include <iostream>
+void Framebuffer::Invalidate()
 {
+	if (m_ID)
+	{
+		glDeleteFramebuffers(1, &m_ID);
+		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+
+		m_ColorAttachments.clear();
+	}
+
 	glCreateFramebuffers(1, &m_ID);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+
+	auto specifications = m_Specifications;
+	m_Specifications.clear();
+
+	for (size_t i = 0; i < specifications.size(); i++)
+	{
+		AddColorAttachment(specifications[i].internalFormat, specifications[i].format);
+	}
+	
+	DrawBuffers();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+Framebuffer::Framebuffer()
+	:m_Width(0), m_Height(0)
+{
+	Invalidate();
+}
+
+Framebuffer::Framebuffer(unsigned int width, unsigned int height)
+	:m_Width(width), m_Height(height)
+{
+	Invalidate();
 }
 
 void Framebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+	glViewport(0, 0, m_Width, m_Height);
 }
 
 void Framebuffer::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Framebuffer::DrawBuffers() const
@@ -26,9 +59,15 @@ void Framebuffer::DrawBuffers() const
 	glDrawBuffers(m_ColorAttachments.size(), attachments.data());
 }
 
-void Framebuffer::Resize(int width, int heigth)
+void Framebuffer::Resize(int width, int height)
 {
-	//if (width == 0 || heigth == 0 || width )
+	if (width == 0 || height == 0)
+		return;
+
+	m_Width = width;
+	m_Height = height;
+
+	Invalidate();
 }
 
 int Framebuffer::ReadPixel(unsigned int attachmentIndex, int x, int y)
@@ -46,7 +85,7 @@ void Framebuffer::AddColorAttachment(GLenum internalFormat, GLenum format)
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1920, 1080, 0, format, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -56,6 +95,8 @@ void Framebuffer::AddColorAttachment(GLenum internalFormat, GLenum format)
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_ColorAttachments.size(), GL_TEXTURE_2D, texture, 0);
 	m_ColorAttachments.push_back(texture);
+
+	m_Specifications.push_back({internalFormat, format});
 }
 
 unsigned int Framebuffer::GetColorAttachmentID(unsigned int attachment)
@@ -67,11 +108,5 @@ Framebuffer::~Framebuffer()
 {
 	INFO("Framebuffer Destructor");
 	glDeleteFramebuffers(1, &m_ID);
+	glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 }
-
-//int Framebuffer::GetPixel(int x, int y)
-//{
-//	int pixelData;
-//	glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData;
-//	return pixelData;
-//}

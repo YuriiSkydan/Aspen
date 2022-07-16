@@ -37,6 +37,8 @@ private:
 	Framebuffer m_GameFramebuffer;
 
 	ImVec2 m_SceneWindowSize;
+	ImVec2 m_GameWindowSize;
+
 	float m_ToolbarHeight;
 	float m_MenuBarHeight;
 
@@ -55,6 +57,8 @@ private:
 	void OpenScene();
 	void SaveScene();
 	void SaveSceneAs(); 
+
+	void UpdateGuizmo();
 
 public:
 	Editor();
