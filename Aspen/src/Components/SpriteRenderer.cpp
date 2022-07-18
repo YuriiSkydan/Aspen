@@ -37,6 +37,10 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	glEnableVertexAttribArray(1);
 
 	m_Shader.Bind();
+
+	m_Shader.SetBool("flipX", flipX);
+	m_Shader.SetBool("flipY", flipY);
+
 	m_Shader.SetVec4f("spriteColor", m_Color.r, m_Color.g, m_Color.r, m_Color.a);
 	m_Shader.SetInt("gameObjectID", gameObject->GetID());
 }
@@ -58,6 +62,18 @@ void SpriteRenderer::SetSprite(const std::string_view path)
 void SpriteRenderer::SetSprite(const Texture& sprite)
 {
 	m_Sprite = sprite;
+}
+
+void SpriteRenderer::SetFlipX(bool value)
+{
+	flipX = value;
+	m_Shader.SetBool("flipX", value);
+}
+
+void SpriteRenderer::SetFlipY(bool value)
+{
+	flipY = value;
+	m_Shader.SetBool("flipY", value);
 }
 
 void SpriteRenderer::Draw()

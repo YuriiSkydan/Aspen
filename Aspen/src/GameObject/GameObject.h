@@ -3,12 +3,13 @@
 #include "../Components/Transform.h"
 #include "../Components/SpriteRenderer.h"
 #include "../Components/PolygonCollider.h"
+#include "../Components/Animator.h"
 #include "../Components/Script.h"
 
 #include <string>
 #include <iostream>
 
-#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider //, PolygonCollider
+#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator
 
 class Scene;
 

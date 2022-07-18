@@ -8,6 +8,9 @@ out vec2 f_TexCoords;
 uniform mat3 camera;
 uniform mat3 transform;
 
+uniform bool flipX;
+uniform bool flipY;
+
 void main()
 {
    //mat3 Tcamera = transpose(camera);
@@ -15,5 +18,14 @@ void main()
    vec3 pos = vec3(v_Pos, 1.0f) * transform * camera;
    gl_Position = vec4(pos, 1.0f);
    //gl_Position = vec4(v_Pos.x, v_Pos.y, 0.0f, 1.0f);
-   f_TexCoords = v_TexCoords;
+
+
+   vec2 texCoords = v_TexCoords;
+   if(flipX)
+	  texCoords.x *= -1.0f;
+
+   if(flipY)
+	  texCoords.y *= -1.0f;
+   
+   f_TexCoords = texCoords;
 }

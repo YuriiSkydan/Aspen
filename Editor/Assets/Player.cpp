@@ -12,7 +12,7 @@ private:
 	Rigidbody* rigidbody;
 	float testFloat;
 
-	float m_MovingSpeed = 5.0f;
+	float m_MovingSpeed = 50.0f;
 
 public:
 	void Start() override
@@ -39,14 +39,14 @@ public:
 
 		//	renderer->SetColor(color);
 		//}
+	}
 
-		std::cout << "\nDelta time: " << Time::DeltaTime();
-		
+	void FixedUpdate() override
+	{
 		if (Input::IsKeyPressed(Key::A))
-			transform->position.x -= m_MovingSpeed * Time::DeltaTime();
+			rigidbody->AddForce(Vector2f(-m_MovingSpeed, 0.0f));
 		else if (Input::IsKeyPressed(Key::D))
-			transform->position.x += m_MovingSpeed * Time::DeltaTime();
-		
+			rigidbody->AddForce(Vector2f(m_MovingSpeed, 0.0f));
 	}
 
 	void OnCollisionEnter(Collision* collision) override

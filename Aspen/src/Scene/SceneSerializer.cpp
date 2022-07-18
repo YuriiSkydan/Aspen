@@ -126,6 +126,14 @@ void SceneSerializer::SerializeComponent(json& out, Camera* camera) const
 	};
 }
 
+void SceneSerializer::SerializeComponent(json& out, PolygonCollider* collider) const
+{
+}
+
+void SceneSerializer::SerializeComponent(json& out, Animator* animator) const
+{
+}
+
 #pragma endregion
 
 #pragma region Deserialization
@@ -256,6 +264,14 @@ void SceneSerializer::DeserializeComponent(json& in, Camera* camera)
 	color.b = in["Background color"]["B"];
 	color.a = in["Background color"]["A"];
 	camera->backgroundColor = color;
+}
+
+void SceneSerializer::DeserializeComponent(json& in, PolygonCollider* collider)
+{
+}
+
+void SceneSerializer::DeserializeComponent(json& in, Animator* animator)
+{
 }
 
 #pragma endregion

@@ -1,16 +1,12 @@
 #include "Inspector.h"
-#include "src/Log/Log.h"
 #include "src/ScriptManager.h"
-#include "src/Components/Script.h"
-#include "src/Components/BoxCollider.h"
-#include "src/Components/CircleCollider.h"
-#include "src/Components/Rigidbody.h"
 
 using namespace std::string_literals;
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
-{}
+{
+}
 
 void Inspector::ImGuiRender()
 {
@@ -19,7 +15,7 @@ void Inspector::ImGuiRender()
 	if (m_SelectedGameObject != nullptr)
 	{
 		DrawGameObjectProperties();
-		DrawComponents();
+		RenderComponents();
 		ImGuiAddComponentButton();
 	}
 
@@ -61,14 +57,14 @@ void Inspector::DrawGameObjectProperties()
 	ImGui::Separator();
 }
 
-void Inspector::DrawComponents()
+void Inspector::RenderComponents()
 {
 	m_SecondCollumnWidth = ImGui::GetWindowSize().x - m_FirstCollumnWidth;
 	m_ItemWidth = m_SecondCollumnWidth - 15;
 
 	auto& components = m_SelectedGameObject->GetComponents();
 	for (auto& it : components)
-		DrawComponents<AllComponents>(it.get());
+		RenderComponents<AllComponents>(it.get());
 
 	for (auto& script : m_SelectedGameObject->GetScripts())
 	{
@@ -80,7 +76,7 @@ void Inspector::DrawComponents()
 	ImGui::NewLine();
 }
 
-bool Inspector::DrawComponentHeader(const std::string& componentName, Component* component, bool isEditable)
+bool Inspector::RenderComponentHeader(const std::string& componentName, Component* component, bool isEditable)
 {
 	bool isOpen = ImGui::CollapsingHeader(("##"s + componentName).c_str(), ImGuiTreeNodeFlags_AllowItemOverlap);
 	bool deleteComponent = false;
@@ -118,7 +114,7 @@ bool Inspector::DrawComponentHeader(const std::string& componentName, Component*
 	return isOpen;
 }
 
-void Inspector::DrawComponent(Transform* transform)
+void Inspector::RenderComponent(Transform* transform)
 {
 	if (ImGui::CollapsingHeader("Transform"))
 	{
@@ -146,9 +142,9 @@ void Inspector::DrawComponent(Transform* transform)
 	}
 }
 
-void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
+void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 {
-	bool isOpen = DrawComponentHeader("SpriteRenderer", spriteRenderer, true);
+	bool isOpen = RenderComponentHeader("SpriteRenderer", spriteRenderer, true);
 
 	if (isOpen)
 	{
@@ -159,6 +155,10 @@ void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 		ImGui::Text("Order In Layer");
 		ImGui::Spacing();
 		ImGui::Text("Color");
+		ImGui::Spacing();
+		ImGui::Text("Flip X");
+		ImGui::Spacing();
+		ImGui::Text("Flip Y");
 		ImGui::Spacing();
 		ImGui::Text("Texture");
 
@@ -175,6 +175,14 @@ void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 			spriteRenderer->m_Shader.Bind();
 			spriteRenderer->m_Shader.SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 		}
+
+		bool flipX = spriteRenderer->GetFlipX();
+		if (ImGui::Checkbox("##FlipX", &flipX))
+			spriteRenderer->SetFlipX(flipX);
+
+		bool flipY = spriteRenderer->GetFlipY();
+		if (ImGui::Checkbox("##FlipY", &flipY))
+			spriteRenderer->SetFlipY(flipY);
 
 		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(m_ItemWidth), float(m_ItemWidth) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
@@ -198,9 +206,9 @@ void Inspector::DrawComponent(SpriteRenderer* spriteRenderer)
 	}
 }
 
-void Inspector::DrawComponent(Camera* camera)
+void Inspector::RenderComponent(Camera* camera)
 {
-	bool isOpen = DrawComponentHeader("Camera", camera, true);
+	bool isOpen = RenderComponentHeader("Camera", camera, true);
 
 	if (isOpen)
 	{
@@ -224,9 +232,9 @@ void Inspector::DrawComponent(Camera* camera)
 	}
 }
 
-void Inspector::DrawComponent(Rigidbody* rigidbody)
+void Inspector::RenderComponent(Rigidbody* rigidbody)
 {
-	bool isOpen = DrawComponentHeader("Rigidbody", rigidbody, false);
+	bool isOpen = RenderComponentHeader("Rigidbody", rigidbody, false);
 
 	if (isOpen)
 	{
@@ -292,9 +300,9 @@ void Inspector::DrawComponent(Rigidbody* rigidbody)
 	}
 }
 
-void Inspector::DrawComponent(BoxCollider* boxCollider)
+void Inspector::RenderComponent(BoxCollider* boxCollider)
 {
-	bool isOpen = DrawComponentHeader("BoxCollider", boxCollider, true);
+	bool isOpen = RenderComponentHeader("BoxCollider", boxCollider, true);
 
 	if (isOpen)
 	{
@@ -331,9 +339,9 @@ void Inspector::DrawComponent(BoxCollider* boxCollider)
 	}
 }
 
-void Inspector::DrawComponent(CircleCollider* circleCollider)
+void Inspector::RenderComponent(CircleCollider* circleCollider)
 {
-	bool isOpen = DrawComponentHeader("CircleCollider", circleCollider, true);
+	bool isOpen = RenderComponentHeader("CircleCollider", circleCollider, true);
 
 	if (isOpen)
 	{
@@ -351,6 +359,26 @@ void Inspector::DrawComponent(CircleCollider* circleCollider)
 		ImGui::DragFloat("##Radius", &circleCollider->radius, 0.001f, 0.0f);
 
 		ImGui::Columns(1);
+	}
+}
+
+void Inspector::RenderComponent(PolygonCollider* polygonCollider)
+{
+	bool isOpen = RenderComponentHeader("PolygonCollider", polygonCollider, true);
+
+	if (isOpen)
+	{
+
+	}
+}
+
+void Inspector::RenderComponent(Animator* animator)
+{
+	bool isOpen = RenderComponentHeader("Animator", animator, true);
+
+	if (isOpen)
+	{
+
 	}
 }
 
@@ -382,6 +410,9 @@ void Inspector::ImGuiAddComponentButton()
 
 		if (ImGui::MenuItem("Polygon Collider"))
 			m_SelectedGameObject->AddComponent<PolygonCollider>();
+
+		if (ImGui::MenuItem("Animator"))
+			m_SelectedGameObject->AddComponent<Animator>();
 
 		ImGui::Separator();
 

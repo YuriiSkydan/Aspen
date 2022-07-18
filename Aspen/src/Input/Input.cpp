@@ -3,9 +3,9 @@
 
 void Input::Init()
 {
-	GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
+	//GLFWwindow* window = Engine::Get().GetWindow().GetNativeWindow();
 	//glfwSetKeyCallback(window, Input::KeyPressCallback);
-	glfwSetScrollCallback(window, Input::ScrollCallback);
+	//glfwSetScrollCallback(window, Input::ScrollCallback);
 }
 
 int Input::GetKeyState(KeyCode key)

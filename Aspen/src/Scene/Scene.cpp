@@ -31,6 +31,8 @@ void Scene::PhysicsWorldStart()
 				bodyDef.linearDamping = rigidbody->GetLinearDrag();
 				bodyDef.angularDamping = rigidbody->GetAngularDrag();
 
+			//	bodyDef.allowSleep = false;
+
 				body = m_PhysicsWorld->CreateBody(&bodyDef);
 				rigidbody->SetBody(body);
 			}

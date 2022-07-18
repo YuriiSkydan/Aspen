@@ -1,9 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "../src/GameObject/GameObject.h"
-#include "../src/Components/Rigidbody.h"
-#include "../src/Components/BoxCollider.h"
-#include "../src/Components/CircleCollider.h"
 #include "JSON/json.hpp"
 using namespace nlohmann;
 
@@ -35,6 +31,8 @@ private:
 
 	//Need to finish this function
 	void SerializeComponent(json& out, PolygonCollider* collider) const;
+	//Also this function
+	void SerializeComponent(json& out, Animator* animator) const;
 
 	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
 	void DeserializeComponent(json& in, Transform* transform);
@@ -46,6 +44,8 @@ private:
 
 	//Need to finish this function
 	void DeserializeComponent(json& in, PolygonCollider* collider);
+	//Also this function
+	void DeserializeComponent(json& in, Animator* animator);
 
 public:
 	SceneSerializer(std::shared_ptr<Scene> scene);

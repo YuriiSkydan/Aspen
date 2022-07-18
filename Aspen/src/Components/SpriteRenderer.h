@@ -31,6 +31,9 @@ private:
 	Shader m_Shader;
 	Color m_Color;
 
+	bool flipX = false;
+	bool flipY = false;
+
 	friend class Inspector;
 public:
 	int orderInLayer = 0;
@@ -42,7 +45,14 @@ public:
 	void SetSprite(const std::string_view path);
 	void SetSprite(const Texture& sprite);
 
+	void SetFlipX(bool value);
+	void SetFlipY(bool value);
+
 	int GetPixel();
+
+	bool GetFlipX() const { return flipX; }
+	bool GetFlipY() const { return flipY; }
+
 	const Color& GetColor() const { return m_Color; }
 	const Texture& GetTexture() const { return m_Sprite; }
 	Shader& GetShader() { return m_Shader; }

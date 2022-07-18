@@ -1,6 +1,5 @@
 #pragma once
 #include "HierarchyPanel.h"
-#include "src/GameObject/GameObject.h"
 
 #ifndef IMGUI_API
 #undef IMGUI_API
@@ -21,10 +20,10 @@ private:
 
 private:
 	void DrawGameObjectProperties();
-	void DrawComponents();
+	void RenderComponents();
 
 	template<typename... Components>
-	void DrawComponents(Component* component)
+	void RenderComponents(Component* component)
 	{
 		bool hasDrown = false;
 
@@ -35,7 +34,7 @@ private:
 					Components* castComponent = dynamic_cast<Components*>(component);
 					if (castComponent != nullptr)
 					{
-						DrawComponent(castComponent);
+						RenderComponent(castComponent);
 						ImGui::Separator();
 						hasDrown = true;
 					}
@@ -43,14 +42,15 @@ private:
 			}(), ...);
 	}
 
-	bool DrawComponentHeader(const std::string& componentName, Component* component, bool isEditable);
-	void DrawComponent(Transform* transform);
-	void DrawComponent(SpriteRenderer* spriteRenderer);
-	void DrawComponent(Camera* camera);
-	void DrawComponent(Rigidbody* rigidbody);
-	void DrawComponent(BoxCollider* boxCollider);
-	void DrawComponent(CircleCollider* circleCollider);
-	void DrawComponent(PolygonCollider* polygonCollider);
+	bool RenderComponentHeader(const std::string& componentName, Component* component, bool isEditable);
+	void RenderComponent(Transform* transform);
+	void RenderComponent(SpriteRenderer* spriteRenderer);
+	void RenderComponent(Camera* camera);
+	void RenderComponent(Rigidbody* rigidbody);
+	void RenderComponent(BoxCollider* boxCollider);
+	void RenderComponent(CircleCollider* circleCollider);
+	void RenderComponent(PolygonCollider* polygonCollider);
+	void RenderComponent(Animator* animator);
 
 	void ImGuiAddComponentButton();
 

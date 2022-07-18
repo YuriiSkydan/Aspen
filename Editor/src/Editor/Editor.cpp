@@ -82,8 +82,8 @@ void Editor::Update()
 	m_ActiveScene->Render();
 	m_GameFramebuffer.Unbind();
 
-	if (m_SceneState == SceneState::EDIT)
-		ScriptManager::Get().Update();
+//	if (m_SceneState == SceneState::EDIT)
+	//	ScriptManager::Get().Update();
 }
 
 void Editor::ImGuiRender()
