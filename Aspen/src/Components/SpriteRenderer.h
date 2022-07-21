@@ -23,19 +23,18 @@ struct ASPEN Color
 class ASPEN SpriteRenderer : public Component
 {
 private:
-	VertexBuffer m_VertexBuffer;
-	IndexBuffer m_IndexBuffer;
-	unsigned int m_VAO; // TODO: make a class
+	//VertexBuffer m_VertexBuffer;
+	//IndexBuffer m_IndexBuffer;
+	//unsigned int m_VAO; // TODO: make a class
 
 	Texture m_Sprite;
-	Shader m_Shader;
+	std::shared_ptr<Shader> m_Shader;
 	Color m_Color;
-
-	bool flipX = false;
-	bool flipY = false;
 
 	friend class Inspector;
 public:
+	bool flipX = false;
+	bool flipY = false;
 	int orderInLayer = 0;
 
 public:
@@ -45,17 +44,9 @@ public:
 	void SetSprite(const std::string_view path);
 	void SetSprite(const Texture& sprite);
 
-	void SetFlipX(bool value);
-	void SetFlipY(bool value);
-
 	int GetPixel();
-
-	bool GetFlipX() const { return flipX; }
-	bool GetFlipY() const { return flipY; }
 
 	const Color& GetColor() const { return m_Color; }
 	const Texture& GetTexture() const { return m_Sprite; }
-	Shader& GetShader() { return m_Shader; }
-
-	void Draw();
+	std::shared_ptr<Shader>& GetShader() { return m_Shader; }
 };

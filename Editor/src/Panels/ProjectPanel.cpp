@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "ProjectPanel.h"
 #include "imgui/imgui.h"
 using namespace std::string_literals;
@@ -36,9 +38,31 @@ void ProjectPanel::ImGuiRender()
 
 	ImGui::Columns(columnCount, 0, false);
 
+	std::vector<std::filesystem::directory_entry> files;
 	for (auto& directory : std::filesystem::directory_iterator(m_CurrentDirectory))
 	{
-		const auto& path = directory.path();
+		files.push_back(directory);
+	}
+
+	std::sort(files.begin(), files.end(),
+		[](std::filesystem::directory_entry& a, std::filesystem::directory_entry& b)
+		{
+			if (a.is_directory())
+			{
+				if (b.is_directory())
+					return a < b;
+				else
+					return true;
+			}
+			else if (b.is_directory())
+				return false;
+			
+			return a > b;
+		});
+
+	for (auto& file : files)
+	{
+		const auto& path = file.path();
 		auto relativePath = std::filesystem::relative(path, "Assets");
 		std::string filenameString = relativePath.filename().string();
 
@@ -46,9 +70,9 @@ void ProjectPanel::ImGuiRender()
 
 		Texture* icon = &m_FolderIcon;
 
-		if (!directory.is_directory())
+		if (!file.is_directory())
 		{
-			if (directory.path().extension() == ".cpp"s)
+			if (file.path().extension() == ".cpp"s)
 				icon = &m_CppFileIcon;
 			else
 				icon = &m_FileIcon;
@@ -67,7 +91,7 @@ void ProjectPanel::ImGuiRender()
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			if (directory.is_directory())
+			if (file.is_directory())
 				m_CurrentDirectory /= path.filename();
 		}
 		ImGui::TextWrapped(filenameString.c_str());

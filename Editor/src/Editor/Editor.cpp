@@ -65,7 +65,6 @@ void Editor::Update()
 	if (m_SceneState == SceneState::PLAY && !m_Pause)
 		m_ActiveScene->Update();
 
-
 	m_SceneFramebuffer.Unbind();
 
 	if (m_GameWindowSize.x != m_GameFramebuffer.GetWidth() ||
@@ -82,8 +81,8 @@ void Editor::Update()
 	m_ActiveScene->Render();
 	m_GameFramebuffer.Unbind();
 
-//	if (m_SceneState == SceneState::EDIT)
-	//	ScriptManager::Get().Update();
+	if (m_SceneState == SceneState::EDIT)
+		ScriptManager::Get().Update();
 }
 
 void Editor::ImGuiRender()

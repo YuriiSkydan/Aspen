@@ -68,7 +68,7 @@ private:
 	void PhysicsWorldStop();
 
 public:
-	Scene() = default;
+	Scene();
 
 	Scene(const Scene& other) = delete;
 	const Scene& operator=(const Scene& other) = delete;

@@ -70,7 +70,7 @@ Shader::Shader(std::string_view vShaderPath, std::string_view fShaderPath)
 
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	
+
 	try
 	{
 		std::stringstream vShaderStream;
@@ -151,5 +151,23 @@ void Shader::SetVec4f(std::string_view name, float v0, float v1, float v2, float
 
 Shader::~Shader()
 {
-	//glDeleteProgram(m_ID);
+	glDeleteProgram(m_ID);
+}
+
+std::shared_ptr<Shader> ShaderLibrary::GetShader(const std::string& filePath)
+{
+	if (m_Shaders.find(filePath) != m_Shaders.end())
+		return m_Shaders[filePath];
+
+	std::shared_ptr<Shader> shader = std::make_shared<Shader>(filePath + ".vs", filePath + ".fs");
+	m_Shaders.insert({ filePath, shader });
+	return shader;
+}
+
+ShaderLibrary* ShaderLibrary::Get()
+{
+	static ShaderLibrary library;
+	m_Instance = &library;
+
+	return m_Instance;
 }

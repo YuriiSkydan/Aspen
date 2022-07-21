@@ -11,11 +11,9 @@ Texture::Texture(std::string_view path)
 
 	if (data != nullptr)
 	{
-		GLenum format, internalFormat;
+		GLenum format = 0, internalFormat = 0;
 
-		if (m_Channels == 1)
-			format = GL_RED;
-		else if (m_Channels == 3)
+		if (m_Channels == 3)
 		{
 			internalFormat = GL_RGB8;
 			format = GL_RGB;
@@ -53,14 +51,11 @@ Texture::Texture(std::string_view path)
 	{
 		std::cerr << "Failed to load texture!!!\n";
 	}
-
-	
 }
 
 void Texture::Bind(unsigned int slot) const
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, m_ID);
+	glBindTextureUnit(slot, m_ID);
 }
 
 void Texture::UnBind() const

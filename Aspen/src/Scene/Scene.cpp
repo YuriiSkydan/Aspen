@@ -2,6 +2,7 @@
 #include "../Log/Log.h"
 #include "../Math/Math.h"
 #include "../Core/Time.h"
+#include "../Renderer/Renderer.h"
 
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"
@@ -31,7 +32,7 @@ void Scene::PhysicsWorldStart()
 				bodyDef.linearDamping = rigidbody->GetLinearDrag();
 				bodyDef.angularDamping = rigidbody->GetAngularDrag();
 
-			//	bodyDef.allowSleep = false;
+				//	bodyDef.allowSleep = false;
 
 				body = m_PhysicsWorld->CreateBody(&bodyDef);
 				rigidbody->SetBody(body);
@@ -134,6 +135,13 @@ void Scene::Copy(const Scene& other)
 	}
 }
 
+
+
+Scene::Scene()
+{
+
+}
+
 GameObject* Scene::CreateGameObject()
 {
 	WARN("Game Object created");
@@ -172,20 +180,22 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 
 	auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
 
+	Renderer::BeginScene(camera.GetCameraMatrix());
 	for (auto& renderObj : renderObjects)
 	{
 		if (renderObj != nullptr)
 		{
 			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
 			{
-				Shader& shader = renderObj->GetShader();
-				shader.Bind();
-				shader.SetMat3("camera", camera.GetCameraMatrix());
+				//std::shared_ptr<Shader> shader = renderObj->GetShader();
+			//	shader->Bind();
+				//shader->SetMat3("camera", camera.GetCameraMatrix());
 
-				renderObj->Draw();
+				Renderer::Draw(renderObj);
 			}
 		}
 	}
+	Renderer::EndScene();
 }
 
 void Scene::Start()
@@ -349,12 +359,15 @@ void Scene::Render()
 	Camera* mainCamera = nullptr;
 	for (auto& object : m_GameObjects)
 	{
-		if (object->HasComponent<Camera>())
+		if (object->IsActive())
 		{
-			Camera* camera = object->GetComponent<Camera>();
-			if (camera->IsEnabled())
+			if (object->HasComponent<Camera>())
 			{
-				mainCamera = object->GetComponent<Camera>();
+				Camera* camera = object->GetComponent<Camera>();
+				if (camera->IsEnabled())
+				{
+					mainCamera = object->GetComponent<Camera>();
+				}
 			}
 		}
 	}
@@ -373,20 +386,20 @@ void Scene::Render()
 				return a->orderInLayer < b->orderInLayer;
 			});
 
+		Renderer::BeginScene(mainCamera);
+
 		for (auto& it : renderObjects)
 		{
 			if (it != nullptr)
 			{
 				if (it->gameObject->IsActive() && it->IsEnabled())
 				{
-					Shader& shader = it->GetShader();
-					shader.Bind();
-					shader.SetMat3("camera", mainCamera->GetCameraMatrix());
-
-					it->Draw();
+					Renderer::Draw(it);
 				}
 			}
 		}
+
+		Renderer::EndScene();
 	}
 	else
 	{

@@ -2,6 +2,8 @@
 #include <../Libraries/include/glad/glad.h>
 #include <../Libraries/include/GLFW/glfw3.h>
 
+#include <memory>
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -17,6 +19,7 @@ class ASPEN Shader
 private:
 	unsigned int m_ID;
 
+	friend class ShaderLibrary;
 private:
 	unsigned int CompileShader(const char* source, int shaderType);
 	unsigned int CreateProgram(unsigned int vShader, unsigned int fShader);
@@ -43,4 +46,15 @@ public:
 	unsigned int GetID() { return m_ID; }
 
 	~Shader();
+};
+
+class ASPEN ShaderLibrary
+{
+private:
+	inline static ShaderLibrary* m_Instance = nullptr;
+	inline static std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+
+public:
+	static ShaderLibrary* Get();
+	static std::shared_ptr<Shader> GetShader(const std::string& filePath);
 };

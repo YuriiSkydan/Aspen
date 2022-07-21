@@ -55,8 +55,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Aspen.lib;glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\Aspen\Aspen\Libraries\lib;C:\Users\skida\source\repos\Aspen\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Aspen.lib;box2d.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\Aspen\Aspen\Libraries\lib\Box2D\Debug;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\lib;C:\Users\skida\source\repos\Aspen\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,8 +76,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Aspen.lib;glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\skida\source\repos\Aspen\Aspen\Libraries\lib;C:\Users\skida\source\repos\Aspen\x64\Release;C:\Users\skida\source\repos\Aspen\Aspen\Libraries\lib\Box2D\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -25,20 +25,20 @@ public:
 
 	void Update() override
 	{
-		//if (Input::IsMouseButtonPressed(Mouse::Button0))
-		//{
-		//	auto created = gameObject->GetScene()->CreateGameObject();
-		//	SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-		//	//created->AddComponent<Rigidbody>();
+		if (Input::IsMouseButtonPressed(Mouse::Button0))
+		{
+			auto created = gameObject->GetScene()->CreateGameObject();
+			SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+			//created->AddComponent<Rigidbody>();
 
-		//	Color color;
-		//	color.r = (rand() % 255) / 255.0f;
-		//	color.g = (rand() % 255) / 255.0f;
-		//	color.b = (rand() % 255) / 255.0f;
-		//	color.a = 1.0f;
+			Color color;
+			color.r = (rand() % 255) / 255.0f;
+			color.g = (rand() % 255) / 255.0f;
+			color.b = (rand() % 255) / 255.0f;
+			color.a = 1.0f;
 
-		//	renderer->SetColor(color);
-		//}
+			renderer->SetColor(color);
+		}
 	}
 
 	void FixedUpdate() override

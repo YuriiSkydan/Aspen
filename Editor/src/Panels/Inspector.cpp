@@ -79,7 +79,7 @@ void Inspector::RenderComponents()
 bool Inspector::RenderComponentHeader(const std::string& componentName, Component* component, bool isEditable)
 {
 	bool isOpen = ImGui::CollapsingHeader(("##"s + componentName).c_str(), ImGuiTreeNodeFlags_AllowItemOverlap);
-	bool deleteComponent = false;
+	bool removeComponent = false;
 	ImGui::SameLine();
 
 	ImGui::PushID(componentName.c_str());
@@ -88,8 +88,8 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 
 	if (ImGui::BeginPopup("Component properties"))
 	{
-		if (ImGui::MenuItem("Delete"))
-			deleteComponent = true;
+		if (ImGui::MenuItem("Remove component"))
+			removeComponent = true;
 
 		ImGui::EndPopup();
 	}
@@ -105,7 +105,7 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 	ImGui::SameLine();
 	ImGui::Text(componentName.c_str());
 
-	if (deleteComponent)
+	if (removeComponent)
 	{
 		m_SelectedGameObject->RemoveComponent(component);
 		return false;
@@ -169,20 +169,10 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		ImGui::DragInt("##Order In Layer", &spriteRenderer->orderInLayer, 1, 0);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		if (ImGui::ColorEdit4("##Color", (float*)&spriteRenderer->m_Color))
-		{
-			Color color = spriteRenderer->m_Color;
-			spriteRenderer->m_Shader.Bind();
-			spriteRenderer->m_Shader.SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
-		}
+		ImGui::ColorEdit4("##Color", (float*)&spriteRenderer->m_Color);
 
-		bool flipX = spriteRenderer->GetFlipX();
-		if (ImGui::Checkbox("##FlipX", &flipX))
-			spriteRenderer->SetFlipX(flipX);
-
-		bool flipY = spriteRenderer->GetFlipY();
-		if (ImGui::Checkbox("##FlipY", &flipY))
-			spriteRenderer->SetFlipY(flipY);
+		ImGui::Checkbox("##FlipX", &spriteRenderer->flipX);
+		ImGui::Checkbox("##FlipY", &spriteRenderer->flipY);
 
 		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(m_ItemWidth), float(m_ItemWidth) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
