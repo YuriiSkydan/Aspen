@@ -174,7 +174,11 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		ImGui::Checkbox("##FlipX", &spriteRenderer->flipX);
 		ImGui::Checkbox("##FlipY", &spriteRenderer->flipY);
 
-		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(m_ItemWidth), float(m_ItemWidth) }, { 0, 1 }, { 1, 0 });
+		float imageButtonSize = m_ItemWidth;
+		if (m_ItemWidth > 128)
+			imageButtonSize = 128;
+
+		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -368,7 +372,42 @@ void Inspector::RenderComponent(Animator* animator)
 
 	if (isOpen)
 	{
+		for (auto& animation : animator->m_AnimationClips)
+		{
+			ImGui::Text(animation.GetName().c_str());
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path texturePath = "Assets";
+					texturePath /= path;
 
+					std::wstring wPath = texturePath.c_str();
+					std::string sPath(wPath.begin(), wPath.end());
+					animation.AddFrame(Texture(sPath));
+					//m_Sprite = Texture(path);
+					//ImGui::GetDragDropPayload();
+					ImGui::EndDragDropTarget();
+				}
+			}
+
+			ImGui::SameLine();
+
+			float duration = animation.GetDuration();
+			ImGui::DragFloat(("##"s + animation.GetName()).c_str(), &duration, 0.01f, 0.0f);
+			animation.SetDuration(duration);
+		}
+
+		ImGui::Text("Add Animation");
+		ImGui::SameLine();
+		if (ImGui::Button("+"))
+		{
+			animator->AddAnimation("Animation" + std::to_string(animator->m_AnimationClips.size()));
+		}
+
+	//	ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
+		
 	}
 }
 

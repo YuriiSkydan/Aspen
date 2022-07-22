@@ -20,6 +20,10 @@ private:
 	float m_ElapsedTime;
 
 	std::chrono::high_resolution_clock::time_point m_LastFrameTime;
+	
+	friend class Animator;
+private:
+	void SetSpriteRenderer(SpriteRenderer* spriteRenderer);
 
 public:
 	AnimationClip(const std::string& name);
@@ -27,9 +31,11 @@ public:
 	void Start();
 	void Update();
 
-	void AddFrame();
+	void AddFrame(const Texture& texture);
 
-	const std::string& GetName() { return m_Name; }
+	void SetDuration(float duration);
+
+	const std::string& GetName() const { return m_Name; }
 	float GetDuration() { return m_Duration; }
 };
 
@@ -43,14 +49,25 @@ private:
 	std::unordered_map<std::string, float> m_FloatParameters;
 	std::unordered_map<std::string, int> m_IntParameters;
 	//std::unordered_map<std::string> m_TriggerParameters;
+	friend class Inspector;
+private:
+	void AddFrameToAnimation(const Texture& newFrame);
+	void AddAnimation(const std::string& name);
+
+	void AddBoolParameter(const std::string& name);
+	void AddFloatParameter(const std::string& name);
+	void AddIntegerParameter(const std::string& name);
 
 public:
 	Animator(GameObject* gameObject, Transform* transform);
-
+	
+	void Start() override;
 	void Update() override;
 
 	void SetBool(const std::string& name, bool value);
 	void SetFloat(const std::string& name, float value);
 	void SetInteger(const std::string& name, int value);
 	void SetTrigger(const std::string& name);
+
+	const AnimationClip& GetAnimation(const std::string& name);
 };

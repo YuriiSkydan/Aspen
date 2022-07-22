@@ -26,5 +26,5 @@ void IndexBuffer::Unbind() const
 
 IndexBuffer::~IndexBuffer()
 {
-	//glDeleteBuffers(1, &m_ID);
+	glDeleteBuffers(1, &m_ID);
 }
