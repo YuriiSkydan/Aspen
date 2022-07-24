@@ -29,6 +29,11 @@ private:
 			: m_DLL(dll), m_ScriptName(scriptName)
 		{
 			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
+		
+			if (m_CreateFunction == nullptr)
+			{
+				WARN("Failed to load create function!!!\n");
+			}
 		}
 
 		Script* Create() const

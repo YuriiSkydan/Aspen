@@ -74,7 +74,7 @@ void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRender
 			 { "G", color.g },
 			 { "B", color.b },
 			 { "A", color.a }}},
-		{ "Texture", spriteRenderer->GetTexture().GetPath() }
+		{ "Texture", spriteRenderer->GetTexture()->GetPath() }
 	};
 }
 

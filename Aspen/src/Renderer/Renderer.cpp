@@ -12,18 +12,17 @@ void ErrorCallback(int error, const char* message)
 	std::cerr << "GLFW Error [" << error << "] " << message << std::endl;
 }
 
-float square[]
+float vertices[] = 
 {
+	 0.5f,  0.5f, 1.0f, 1.0f,  // top right
 	 0.5f, -0.5f, 1.0f, 0.0f,  // bottom right
 	-0.5f, -0.5f, 0.0f, 0.0f,  // bottom left
-	-0.5f,  0.5f, 0.0f, 1.0f,  // top left
-	 0.5f,  0.5f, 1.0f, 1.0f   // top right 
+	-0.5f,  0.5f, 0.0f, 1.0f   // top left 
 };
-
-unsigned int indicies[]
-{
-	0, 1, 2,
-	0, 3, 2
+unsigned int indices[] = 
+{ 
+	0, 1, 3,   // first triangle
+	1, 2, 3    // second triangle
 };
 
 void Renderer::Init()
@@ -31,8 +30,8 @@ void Renderer::Init()
 	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);
 
-	m_VertexBuffer.SetData(square, sizeof(square));
-	m_IndexBuffer.SetData(indicies, 6);
+	m_VertexBuffer.SetData(vertices, sizeof(vertices));
+	m_IndexBuffer.SetData(indices, 6);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0));
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeof(float) * 2));
@@ -67,7 +66,7 @@ void Renderer::Draw(const SpriteRenderer* spriteRenderer)
 	Color color = spriteRenderer->GetColor();
 	m_StandartShader->SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 
-	spriteRenderer->GetTexture().Bind(0);
+	spriteRenderer->GetTexture()->Bind(0);
 	m_StandartShader->SetInt("sprite", 0);
 
 

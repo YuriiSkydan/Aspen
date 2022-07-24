@@ -7,7 +7,7 @@ using namespace std::string_literals;
 ProjectPanel::ProjectPanel()
 	: m_CurrentDirectory("Assets")
 	, m_BackArrowIcon("Resources/BackArrow.png")
-	, m_FolderIcon("Resources/FolderIcon_2.png")
+	, m_FolderIcon("Resources/FolderIcon_3.png")
 	, m_FileIcon("Resources/FileIcon_2.png")
 	, m_CppFileIcon("Resources/CppFileIcon_2.png")
 {
@@ -56,7 +56,7 @@ void ProjectPanel::ImGuiRender()
 			}
 			else if (b.is_directory())
 				return false;
-			
+
 			return a > b;
 		});
 
@@ -73,9 +73,20 @@ void ProjectPanel::ImGuiRender()
 		if (!file.is_directory())
 		{
 			if (file.path().extension() == ".cpp"s)
+			{
 				icon = &m_CppFileIcon;
+			}
+			else if (file.path().extension() == ".png" ||
+				file.path().extension() == ".jpg")
+			{
+				std::wstring wPath = file.path();
+				std::string path(wPath.begin(), wPath.end());
+				icon = TextureLibrary::Get()->GetTexture(path).get();
+			}
 			else
+			{
 				icon = &m_FileIcon;
+			}
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });

@@ -8,28 +8,41 @@
 class Player : public Script
 {
 private:
-	SpriteRenderer* renderer;
-	Rigidbody* rigidbody;
-	float testFloat;
-
-	float m_MovingSpeed = 50.0f;
+	const int widthRange = -50;
+	
+	int currentXPos = -25;
+	int currentYPos = 25;
 
 public:
+	Player()
+	{
+		std::cout << "Player Constructor!!!\n";
+	}
 	void Start() override
 	{
-		if (gameObject->HasComponent<SpriteRenderer>())
-			renderer = gameObject->GetComponent<SpriteRenderer>();
+		std::cout << "Player Start!!!\n";
+		//if (gameObject->HasComponent<SpriteRenderer>())
+		//	renderer = gameObject->GetComponent<SpriteRenderer>();
 
-		rigidbody = GetComponent<Rigidbody>();
+		//rigidbody = GetComponent<Rigidbody>();
 	}
 
 	void Update() override
 	{
-		if (Input::IsMouseButtonPressed(Mouse::Button0))
+		if (Input::IsKeyPressed(Key::Space))
 		{
 			auto created = gameObject->GetScene()->CreateGameObject();
 			SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
 			//created->AddComponent<Rigidbody>();
+			created->transform->position.x = currentXPos;
+			created->transform->position.y = currentYPos;
+
+			currentXPos++;
+			if (currentXPos >= 25)
+			{
+				currentYPos--;
+				currentXPos = -25;
+			}
 
 			Color color;
 			color.r = (rand() % 255) / 255.0f;
@@ -43,10 +56,7 @@ public:
 
 	void FixedUpdate() override
 	{
-		if (Input::IsKeyPressed(Key::A))
-			rigidbody->AddForce(Vector2f(-m_MovingSpeed, 0.0f));
-		else if (Input::IsKeyPressed(Key::D))
-			rigidbody->AddForce(Vector2f(m_MovingSpeed, 0.0f));
+
 	}
 
 	void OnCollisionEnter(Collision* collision) override
@@ -65,4 +75,13 @@ public:
 	}
 };
 
-RegisterScript(Player);
+//RegisterScript(Player);
+
+extern "C"
+{
+	__declspec(dllexport) Script* Create()
+	{
+		std::cout << "Create Function!!!\n";
+		return new Player();
+	}
+}

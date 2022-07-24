@@ -27,7 +27,7 @@ private:
 	//IndexBuffer m_IndexBuffer;
 	//unsigned int m_VAO; // TODO: make a class
 
-	Texture m_Sprite;
+	std::shared_ptr<Texture> m_Sprite;
 	std::shared_ptr<Shader> m_Shader;
 	Color m_Color;
 
@@ -42,11 +42,11 @@ public:
 
 	void SetColor(const Color& color);
 	void SetSprite(const std::string_view path);
-	void SetSprite(const Texture& sprite);
+	void SetSprite(const std::shared_ptr<Texture>& sprite);
 
 	int GetPixel();
 
 	const Color& GetColor() const { return m_Color; }
-	const Texture& GetTexture() const { return m_Sprite; }
-	std::shared_ptr<Shader>& GetShader() { return m_Shader; }
+	const std::shared_ptr<Texture>& GetTexture() const { return m_Sprite; }
+	const std::shared_ptr<Shader>& GetShader() { return m_Shader; }
 };

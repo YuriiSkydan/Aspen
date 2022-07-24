@@ -5,8 +5,7 @@
 #include "../Input/Input.h"
 
 SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
-	:Component(gameObject, transform), 
-	m_Sprite("Assets/Sprites/StandartSprite.png")
+	:Component(gameObject, transform)
 {
 	//glGenVertexArrays(1, &m_VAO);
 	//glBindVertexArray(m_VAO);
@@ -20,6 +19,7 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	//glEnableVertexAttribArray(0);
 	//glEnableVertexAttribArray(1);
 
+	m_Sprite = TextureLibrary::Get()->GetTexture("Assets/Sprites/StandartSprite.png");
 	m_Shader = ShaderLibrary::Get()->GetShader("Shaders/StandartShader");
 }
 
@@ -31,11 +31,11 @@ void SpriteRenderer::SetColor(const Color& color)
 void SpriteRenderer::SetSprite(const std::string_view path)
 {
 	// here's bug if you created denstructor in Texture
-	Texture newSprite(path);
-	m_Sprite = newSprite; 
+	
+	m_Sprite = TextureLibrary::Get()->GetTexture(path.data());
 }
 
-void SpriteRenderer::SetSprite(const Texture& sprite)
+void SpriteRenderer::SetSprite(const std::shared_ptr<Texture>& sprite)
 {
 	m_Sprite = sprite;
 }

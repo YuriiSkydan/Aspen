@@ -1,8 +1,10 @@
 #pragma once
-#include "../Core/Core.h"
-#include <iostream>
+#include <unordered_map>
+#include <memory>
 #include <string>
 #include <string_view>
+
+#include "../Core/Core.h"
 
 class ASPEN Texture
 {
@@ -13,6 +15,8 @@ private:
 	int m_Width, m_Height;
 	int m_Channels;
 
+	friend class TextureLibrary;
+	friend class std::shared_ptr<Texture>;
 public:
 	Texture(std::string_view path);
 
@@ -23,4 +27,15 @@ public:
 	const std::string& GetPath() const { return m_Path; }
 
 	~Texture();
+};
+
+class ASPEN TextureLibrary
+{
+private:
+	inline static TextureLibrary* s_Instance = nullptr;
+	std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
+
+public:
+	static TextureLibrary* Get();
+	const std::shared_ptr<Texture>& GetTexture(const std::string& filePath);
 };

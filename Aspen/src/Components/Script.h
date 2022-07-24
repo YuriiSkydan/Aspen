@@ -6,7 +6,7 @@
 #include "Trigger.h"
 #include "Collision.h"
 
-#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create(){ return new className(); }}
+//#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create() { return new className(); }}
 
 class ASPEN Script : public Component
 {

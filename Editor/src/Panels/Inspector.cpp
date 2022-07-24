@@ -178,7 +178,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		if (m_ItemWidth > 128)
 			imageButtonSize = 128;
 
-		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
+		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite->GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -189,7 +189,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 
 				std::wstring wPath = texturePath.c_str();
 				std::string sPath(wPath.begin(), wPath.end());
-				spriteRenderer->m_Sprite = Texture(sPath);
+				spriteRenderer->m_Sprite = TextureLibrary::Get()->GetTexture(sPath);
 				//m_Sprite = Texture(path);
 				//ImGui::GetDragDropPayload();
 				ImGui::EndDragDropTarget();
@@ -385,7 +385,7 @@ void Inspector::RenderComponent(Animator* animator)
 
 					std::wstring wPath = texturePath.c_str();
 					std::string sPath(wPath.begin(), wPath.end());
-					animation.AddFrame(Texture(sPath));
+					animation.AddFrame(TextureLibrary::Get()->GetTexture(sPath));
 					//m_Sprite = Texture(path);
 					//ImGui::GetDragDropPayload();
 					ImGui::EndDragDropTarget();

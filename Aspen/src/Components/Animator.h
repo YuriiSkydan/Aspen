@@ -11,8 +11,8 @@ class ASPEN AnimationClip
 private:
 	SpriteRenderer* m_SpriteRenderer;
 	std::string m_Name;
-	std::list<Texture> m_Frames;
-	std::list<Texture>::iterator m_CurrentFrame;
+	std::list<std::shared_ptr<Texture>> m_Frames;
+	std::list<std::shared_ptr<Texture>>::iterator m_CurrentFrame;
 
 	float m_Duration;
 
@@ -31,7 +31,7 @@ public:
 	void Start();
 	void Update();
 
-	void AddFrame(const Texture& texture);
+	void AddFrame(const std::shared_ptr<Texture>& texture);
 
 	void SetDuration(float duration);
 

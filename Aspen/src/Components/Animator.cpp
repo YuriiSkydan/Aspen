@@ -43,7 +43,7 @@ void AnimationClip::Update()
 	}
 }
 
-void AnimationClip::AddFrame(const Texture& texture)
+void AnimationClip::AddFrame(const std::shared_ptr<Texture>& texture)
 {
 	m_Frames.push_back(texture);
 }

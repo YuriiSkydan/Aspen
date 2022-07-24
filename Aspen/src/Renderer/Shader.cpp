@@ -154,11 +154,12 @@ Shader::~Shader()
 	glDeleteProgram(m_ID);
 }
 
-std::shared_ptr<Shader> ShaderLibrary::GetShader(const std::string& filePath)
+
+const std::shared_ptr<Shader>& ShaderLibrary::GetShader(const std::string& filePath)
 {
 	if (m_Shaders.find(filePath) != m_Shaders.end())
 		return m_Shaders[filePath];
-
+	
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>(filePath + ".vs", filePath + ".fs");
 	m_Shaders.insert({ filePath, shader });
 	return shader;
@@ -167,7 +168,7 @@ std::shared_ptr<Shader> ShaderLibrary::GetShader(const std::string& filePath)
 ShaderLibrary* ShaderLibrary::Get()
 {
 	static ShaderLibrary library;
-	m_Instance = &library;
+	s_Instance = &library;
 
-	return m_Instance;
+	return s_Instance;
 }

@@ -11,11 +11,12 @@ uniform sampler2D sprite;
 
 void main()
 {
-   vec4 texColor = texture(sprite, f_TexCoords);
+   vec4 texColor = texture(sprite, f_TexCoords) * spriteColor;
+  
    if(texColor.a < 0.1f)
         discard;
 
-   FragColor = texColor * spriteColor;
+   FragColor = texColor;
   // FragColor = spriteColor;
    IDColor = gameObjectID;
 }

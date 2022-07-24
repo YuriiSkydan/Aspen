@@ -1,5 +1,6 @@
 #include "Framebuffer.h"
 #include <iostream>
+
 void Framebuffer::Invalidate()
 {
 	if (m_ID)

@@ -47,7 +47,7 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				compileCommand += " /I ..\\Aspen\\vendor\\spdlog-1.x\\include";
 
 				//Compile properties
-				compileCommand += " /EHsc /MD /LD " + filePath;
+				compileCommand += " /EHsc /MDd /LD " + filePath;
 
 				//Link properties
 				//compileCommand += " /link glfw3.lib";
@@ -78,6 +78,19 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 					//std::pair<std::filesystem::path, std::unique_ptr<ScriptDLL>> newElement;
 					//newElement = std::make_pair(filePath, std::make_unique<ScriptDLL>(dll));
 					//m_Scripts.insert(std::move(newElement));
+
+					
+
+					//newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename));
+
+					//std::cout << "Trying to create script!!!\n";
+					//auto CreateFunction = ScriptCreatePtr(GetProcAddress(dll, "Create"));
+				
+					//if (CreateFunction)
+					//{
+					//	Script* test = CreateFunction();
+					//	test->Start();
+					//}
 
 					std::pair<std::string, std::unique_ptr<ScriptDLL>> newElement;
 					newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename));
