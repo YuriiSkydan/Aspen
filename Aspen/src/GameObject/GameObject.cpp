@@ -22,16 +22,16 @@ void GameObject::RemoveComponent(Component* component)
 GameObject::GameObject(Scene* scene)
 	:m_Scene(scene)
 {
+	m_ID = s_Objects;
+	s_Objects++;
+
 	auto newComponent = std::make_unique<Transform>(this);
-	transform = newComponent.get();
 	m_Components.push_back(std::move(newComponent));
+	transform = (Transform*)m_Components.back().get();
 
 	std::stringstream name;
 	name << "GameObject" << s_Objects << '\0';
 	name >> m_Name;
-
-	m_ID = s_Objects;
-	s_Objects++;
 }
 
 GameObject::GameObject(Scene* scene, const GameObject& other)
@@ -61,9 +61,9 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 	}
 }
 
-void GameObject::SetName(const char* newName)
+void GameObject::SetName(const std::string& name)
 {
-	strcpy_s(m_Name, 20, newName);
+	strcpy_s(m_Name, 20, name.data());
 }
 
 void GameObject::SetActive(bool active)
@@ -154,5 +154,6 @@ void GameObject::AddScript(Script* script)
 
 GameObject::~GameObject()
 {
+	s_Objects--;
 	std::cout << "GameObject destructor!!!\n";
 }

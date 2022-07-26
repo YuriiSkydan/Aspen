@@ -74,6 +74,7 @@ public:
 	const Scene& operator=(const Scene& other) = delete;
 
 	GameObject* CreateGameObject();
+	GameObject* CreateGameObject(const std::string& name);
 	GameObject* GetObjectWithID(int ID);
 
 	void DestroyGameObject(GameObject* gameObject);

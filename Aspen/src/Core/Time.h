@@ -12,7 +12,6 @@ private:
 	inline static std::chrono::high_resolution_clock::time_point start;
 
 	friend class Engine;
-
 private:
 	static void FrameStart();
 	static void FrameEnd();

@@ -1,7 +1,9 @@
 #pragma once
+#include <iostream>
+
 #include "Window.h"
-#include "../Scene/Scene.h"
 #include "../Layer.h"
+#include "../Renderer/Texture.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "ImGuizmo/ImGuizmo.h"
@@ -9,6 +11,9 @@
 class ASPEN Engine
 {
 private:
+	std::unique_ptr<TextureLibrary> m_TextureLibrary;
+	//std::unique_ptr<ShaderLibrary> m_ShaderLibrary;
+
 	std::unique_ptr<Window> m_Window;
 	std::unique_ptr<Layer> m_Editor;
 

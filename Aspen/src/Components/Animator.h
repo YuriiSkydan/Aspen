@@ -32,11 +32,17 @@ public:
 	void Update();
 
 	void AddFrame(const std::shared_ptr<Texture>& texture);
-
 	void SetDuration(float duration);
 
-	const std::string& GetName() const { return m_Name; }
 	float GetDuration() { return m_Duration; }
+	const std::string& GetName() const { return m_Name; }
+};
+
+class ASPEN AnimationState
+{
+private:
+	//std::unordered_map<std::pair<std::string, bool>, bool> m_BoolCondition;
+	AnimationClip m_AnimationClip;
 };
 
 class ASPEN Animator : public Component

@@ -30,6 +30,10 @@ private:
 	Texture m_PauseButtonIcon;
 	Texture m_StopButtonIcon;
 
+	Texture m_MoveButtonIcon;
+	Texture m_RotateButtonIcon;
+	Texture m_ScaleButtonIcon;
+
 	GameObject* m_SelectedObject = nullptr;
 	GameObject* m_HoveredObject = nullptr;
 

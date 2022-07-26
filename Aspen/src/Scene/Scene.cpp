@@ -103,20 +103,6 @@ void Scene::PhysicsWorldStart()
 	}
 }
 
-//Scene::Scene(const Scene& other)
-//{
-//	m_Name = other.m_Name;
-//	std::cout << "Scene coping!!!\n" << m_Name << std::endl;
-//
-//	m_GameObjects.resize(other.m_GameObjects.size());
-//	m_Gravity = other.m_Gravity;
-//
-//	for (size_t i = 0; i < other.m_GameObjects.size(); i++)
-//	{
-//		m_GameObjects[i] = std::make_unique<GameObject>(this, *other.m_GameObjects[i]);
-//	}
-//}
-
 void Scene::Copy(const Scene& other)
 {
 	m_Name = other.m_Name;
@@ -136,7 +122,6 @@ void Scene::Copy(const Scene& other)
 }
 
 
-
 Scene::Scene()
 {
 
@@ -147,6 +132,13 @@ GameObject* Scene::CreateGameObject()
 	WARN("Game Object created");
 
 	m_GameObjects.push_back(std::make_unique<GameObject>(this));
+	return m_GameObjects.back().get();
+}
+
+GameObject* Scene::CreateGameObject(const std::string& name)
+{
+	m_GameObjects.push_back(std::make_unique<GameObject>(this));
+	m_GameObjects.back()->SetName(name);
 	return m_GameObjects.back().get();
 }
 
@@ -179,22 +171,25 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
+	std::sort(renderObjects.begin(), renderObjects.end(),
+		[](SpriteRenderer* a, SpriteRenderer* b)
+		{
+			return a->orderInLayer < b->orderInLayer;
+		});
 
 	Renderer::BeginScene(camera.GetCameraMatrix());
+	//Render objects
 	for (auto& renderObj : renderObjects)
 	{
 		if (renderObj != nullptr)
 		{
 			if (renderObj->gameObject->IsActive() && renderObj->IsEnabled())
 			{
-				//std::shared_ptr<Shader> shader = renderObj->GetShader();
-			//	shader->Bind();
-				//shader->SetMat3("camera", camera.GetCameraMatrix());
-
 				Renderer::Draw(renderObj);
 			}
 		}
 	}
+
 	Renderer::EndScene();
 }
 

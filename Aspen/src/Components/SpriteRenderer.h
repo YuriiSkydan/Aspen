@@ -23,10 +23,6 @@ struct ASPEN Color
 class ASPEN SpriteRenderer : public Component
 {
 private:
-	//VertexBuffer m_VertexBuffer;
-	//IndexBuffer m_IndexBuffer;
-	//unsigned int m_VAO; // TODO: make a class
-
 	std::shared_ptr<Texture> m_Sprite;
 	std::shared_ptr<Shader> m_Shader;
 	Color m_Color;

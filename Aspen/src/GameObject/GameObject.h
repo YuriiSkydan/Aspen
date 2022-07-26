@@ -16,6 +16,8 @@ class Scene;
 class ASPEN GameObject
 {
 private:
+	inline static unsigned int s_Objects = 0;
+
 	std::vector<std::unique_ptr<Component>> m_Components;
 	std::vector<Script*> m_Scripts;
 	Scene* m_Scene = nullptr;
@@ -23,8 +25,6 @@ private:
 	char m_Name[20];
 	bool m_IsActive = true;
 	unsigned int m_ID;
-
-	inline static unsigned int s_Objects = 0;
 
 	friend class Inspector;
 	friend class Scene;
@@ -65,23 +65,12 @@ public:
 	GameObject(const GameObject& other) = delete;
 	const GameObject& operator=(const GameObject& other) = delete;
 
-	void SetName(const char* newName);
-	void SetActive(bool active);
-
-	bool IsActive() { return m_IsActive; }
-	const char* GetName() const { return m_Name; }
-	unsigned int GetID() const { return m_ID; }
-	Scene* GetScene() const { return m_Scene; }
-
-	std::vector<std::unique_ptr<Component>>& GetComponents() { return m_Components; }
-	std::vector<Script*>& GetScripts() { return m_Scripts; }
-
 	//In Scene.h
 	template<typename T>
 	T* AddComponent();
 
 	template<typename T>
-	void RemoveComponent() // method isn't finished
+	void RemoveComponent()
 	{
 		for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
 		{
@@ -101,6 +90,17 @@ public:
 
 	template<typename T>
 	T* GetComponent() const;
+
+	void SetName(const std::string& name);
+	void SetActive(bool active);
+
+	const char* GetName() const { return m_Name; }
+	unsigned int GetID() const { return m_ID; }
+	Scene* GetScene() const { return m_Scene; }
+	bool IsActive() const { return m_IsActive; }
+
+	const std::vector<std::unique_ptr<Component>>& GetComponents() const { return m_Components; }
+	const std::vector<Script*>& GetScripts() const { return m_Scripts; }
 
 	~GameObject();
 };

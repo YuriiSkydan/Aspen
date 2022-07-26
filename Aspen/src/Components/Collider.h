@@ -7,7 +7,7 @@
 class ASPEN Collider : public Collision, public Trigger
 {
 public:
-	Vector2f offset;
+	Vector2f offset { 0.0f, 0.0f};
 	Material material;
 
 protected:

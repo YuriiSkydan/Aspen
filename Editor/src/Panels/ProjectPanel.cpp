@@ -105,6 +105,7 @@ void ProjectPanel::ImGuiRender()
 			if (file.is_directory())
 				m_CurrentDirectory /= path.filename();
 		}
+
 		ImGui::TextWrapped(filenameString.c_str());
 
 		ImGui::NextColumn();

@@ -190,8 +190,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 				std::wstring wPath = texturePath.c_str();
 				std::string sPath(wPath.begin(), wPath.end());
 				spriteRenderer->m_Sprite = TextureLibrary::Get()->GetTexture(sPath);
-				//m_Sprite = Texture(path);
-				//ImGui::GetDragDropPayload();
+
 				ImGui::EndDragDropTarget();
 			}
 		}
@@ -386,8 +385,7 @@ void Inspector::RenderComponent(Animator* animator)
 					std::wstring wPath = texturePath.c_str();
 					std::string sPath(wPath.begin(), wPath.end());
 					animation.AddFrame(TextureLibrary::Get()->GetTexture(sPath));
-					//m_Sprite = Texture(path);
-					//ImGui::GetDragDropPayload();
+
 					ImGui::EndDragDropTarget();
 				}
 			}

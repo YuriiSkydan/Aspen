@@ -9,7 +9,6 @@ private:
 
 	unsigned int m_Width = 0;
 	unsigned int m_Heigth = 0;
-
 public:
 	float size = 1;
 	Color backgroundColor;

@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "../Log/Log.h"
 #include "../Input/Input.h"
-#include "../ScriptManager.h"
 #include "../Core/Time.h"
 #include "../Renderer/Renderer.h"
 
@@ -15,9 +14,10 @@ Engine::Engine()
 	s_Instance = this;
 	m_Window = std::make_unique<Window>();
 
+	m_TextureLibrary = std::make_unique<TextureLibrary>();
+
 	Renderer::Init();
 	InitImGui();
-
 	Input::Init();
 }
 

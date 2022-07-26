@@ -70,12 +70,13 @@ Texture::~Texture()
 	glDeleteTextures(1, &m_ID);
 }
 
+TextureLibrary::TextureLibrary()
+{
+	s_Instance = this;
+}
 
 TextureLibrary* TextureLibrary::Get()
 {
-	static TextureLibrary textureLibrary;
-	s_Instance = &textureLibrary;
-
 	return s_Instance;
 }
 

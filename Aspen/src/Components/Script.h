@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <memory>
-
 #include "Component.h"
 #include "Trigger.h"
 #include "Collision.h"

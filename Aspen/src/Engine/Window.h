@@ -42,4 +42,11 @@ public:
 
 	unsigned int GetWidth() const { return m_Data.width; };
 	unsigned int GetHeight() const { return m_Data.height; }
+
+	~Window()
+	{
+		//maybe move it to shutdown
+		glfwDestroyWindow(m_Window);
+		glfwTerminate();
+	}
 };

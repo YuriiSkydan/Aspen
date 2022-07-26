@@ -4,6 +4,9 @@
 #include <string>
 #include <string_view>
 
+
+#include <iostream>
+
 #include "../Core/Core.h"
 
 class ASPEN Texture
@@ -36,6 +39,10 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
 
 public:
+	TextureLibrary();
+	TextureLibrary(const TextureLibrary& other) = delete;
+	const TextureLibrary& operator=(const TextureLibrary& other) = delete;
+
 	static TextureLibrary* Get();
 	const std::shared_ptr<Texture>& GetTexture(const std::string& filePath);
 };

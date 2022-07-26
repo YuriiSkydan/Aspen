@@ -74,7 +74,8 @@ void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRender
 			 { "G", color.g },
 			 { "B", color.b },
 			 { "A", color.a }}},
-		{ "Texture", spriteRenderer->GetTexture()->GetPath() }
+		{ "Texture", spriteRenderer->GetTexture()->GetPath() },
+		{ "OrderInLayer", spriteRenderer->orderInLayer}
 	};
 }
 
@@ -227,6 +228,7 @@ void SceneSerializer::DeserializeComponent(json& in, SpriteRenderer* spriteRende
 
 	spriteRenderer->SetColor(color);
 	spriteRenderer->SetSprite(in["Texture"]);
+	spriteRenderer->orderInLayer = in["OrderInLayer"];
 }
 
 void SceneSerializer::DeserializeComponent(json& in, BoxCollider* collider)

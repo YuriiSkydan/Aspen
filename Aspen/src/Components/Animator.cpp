@@ -1,7 +1,5 @@
 #include "Animator.h"
 #include "../GameObject/GameObject.h"
-#include "../Log/Log.h"
-
 #include "../Core/Time.h"
 
 void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
@@ -27,9 +25,6 @@ void AnimationClip::Start()
 
 void AnimationClip::Update()
 {
-	//auto now = std::chrono::steady_clock::now();
-	//m_ElapsedTime += std::chrono::duration_cast<std::chrono::seconds>(now - m_LastFrameTime).count();
-	//m_LastFrameTime = std::chrono::steady_clock::now();
 	m_ElapsedTime += Time::DeltaTime();
 	if (m_ElapsedTime >= m_FrameTime)
 	{

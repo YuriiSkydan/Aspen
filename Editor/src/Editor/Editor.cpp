@@ -24,12 +24,13 @@ Editor::Editor()
 	, m_PlayButtonIcon("Resources/PlayIcon.png")
 	, m_StopButtonIcon("Resources/StopIcon.png")
 	, m_PauseButtonIcon("Resources/PauseIcon.png")
+	, m_MoveButtonIcon("Resources/MoveIcon.png")
+	, m_RotateButtonIcon("Resources/RotateIcon.png")
+	, m_ScaleButtonIcon("Resources/ScaleIcon.png")
 	, m_ToolbarHeight(33)
 {
 	ImGui::SetCurrentContext(Engine::Get().GetImGuiContext());
-	//Move somewhere later
-	//glDebugMessageCallback(DebugMessageCallback, nullptr);
-	//glfwSetErrorCallback(ErrorCallback);
+
 	m_EditorScene = std::make_shared<Scene>();
 	m_ActiveScene = m_EditorScene;
 
@@ -61,6 +62,22 @@ void Editor::Update()
 	m_SceneFramebuffer.Bind();
 
 	m_ActiveScene->UpdateOnEditor(m_EditorCamera);
+
+	//Render Colliders
+	if (m_SelectedObject != nullptr && m_SelectedObject->IsActive())
+	{
+		BoxCollider* boxCollider = m_SelectedObject->GetComponent<BoxCollider>();
+		if (boxCollider != nullptr && boxCollider->IsEnabled())
+		{
+			Renderer::DrawBoxCollider(m_SelectedObject->transform, boxCollider);
+		}
+
+		CircleCollider* circleCollider = m_SelectedObject->GetComponent<CircleCollider>();
+		if (circleCollider != nullptr && circleCollider->IsEnabled())
+		{
+			Renderer::DrawCirlceCollider(m_SelectedObject->transform, circleCollider);
+		}
+	}
 
 	if (m_SceneState == SceneState::PLAY && !m_Pause)
 		m_ActiveScene->Update();
@@ -121,8 +138,34 @@ void Editor::GameWindow()
 void Editor::SceneWindow()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	ImGui::Begin("Scene");
+	
+	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar);
 
+	ImGui::Dummy(m_SceneWindowSize);
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
+		{
+			const wchar_t* path = (const wchar_t*)payload->Data;
+			std::filesystem::path texturePath = "Assets";
+			texturePath /= path;
+
+			std::wstring wPath = texturePath.c_str();
+			std::string sPath(wPath.begin(), wPath.end());
+
+			size_t startPos = sPath.find_last_of("\\") + 1;
+			size_t endPos = sPath.find_last_of(".") - startPos;
+
+			std::string objectName = sPath.substr(startPos, endPos);
+			GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
+			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
+			spriteRenderer->SetSprite(TextureLibrary::Get()->GetTexture(sPath));
+
+			m_SelectedObject = gameObject;
+
+			ImGui::EndDragDropTarget();
+		}
+	}
 	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -134,7 +177,6 @@ void Editor::SceneWindow()
 		m_SceneWindowSize = size;
 
 	drawList->AddImage((void*)m_SceneFramebuffer.GetColorAttachmentID(), start, end, { 0, 1 }, { 1, 0 });
-
 
 	Vector2f mousePos = Input::GetMousePosition();
 	mousePos.x -= start.x;
@@ -155,9 +197,19 @@ void Editor::SceneWindow()
 		}
 	}
 
-
-	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
 	m_EditorCamera.Update();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, {1.0f, 1.0f, 1.0f, 0.2});
+	ImVec2 buttonSize{ 20, 20 };
+	ImGui::SameLine(m_SceneWindowSize.x - 100);
+	ImGui::ImageButton(ImTextureID(m_MoveButtonIcon.GetID()), buttonSize);
+
+	ImGui::SameLine(m_SceneWindowSize.x - 70);
+	ImGui::ImageButton(ImTextureID(m_RotateButtonIcon.GetID()), buttonSize);
+	
+	ImGui::SameLine(m_SceneWindowSize.x - 40);
+	ImGui::ImageButton(ImTextureID(m_ScaleButtonIcon.GetID()), buttonSize);
+	ImGui::PopStyleColor();
 
 	ImGui::End();
 	ImGui::PopStyleVar();
@@ -175,6 +227,7 @@ void Editor::OpenScene()
 		{
 			m_EditorScene = newScene;
 			m_ActiveScene = m_EditorScene;
+			m_SelectedObject = nullptr;
 
 			//m_HierarchyPanel.SetScene(m_ActiveScene);
 		}
