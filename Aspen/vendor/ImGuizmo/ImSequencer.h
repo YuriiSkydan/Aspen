@@ -27,6 +27,10 @@
 
 #include <cstddef>
 
+#ifndef IMGUI_API
+#define IMGUI_API
+#endif
+
 struct ImDrawList;
 struct ImRect;
 namespace ImSequencer
@@ -72,6 +76,6 @@ namespace ImSequencer
 
 
    // return true if selection is made
-   bool Sequencer(SequenceInterface* sequence, int* currentFrame, bool* expanded, int* selectedEntry, int* firstFrame, int sequenceOptions);
+   IMGUI_API bool Sequencer(SequenceInterface* sequence, int* currentFrame, bool* expanded, int* selectedEntry, int* firstFrame, int sequenceOptions);
 
 }

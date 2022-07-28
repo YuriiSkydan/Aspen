@@ -39,6 +39,9 @@ public:
 	void SetLinearDrag(float drag);
 	void SetAngularDrag(float drag);
 
+	Vector2f GetLinearVelocity() const;
+	float GetAngularVelocity() const { return m_Body->GetAngularVelocity(); };
+
 	float GetLinearDrag() const { return m_LinearDrag; }
 	float GetAngularDrag() const { return m_AngularDrag; }
 	float GetMass() const { return m_Mass; }

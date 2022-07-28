@@ -8,7 +8,7 @@ void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
 }
 
 AnimationClip::AnimationClip(const std::string& name)
-	: m_Name(name)
+	: m_Name(name), m_Duration(0.0f), m_FrameTime(0.0f), m_ElapsedTime(0.0f)
 {
 }
 
@@ -49,6 +49,11 @@ void AnimationClip::SetDuration(float duration)
 		return;
 
 	m_Duration = duration;
+}
+
+void AnimationClip::SetName(const std::string& name)
+{
+	m_Name = name;
 }
 
 
@@ -99,6 +104,20 @@ void Animator::SetBool(const std::string& name, bool value)
 	}
 
 	m_BoolParameters[name] = value;
+}
+
+void Animator::PlayAnimation(const std::string& name)
+{
+	auto animation = std::find_if(m_AnimationClips.begin(), m_AnimationClips.end(),
+		[&](const AnimationClip& clip)
+		{
+			if (clip.GetName() == name)
+				return true;
+
+			return false;
+		});
+
+	m_CurrentClip = animation;
 }
 
 void Animator::SetFloat(const std::string& name, float value)

@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "../Components/Transform.h"
+#include "../GameObject/GameObject.h"
 
 void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -46,7 +47,7 @@ void Renderer::Init()
 
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/StandartShader");
 	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
-	//s_CircleColliderTexture = TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png");
+	s_CircleColliderTexture = TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png");
 }
 
 void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
@@ -61,7 +62,11 @@ void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
 
 void Renderer::BeginScene(const Camera* camera)
 {
+	s_StandartShader->Bind();
 	s_StandartShader->SetMat3("camera", camera->GetCameraMatrix());
+
+	s_BoxColliderShader->Bind();
+	s_BoxColliderShader->SetMat3("camera", camera->GetCameraMatrix());
 	glBindVertexArray(s_VAO);
 }
 
@@ -78,6 +83,8 @@ void Renderer::Draw(const SpriteRenderer* spriteRenderer)
 
 	spriteRenderer->GetTexture()->Bind(0);
 	s_StandartShader->SetInt("sprite", 0);
+
+	s_StandartShader->SetInt("gameObjectID", spriteRenderer->gameObject->GetID());
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }
@@ -115,25 +122,25 @@ void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* bo
 
 void Renderer::DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider)
 {
-	//Vector2f scale(transform->scale);
-	//scale *= circleCollider->radius * 2;
+	Vector2f scale(transform->scale);
+	scale *= circleCollider->radius * 2;
 
-	//Vector2f position(transform->position);
-	//position += circleCollider->offset;
+	Vector2f position(transform->position);
+	position += circleCollider->offset;
 
-	//Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
+	Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
 
-	//transformMatrix = MatrixTransform::Translate(transformMatrix, position);
-	//transformMatrix = MatrixTransform::Scale(transformMatrix, scale);
+	transformMatrix = MatrixTransform::Translate(transformMatrix, position);
+	transformMatrix = MatrixTransform::Scale(transformMatrix, scale);
 
-	//s_StandartShader->Bind();
-	//s_StandartShader->SetMat3("transform", transformMatrix);
+	s_StandartShader->Bind();
+	s_StandartShader->SetMat3("transform", transformMatrix);
 
-	//Color color(0.0f, 1.0f, 0.0f, 1.0f);
-	//s_StandartShader->SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
+	Color color(0.0f, 1.0f, 0.0f, 1.0f);
+	s_StandartShader->SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 
-	//s_CircleColliderTexture->Bind(0);
-	//s_StandartShader->SetInt("sprite", 0);
+	s_CircleColliderTexture->Bind(0);
+	s_StandartShader->SetInt("sprite", 0);
 
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }

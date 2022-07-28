@@ -1,5 +1,6 @@
 #include "Editor.h"
 #include "../ImGuizmo/ImGuizmo.h"
+#include "../ImGuizmo/ImSequencer.h"
 
 #include "src/Math/Math.h"
 #include "src/Scene/SceneSerializer.h"
@@ -49,6 +50,7 @@ Editor::Editor()
 
 void Editor::Update()
 {
+#pragma region RenderScene
 	if (m_SceneWindowSize.x != m_SceneFramebuffer.GetWidth() ||
 		m_SceneWindowSize.y != m_SceneFramebuffer.GetHeight())
 	{
@@ -79,11 +81,10 @@ void Editor::Update()
 		}
 	}
 
-	if (m_SceneState == SceneState::PLAY && !m_Pause)
-		m_ActiveScene->Update();
-
 	m_SceneFramebuffer.Unbind();
+#pragma endregion
 
+#pragma region RenderGame
 	if (m_GameWindowSize.x != m_GameFramebuffer.GetWidth() ||
 		m_GameWindowSize.y != m_GameFramebuffer.GetHeight() ||
 		m_GameWindowSize.x != m_ActiveScene->GetWidth() ||
@@ -94,12 +95,19 @@ void Editor::Update()
 	}
 
 	m_GameFramebuffer.Bind();
-
 	m_ActiveScene->Render();
 	m_GameFramebuffer.Unbind();
+#pragma endregion
 
-	if (m_SceneState == SceneState::EDIT)
+	switch (m_SceneState)
+	{
+	case SceneState::PLAY:
+		m_ActiveScene->Update();
+		break;
+	case SceneState::EDIT:
 		ScriptManager::Get().Update();
+		break;
+	}
 }
 
 void Editor::ImGuiRender()
@@ -138,7 +146,7 @@ void Editor::GameWindow()
 void Editor::SceneWindow()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	
+
 	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar);
 
 	ImGui::Dummy(m_SceneWindowSize);
@@ -166,7 +174,6 @@ void Editor::SceneWindow()
 			ImGui::EndDragDropTarget();
 		}
 	}
-	//glViewport(0, 0, m_SceneWindowSize.x, m_SceneWindowSize.y);
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	ImVec2 size = ImGui::GetWindowSize();
@@ -178,10 +185,17 @@ void Editor::SceneWindow()
 
 	drawList->AddImage((void*)m_SceneFramebuffer.GetColorAttachmentID(), start, end, { 0, 1 }, { 1, 0 });
 
-	Vector2f mousePos = Input::GetMousePosition();
-	mousePos.x -= start.x;
-	mousePos.y -= start.y;
+	auto mousePos = ImGui::GetMousePos();
+	auto viewportMin = ImGui::GetWindowContentRegionMin();
+	auto offset = ImGui::GetWindowPos();
 
+	ImVec2 viewportBounds = { viewportMin.x + offset.x, viewportMin.y + offset.y };
+	
+	mousePos.x -= offset.x;
+	mousePos.y = m_SceneWindowSize.y / 2.0f + (m_SceneWindowSize.y / 2.0f - mousePos.y);
+	mousePos.y += offset.y;
+	 
+	//Read pixel of gameObject 
 	m_SceneFramebuffer.Bind();
 	int pData = m_SceneFramebuffer.ReadPixel(1, mousePos.x, mousePos.y);
 	m_SceneFramebuffer.Unbind();
@@ -199,14 +213,14 @@ void Editor::SceneWindow()
 
 	m_EditorCamera.Update();
 
-	ImGui::PushStyleColor(ImGuiCol_Button, {1.0f, 1.0f, 1.0f, 0.2});
+	ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.2 });
 	ImVec2 buttonSize{ 20, 20 };
 	ImGui::SameLine(m_SceneWindowSize.x - 100);
 	ImGui::ImageButton(ImTextureID(m_MoveButtonIcon.GetID()), buttonSize);
 
 	ImGui::SameLine(m_SceneWindowSize.x - 70);
 	ImGui::ImageButton(ImTextureID(m_RotateButtonIcon.GetID()), buttonSize);
-	
+
 	ImGui::SameLine(m_SceneWindowSize.x - 40);
 	ImGui::ImageButton(ImTextureID(m_ScaleButtonIcon.GetID()), buttonSize);
 	ImGui::PopStyleColor();
@@ -356,12 +370,12 @@ void Editor::Toolbar()
 
 	int xPos = ImGui::GetWindowSize().x / 2;
 	ImGui::SameLine(xPos - 36);
+
 	if (m_SceneState == SceneState::EDIT)
 	{
 		if (ImGui::ImageButton((ImTextureID)m_PlayButtonIcon.GetID(), ImVec2(18, 18)))
 		{
 			m_SceneState = SceneState::PLAY;
-			m_Pause = false;
 
 			auto m_RuntimeScene = std::make_shared<Scene>();
 			m_RuntimeScene->Copy(*m_EditorScene);
@@ -377,7 +391,6 @@ void Editor::Toolbar()
 		if (ImGui::ImageButton((ImTextureID)m_StopButtonIcon.GetID(), ImVec2(18, 18)))
 		{
 			m_SceneState = SceneState::EDIT;
-			m_Pause = false;
 
 			m_ActiveScene->Stop();
 			m_ActiveScene = m_EditorScene;
@@ -390,7 +403,10 @@ void Editor::Toolbar()
 
 	if (ImGui::ImageButton((ImTextureID)m_PauseButtonIcon.GetID(), ImVec2(18, 18)))
 	{
-		m_Pause = !m_Pause;
+		if (m_SceneState == SceneState::PAUSE)
+			m_SceneState = SceneState::PLAY;
+		else
+			m_SceneState = SceneState::PAUSE;
 	}
 
 	ImGui::End();

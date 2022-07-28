@@ -178,7 +178,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		if (m_ItemWidth > 128)
 			imageButtonSize = 128;
 
-		ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite->GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)spriteRenderer->m_Sprite->GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -373,21 +373,10 @@ void Inspector::RenderComponent(Animator* animator)
 	{
 		for (auto& animation : animator->m_AnimationClips)
 		{
-			ImGui::Text(animation.GetName().c_str());
-			if (ImGui::BeginDragDropTarget())
+			if (ImGui::MenuItem(animation.GetName().c_str()))
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
-				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path texturePath = "Assets";
-					texturePath /= path;
-
-					std::wstring wPath = texturePath.c_str();
-					std::string sPath(wPath.begin(), wPath.end());
-					animation.AddFrame(TextureLibrary::Get()->GetTexture(sPath));
-
-					ImGui::EndDragDropTarget();
-				}
+				m_ChoosenAnimation = &animation;
+				m_ChoosenAnimation->Start();
 			}
 
 			ImGui::SameLine();
@@ -404,8 +393,38 @@ void Inspector::RenderComponent(Animator* animator)
 			animator->AddAnimation("Animation" + std::to_string(animator->m_AnimationClips.size()));
 		}
 
-	//	ImGui::ImageButton((ImTextureID)spriteRenderer->m_Sprite.GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
-		
+		ImGui::Spacing();
+		ImGui::Text("Current Animation: ");
+		ImGui::SameLine();
+
+		if (m_ChoosenAnimation != nullptr)
+		{
+			m_ChoosenAnimation->Update();
+
+			float imageSize = m_ItemWidth;
+			if (m_ItemWidth > 128)
+				imageSize = 128;
+
+			ImGui::Text(m_ChoosenAnimation->GetName().c_str());
+
+			if (m_ChoosenAnimation->GetFrame() != nullptr)
+				ImGui::Image((ImTextureID)m_ChoosenAnimation->GetFrame()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path texturePath = "Assets";
+					texturePath /= path;
+
+					std::wstring wPath = texturePath.c_str();
+					std::string sPath(wPath.begin(), wPath.end());
+					m_ChoosenAnimation->AddFrame(TextureLibrary::Get()->GetTexture(sPath));
+
+					ImGui::EndDragDropTarget();
+				}
+			}
+		}
 	}
 }
 

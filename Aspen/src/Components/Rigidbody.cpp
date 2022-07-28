@@ -80,6 +80,12 @@ void Rigidbody::SetAngularDrag(float drag)
 	m_AngularDrag = drag;
 }
 
+Vector2f Rigidbody::GetLinearVelocity() const
+{
+	auto velocity = m_Body->GetLinearVelocity();
+	return Vector2f(velocity.x, velocity.y);
+}
+
 void Rigidbody::SetBody(b2Body* body)
 {
 	m_Body = body;

@@ -33,8 +33,10 @@ public:
 
 	void AddFrame(const std::shared_ptr<Texture>& texture);
 	void SetDuration(float duration);
+	void SetName(const std::string& name);
 
-	float GetDuration() { return m_Duration; }
+	std::shared_ptr<Texture> GetFrame() const { return *m_CurrentFrame; }
+	float GetDuration() const { return m_Duration; }
 	const std::string& GetName() const { return m_Name; }
 };
 
@@ -69,6 +71,8 @@ public:
 	
 	void Start() override;
 	void Update() override;
+
+	void PlayAnimation(const std::string& name);
 
 	void SetBool(const std::string& name, bool value);
 	void SetFloat(const std::string& name, float value);

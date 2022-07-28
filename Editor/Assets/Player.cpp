@@ -13,50 +13,67 @@ private:
 	int currentXPos = -25;
 	int currentYPos = 25;
 
+	float m_Speed = 5.0f;
+	float m_JumpForce = 10.0f;
+
+	float m_MovingDirection = 0.0f;
+
+	Rigidbody* m_Rigidbody;
 public:
-	Player()
-	{
-		std::cout << "Player Constructor!!!\n";
-	}
+
 	void Start() override
 	{
 		std::cout << "Player Start!!!\n";
 		//if (gameObject->HasComponent<SpriteRenderer>())
 		//	renderer = gameObject->GetComponent<SpriteRenderer>();
 
-		//rigidbody = GetComponent<Rigidbody>();
+		m_Rigidbody = GetComponent<Rigidbody>();
 	}
 
 	void Update() override
 	{
-		if (Input::IsKeyPressed(Key::Space))
 		{
-			auto created = gameObject->GetScene()->CreateGameObject();
-			SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-			//created->AddComponent<Rigidbody>();
-			created->transform->position.x = currentXPos;
-			created->transform->position.y = currentYPos;
+			//if (Input::IsKeyPressed(Key::Space))
+			//{
+			//	auto created = gameObject->GetScene()->CreateGameObject();
+			//	SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+			//	//created->AddComponent<Rigidbody>();
+			//	created->transform->position.x = currentXPos;
+			//	created->transform->position.y = currentYPos;
 
-			currentXPos++;
-			if (currentXPos >= 25)
-			{
-				currentYPos--;
-				currentXPos = -25;
-			}
+			//	currentXPos++;
+			//	if (currentXPos >= 25)
+			//	{
+			//		currentYPos--;
+			//		currentXPos = -25;
+			//	}
 
-			Color color;
-			color.r = (rand() % 255) / 255.0f;
-			color.g = (rand() % 255) / 255.0f;
-			color.b = (rand() % 255) / 255.0f;
-			color.a = 1.0f;
+			//	Color color;
+			//	color.r = (rand() % 255) / 255.0f;
+			//	color.g = (rand() % 255) / 255.0f;
+			//	color.b = (rand() % 255) / 255.0f;
+			//	color.a = 1.0f;
 
-			renderer->SetColor(color);
+			//	renderer->SetColor(color);
+			//}
 		}
+
+		m_MovingDirection = 0.0f;
+		if (Input::IsKeyPressed(Key::D))
+			m_MovingDirection = 1.0f;
+
+		if (Input::IsKeyPressed(Key::A))
+			m_MovingDirection = -1.0f;
 	}
 
 	void FixedUpdate() override
 	{
+		if (Input::IsKeyPressed(Key::Space))
+			m_Rigidbody->AddForce(Vector2f(0.0f, m_JumpForce), ForceMode::Impulse);
 
+		Vector2f currentVelocity = m_Rigidbody->GetLinearVelocity();
+		currentVelocity.x = m_MovingDirection * m_Speed;
+		m_Rigidbody->SetLinearVelocity(currentVelocity);
 	}
 
 	void OnCollisionEnter(Collision* collision) override

@@ -14,6 +14,8 @@ class Inspector
 private:
 	Ptr<GameObject>& m_SelectedGameObject;
 
+	AnimationClip* m_ChoosenAnimation = nullptr;
+
 	unsigned int m_FirstCollumnWidth = 110;
 	unsigned int m_SecondCollumnWidth;
 	unsigned int m_ItemWidth;

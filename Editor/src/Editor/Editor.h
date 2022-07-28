@@ -18,13 +18,11 @@ private:
 
 	EditorCamera m_EditorCamera;
 
-	enum class SceneState { PLAY = 0, EDIT = 1 };
+	enum class SceneState { PLAY = 0, EDIT = 1, PAUSE = 2};
 	SceneState m_SceneState = SceneState::EDIT;
 	
 	std::shared_ptr<Scene> m_EditorScene;
 	std::shared_ptr<Scene> m_ActiveScene;
-
-	bool m_Pause = false;
 
 	Texture m_PlayButtonIcon;
 	Texture m_PauseButtonIcon;
@@ -63,7 +61,7 @@ private:
 	void SaveSceneAs(); 
 
 	void UpdateGuizmo();
-
+	void PickHoveredObject();
 public:
 	Editor();
 

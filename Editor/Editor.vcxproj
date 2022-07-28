@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\AnimatorWindow.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
@@ -88,6 +89,7 @@
     <ClCompile Include="src\Panels\ProjectPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\AnimatorWindow.h" />
     <ClInclude Include="GLFW\glfw3.h" />
     <ClInclude Include="GLFW\glfw3native.h" />
     <ClInclude Include="src\Editor\Editor.h" />

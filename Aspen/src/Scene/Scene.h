@@ -78,7 +78,6 @@ public:
 	GameObject* GetObjectWithID(int ID);
 
 	void DestroyGameObject(GameObject* gameObject);
-	//void DestroyGameObject();
 
 	void Start();
 	void Stop();
@@ -130,10 +129,7 @@ void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 	//if (typeid(T) == typeid(SpriteRenderer))
 	//	m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
 	if (typeid(T) == typeid(Camera))
-	{
-		std::cout << "Camera is added!!!\n";
-		std::cout << "Scene width: " << m_Width << std::endl;
-		std::cout << "Scene height: " << m_Height << std::endl;
+	{;
 		Camera* camera = (Camera*)(component.get());
 		camera->SetRatio(float(m_Height) / float(m_Width));
 	}

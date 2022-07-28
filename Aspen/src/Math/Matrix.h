@@ -9,8 +9,6 @@ struct Matrix
 	Matrix();
 	Matrix(T diagonal);
 
-	//Matrix(const Matrix& other) = default;
-
 	template<size_t S>
 	Matrix(const Matrix<T, S>& other);
 
