@@ -80,7 +80,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LayerMask.cpp" />
+    <ClCompile Include="src\Physics\ContactListener.cpp" />
+    <ClCompile Include="src\Physics\Physics.cpp" />
+    <ClCompile Include="src\GameObject\LayerMask.cpp" />
     <ClCompile Include="src\Components\Animator.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Layer.cpp" />
@@ -128,7 +130,9 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LayerMask.h" />
+    <ClInclude Include="src\Physics\ContactListener.h" />
+    <ClInclude Include="src\Physics\Physics.h" />
+    <ClInclude Include="src\GameObject\LayerMask.h" />
     <ClInclude Include="src\Components\Animator.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Libraries\include\glad\glad.h" />
@@ -149,10 +153,10 @@
     <ClInclude Include="src\Components\Transform.h" />
     <ClInclude Include="src\Components\Trigger.h" />
     <ClInclude Include="src\Core\Core.h" />
-    <ClInclude Include="src\Engine\Base.h" />
+    <ClInclude Include="src\Core\Base.h" />
     <ClInclude Include="src\Engine\Engine.h" />
     <ClInclude Include="src\Engine\Window.h" />
-    <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Core\EntryPoint.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />

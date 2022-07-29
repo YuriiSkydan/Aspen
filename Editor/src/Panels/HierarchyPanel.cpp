@@ -13,6 +13,72 @@ using namespace std::string_literals;
 //{
 //}
 
+void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
+{
+	ImGui::PushID(("##"s + gameObject->GetName()).c_str());
+
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	if (gameObject == m_SelectedGameObject)
+		nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+	if (gameObject->transform->child == nullptr)
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+	bool nodeOpen = ImGui::TreeNodeEx(gameObject->GetName(), nodeFlags);
+
+	if (ImGui::BeginDragDropSource())
+	{
+		ImGui::SetDragDropPayload("HIERARCHY_PANEL_ITEM", gameObject, sizeof(GameObject));
+		std::cout << "Drag object name: " << gameObject->GetName() << std::endl;
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::IsItemHovered())
+	{
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		{
+			m_SelectedGameObject = gameObject;
+
+		}
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+			m_SelectedGameObject = gameObject;
+			ImGui::OpenPopup("Object Properties");
+		}
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PANEL_ITEM"))
+		{
+			GameObject* dragObject = (GameObject*)payload->Data;
+			if (dragObject != gameObject)
+			{
+				if (dragObject->transform->parent == nullptr ||
+					dragObject->transform->parent->gameObject != gameObject)
+				{
+					if (dragObject->transform->parent != nullptr)
+						dragObject->transform->parent->child = nullptr;
+
+					dragObject->transform->parent = gameObject->transform;
+					gameObject->transform->child = dragObject->transform;
+					ImGui::EndDragDropTarget();
+				}
+			}
+		}
+	}
+	else if (nodeOpen)
+	{
+		if (gameObject->transform->child != nullptr)
+		{
+			RenderGameObjectTreeNode(gameObject->transform->child->gameObject);
+			ImGui::TreePop();
+		}
+	}
+
+	ImGui::PopID();
+}
+
 HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
 	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
 {
@@ -63,41 +129,11 @@ void HierarchyPanel::ImGuiRender()
 
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
-		if (strlen(m_FindInput) != 0)
-		{
-			for (auto& object : m_Scene->m_GameObjects)
-			{
-				findStr = object->GetName();
-				if (!findStr.find(m_FindInput))
-				{
-					ImGui::Text("   ");
-					ImGui::SameLine();
-					if (ImGui::MenuItem(object->GetName()))
-						m_SelectedGameObject = object.get();
-				}
-			}
-		}
-		else
-		{
-			for (auto& object : m_Scene->m_GameObjects)
-			{
-				ImGui::Text("   ");
-				ImGui::SameLine();
 
-				ImGui::PushID(("##"s + object->GetName()).c_str());
-				if (ImGui::MenuItem(object->GetName()))
-				{
-					m_SelectedGameObject = object.get();
-				}
-				ImGui::PopID();
-
-				if (ImGui::IsItemHovered() &&
-					ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-				{
-					m_SelectedGameObject = object.get();
-					ImGui::OpenPopup("Object Properties");
-				}
-			}
+		for (auto& object : m_Scene->m_GameObjects)
+		{
+			if (object->transform->parent == nullptr)
+				RenderGameObjectTreeNode(object.get());
 		}
 	}
 

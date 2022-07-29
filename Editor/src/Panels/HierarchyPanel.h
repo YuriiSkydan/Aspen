@@ -1,5 +1,5 @@
 #pragma once
-#include "src/Engine/Base.h"
+#include "src/Core/Base.h"
 #include "src/Scene/Scene.h"
 
 class HierarchyPanel
@@ -10,6 +10,10 @@ private:
 
 	char m_FindInput[20];
 	std::string findStr;
+private:
+	void RenderGameObjects();
+	void RenderGameObjectTreeNode(GameObject* gameObject);
+
 public:
 	HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef);
 

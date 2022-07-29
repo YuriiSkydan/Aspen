@@ -17,19 +17,18 @@ int Input::GetKeyState(KeyCode key)
 
 void Input::KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if(action == GLFW_REPEAT)
-	{
-		std::cout << "REPEAT EVENT!!!\n";
-		s_InputBuffer.insert(key);
-	}
-
-	if (action == GLFW_RELEASE)
-		s_InputBuffer.erase(key);
+	std::cout << "Pressed callback!!!\n";
+	s_ThisFramePressed.insert(key);
 }
 
 void Input::ScrollCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	
+
+}
+
+void Input::FrameStart()
+{
+	s_PreviousFramePressed = std::move(s_ThisFramePressed);
 }
 
 bool Input::IsKeyPressed(KeyCode key)
@@ -51,19 +50,13 @@ bool Input::GetKeyUp(KeyCode key)
 
 bool Input::GetKeyDown(KeyCode key)
 {
-	int state = GetKeyState(key);
-	if (state == GLFW_PRESS)
-	{
-		if (s_InputBuffer.find(key) != s_InputBuffer.end())
-		{
-			std::cout << "Buton is here!!!\n";
-			return false;
-		}
+	if (!IsKeyPressed(key))
+		return false;
 
-		return true;
-	}
+	if (s_PreviousFramePressed.find(key) != s_PreviousFramePressed.end())
+		return false;
 
-	return false;
+	return true;
 }
 
 bool Input::IsMouseButtonPressed(MouseCode button)

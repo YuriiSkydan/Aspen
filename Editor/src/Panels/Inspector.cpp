@@ -320,7 +320,7 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat2("##Size", (float*)&boxCollider->size, 0.01f, 0.0f, FLT_MAX, "%.3f");
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat2("##Offset", (float*)&boxCollider->offset, 0.1f);
+		ImGui::DragFloat2("##Offset", (float*)&boxCollider->offset, 0.01f);
 		ImGui::Checkbox("##IsTrigger", &boxCollider->isTrigger);
 		ImGui::NewLine();
 		ImGui::SetNextItemWidth(m_ItemWidth);

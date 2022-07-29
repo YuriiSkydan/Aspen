@@ -11,12 +11,12 @@ SceneSerializer::SceneSerializer(std::shared_ptr<Scene> scene)
 
 void SceneSerializer::Serialize() const
 {
-	std::ofstream fileStream(m_Scene->m_Name + ".json", std::ofstream::binary);
+	std::ofstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
 
 	if (!fileStream.is_open())
 	{
-		ERROR("Failed to open the file!!!");
 		return;
+		ERROR("Failed to open the file!!!");
 	}
 
 	json serializer =
@@ -142,7 +142,7 @@ void SceneSerializer::SerializeComponent(json& out, Animator* animator) const
 void SceneSerializer::Deserialize()
 {
 	using namespace nlohmann;
-	std::ifstream fileStream(m_Scene->m_Name + ".json", std::ofstream::binary);
+	std::ifstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
 
 	if (!fileStream.is_open())
 	{
@@ -153,6 +153,32 @@ void SceneSerializer::Deserialize()
 	json in;
 	fileStream >> in;
 
+	DeserializeScene(in);
+
+	fileStream.close();
+}
+
+void SceneSerializer::Deserialize(const std::string& filename)
+{
+	using namespace nlohmann;
+	std::ifstream fileStream(filename, std::ofstream::binary);
+
+	if (!fileStream.is_open())
+	{
+		ERROR("Failed to open the file!!!");
+		return;
+	}
+
+	json in;
+	fileStream >> in;
+
+	DeserializeScene(in);
+
+	fileStream.close();
+}
+
+void SceneSerializer::DeserializeScene(json& in)
+{
 	m_Scene->m_Name = in["Scene"]["Name"];
 	m_Scene->m_GameObjects.resize(in["Scene"]["Objects amount"]);
 	m_Scene->m_Gravity.x = in["Scene"]["Gravity"]["X"];
@@ -164,8 +190,6 @@ void SceneSerializer::Deserialize()
 		DeserializeGameObject(in[std::to_string(i)], newGameObject);
 		m_Scene->m_GameObjects[i] = std::move(newGameObject);
 	};
-
-	fileStream.close();
 }
 
 void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject)

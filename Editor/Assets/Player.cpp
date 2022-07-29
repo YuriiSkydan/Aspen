@@ -19,6 +19,7 @@ private:
 	float m_MovingDirection = 0.0f;
 
 	Rigidbody* m_Rigidbody;
+	SpriteRenderer* m_SpriteRenderer;
 public:
 
 	void Start() override
@@ -28,6 +29,7 @@ public:
 		//	renderer = gameObject->GetComponent<SpriteRenderer>();
 
 		m_Rigidbody = GetComponent<Rigidbody>();
+		m_SpriteRenderer = GetComponent<SpriteRenderer>();
 	}
 
 	void Update() override
@@ -60,10 +62,19 @@ public:
 
 		m_MovingDirection = 0.0f;
 		if (Input::IsKeyPressed(Key::D))
+		{
+			m_SpriteRenderer->flipX = false;
 			m_MovingDirection = 1.0f;
+		}
 
 		if (Input::IsKeyPressed(Key::A))
+		{
+			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
+		}
+
+		if (Input::GetKeyDown(Key::Space))
+			std::cout << "Key Is Down!!!\n";
 	}
 
 	void FixedUpdate() override

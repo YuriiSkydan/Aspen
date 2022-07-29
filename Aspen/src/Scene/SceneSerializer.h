@@ -34,6 +34,7 @@ private:
 	//Also this function
 	void SerializeComponent(json& out, Animator* animator) const;
 
+	void DeserializeScene(json& in);
 	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
 	void DeserializeComponent(json& in, Transform* transform);
 	void DeserializeComponent(json& in, SpriteRenderer* spriteRenderer);
@@ -52,5 +53,6 @@ public:
 
 	void Serialize() const;
 	void Deserialize();
+	void Deserialize(const std::string& filename);
 };
 

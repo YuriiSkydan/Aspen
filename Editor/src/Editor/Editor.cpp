@@ -122,6 +122,8 @@ void Editor::ImGuiRender()
 
 	GameWindow();
 	SceneWindow();
+
+	ImGui::ShowDemoWindow();
 }
 
 void Editor::GameWindow()
@@ -210,7 +212,7 @@ void Editor::SceneWindow()
 			m_SelectedObject = m_HoveredObject;
 		}
 	}
-
+	
 	m_EditorCamera.Update();
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.2 });

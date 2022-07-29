@@ -9,13 +9,16 @@
 class ASPEN Input
 {
 private:
-	inline static std::unordered_set<int> s_InputBuffer;
+	inline static std::unordered_set<KeyCode> s_PreviousFramePressed;
+	inline static std::unordered_set<KeyCode> s_ThisFramePressed;
 
+	friend class Engine;
 private:
 	static int GetKeyState(KeyCode key);
 	static void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void ScrollCallback(GLFWwindow* window, double xpos, double ypos);
 
+	static void FrameStart();
 public:
 	static void Init();
 	static bool IsKeyPressed(KeyCode key);

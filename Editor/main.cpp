@@ -1,6 +1,6 @@
 #include "../Aspen/src/Engine/Engine.h"
 #include "src/Editor/Editor.h"
-#include "EntryPoint.h"
+#include "src/Core/EntryPoint.h"
 
 Engine* CreateEngine()
 {

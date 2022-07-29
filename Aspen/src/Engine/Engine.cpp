@@ -25,11 +25,10 @@ void Engine::Run()
 {
 	while (m_Running)
 	{
-		auto start = std::chrono::high_resolution_clock::now();
-
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		Time::FrameStart();
+		Input::FrameStart();
 
 		m_Editor->Update();
 
@@ -42,10 +41,8 @@ void Engine::Run()
 
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
-		auto end = std::chrono::high_resolution_clock::now();
-
-		std::chrono::duration<double> duration = end - start;
-		std::string title = "Aspen " + std::to_string(1.0f / duration.count());
+		
+		std::string title = "Aspen " + std::to_string(1.0f / Time::DeltaTime());
 		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());
 	}
 }
