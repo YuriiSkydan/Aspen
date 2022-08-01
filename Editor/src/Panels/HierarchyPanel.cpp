@@ -13,6 +13,18 @@ using namespace std::string_literals;
 //{
 //}
 
+void HierarchyPanel::GameObjectPropertiesPopup()
+{
+	if (ImGui::MenuItem("Delete"))
+	{
+		//change it later
+		//gameObjects.erase(gameObjects.begin() + i);
+
+		m_Scene->DestroyGameObject(m_SelectedGameObject);
+		m_SelectedGameObject = nullptr;
+	}
+}
+
 void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 {
 	ImGui::PushID(("##"s + gameObject->GetName()).c_str());
@@ -31,20 +43,6 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 		ImGui::SetDragDropPayload("HIERARCHY_PANEL_ITEM", gameObject, sizeof(GameObject));
 		std::cout << "Drag object name: " << gameObject->GetName() << std::endl;
 		ImGui::EndDragDropSource();
-	}
-
-	if (ImGui::IsItemHovered())
-	{
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-		{
-			m_SelectedGameObject = gameObject;
-
-		}
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			m_SelectedGameObject = gameObject;
-			ImGui::OpenPopup("Object Properties");
-		}
 	}
 
 	if (ImGui::BeginDragDropTarget())
@@ -67,7 +65,31 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 			}
 		}
 	}
-	else if (nodeOpen)
+
+	if (ImGui::IsItemHovered())
+	{
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		{
+			m_SelectedGameObject = gameObject;
+
+		}
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+
+			m_SelectedGameObject = gameObject;
+			ImGui::OpenPopup("Object Properties", ImGuiPopupFlags_AnyPopupId | ImGuiPopupFlags_AnyPopup);
+		}
+	}
+
+	if (ImGui::BeginPopup("Object Properties"))
+	{
+		GameObjectPropertiesPopup();
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopID();
+
+	if (nodeOpen && !(nodeFlags & ImGuiTreeNodeFlags_Leaf))
 	{
 		if (gameObject->transform->child != nullptr)
 		{
@@ -75,8 +97,6 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 			ImGui::TreePop();
 		}
 	}
-
-	ImGui::PopID();
 }
 
 HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
@@ -129,25 +149,11 @@ void HierarchyPanel::ImGuiRender()
 
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
-
 		for (auto& object : m_Scene->m_GameObjects)
 		{
 			if (object->transform->parent == nullptr)
 				RenderGameObjectTreeNode(object.get());
 		}
-	}
-
-	if (ImGui::BeginPopup("Object Properties"))
-	{
-		if (ImGui::MenuItem("Delete"))
-		{
-			//change it later
-			//gameObjects.erase(gameObjects.begin() + i);
-
-			m_Scene->DestroyGameObject(m_SelectedGameObject);
-			m_SelectedGameObject = nullptr;
-		}
-		ImGui::EndPopup();
 	}
 
 	ImGui::End();

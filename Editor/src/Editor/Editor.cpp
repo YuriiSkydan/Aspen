@@ -1,5 +1,4 @@
 #include "Editor.h"
-#include "../ImGuizmo/ImGuizmo.h"
 #include "../ImGuizmo/ImSequencer.h"
 
 #include "src/Math/Math.h"
@@ -123,7 +122,7 @@ void Editor::ImGuiRender()
 	GameWindow();
 	SceneWindow();
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 }
 
 void Editor::GameWindow()
@@ -171,6 +170,8 @@ void Editor::SceneWindow()
 			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
 			spriteRenderer->SetSprite(TextureLibrary::Get()->GetTexture(sPath));
 
+			gameObject->transform->position = m_EditorCamera.GetPosition();
+
 			m_SelectedObject = gameObject;
 
 			ImGui::EndDragDropTarget();
@@ -185,47 +186,56 @@ void Editor::SceneWindow()
 	if (m_SceneWindowSize.x != size.x || m_SceneWindowSize.y != size.y)
 		m_SceneWindowSize = size;
 
+	//Setting Scene Framebuffer
 	drawList->AddImage((void*)m_SceneFramebuffer.GetColorAttachmentID(), start, end, { 0, 1 }, { 1, 0 });
 
-	auto mousePos = ImGui::GetMousePos();
-	auto viewportMin = ImGui::GetWindowContentRegionMin();
-	auto offset = ImGui::GetWindowPos();
+#pragma region GuizmoToolBar
+	ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.2 });
+	ImVec2 buttonSize{ 20, 20 };
+	ImGui::SameLine(m_SceneWindowSize.x - 100);
+	if (ImGui::ImageButton(ImTextureID(m_MoveButtonIcon.GetID()), buttonSize))
+	{
+		m_CurrentOperation = ImGuizmo::TRANSLATE_X | ImGuizmo::TRANSLATE_Y;
+	}
 
-	ImVec2 viewportBounds = { viewportMin.x + offset.x, viewportMin.y + offset.y };
-	
-	mousePos.x -= offset.x;
-	mousePos.y = m_SceneWindowSize.y / 2.0f + (m_SceneWindowSize.y / 2.0f - mousePos.y);
-	mousePos.y += offset.y;
-	 
-	//Read pixel of gameObject 
-	m_SceneFramebuffer.Bind();
-	int pData = m_SceneFramebuffer.ReadPixel(1, mousePos.x, mousePos.y);
-	m_SceneFramebuffer.Unbind();
+	ImGui::SameLine(m_SceneWindowSize.x - 70);
+	if (ImGui::ImageButton(ImTextureID(m_RotateButtonIcon.GetID()), buttonSize))
+	{
+		m_CurrentOperation = ImGuizmo::ROTATE_Z;
+	}
+
+	ImGui::SameLine(m_SceneWindowSize.x - 40);
+	if (ImGui::ImageButton(ImTextureID(m_ScaleButtonIcon.GetID()), buttonSize))
+	{
+		m_CurrentOperation = ImGuizmo::SCALE_X | ImGuizmo::SCALE_Y;
+	}
+	ImGui::PopStyleColor();
+#pragma endregion
 
 	UpdateGuizmo();
 
-	if (!ImGuizmo::IsUsing())
+	if (!ImGuizmo::IsUsing() && !ImGui::IsItemClicked())
 	{
 		if (ImGui::IsWindowHovered() && Input::IsMouseButtonPressed(Mouse::Button0))
 		{
+			//Pick up object
+			auto mousePos = ImGui::GetMousePos();
+			auto offset = ImGui::GetWindowPos();
+
+			mousePos.x -= offset.x;
+			mousePos.y = m_SceneWindowSize.y / 2.0f + (m_SceneWindowSize.y / 2.0f - mousePos.y);
+			mousePos.y += offset.y;
+
+			m_SceneFramebuffer.Bind();
+			int pData = m_SceneFramebuffer.ReadPixel(1, mousePos.x, mousePos.y);
+			m_SceneFramebuffer.Unbind();
+
 			m_HoveredObject = m_ActiveScene->GetObjectWithID(pData);
 			m_SelectedObject = m_HoveredObject;
 		}
 	}
 	
-	m_EditorCamera.Update();
-
-	ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.2 });
-	ImVec2 buttonSize{ 20, 20 };
-	ImGui::SameLine(m_SceneWindowSize.x - 100);
-	ImGui::ImageButton(ImTextureID(m_MoveButtonIcon.GetID()), buttonSize);
-
-	ImGui::SameLine(m_SceneWindowSize.x - 70);
-	ImGui::ImageButton(ImTextureID(m_RotateButtonIcon.GetID()), buttonSize);
-
-	ImGui::SameLine(m_SceneWindowSize.x - 40);
-	ImGui::ImageButton(ImTextureID(m_ScaleButtonIcon.GetID()), buttonSize);
-	ImGui::PopStyleColor();
+	m_EditorCamera.Update(); // maybe move it to update method
 
 	ImGui::End();
 	ImGui::PopStyleVar();
@@ -319,13 +329,17 @@ void Editor::UpdateGuizmo()
 		position.x = transform->position.x;
 		position.y = transform->position.y;
 
+		glm::vec3 scale = glm::vec3(1.0f);
+		scale.x = transform->scale.x;
+		scale.y = transform->scale.y;
+
 		auto rect = m_EditorCamera.GetCameraMatrix();
 		float XAxis = (1.0f / rect[0][0]);
 		float YAxis = (1.0f / rect[1][1]);
 
 		glm::mat4 Projection = glm::ortho(-XAxis, XAxis, -YAxis, YAxis);
-
 		glm::mat4 objectTransform = glm::translate(glm::mat4(1.0f), position);
+		objectTransform = glm::scale(objectTransform, scale);
 		//objectTransform = glm::rotate(objectTransform, -ToRads(transform->angle), glm::vec3(0.0, 0.0, 1.0f));
 
 		Vector2f cameraPos = m_EditorCamera.GetPosition();
@@ -336,16 +350,13 @@ void Editor::UpdateGuizmo()
 		ImGuizmo::SetLineThickness(6.3f);
 
 		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::TRANSLATE_X), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
-
-		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::TRANSLATE_Y), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
-
-		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
-			(ImGuizmo::ROTATE_Z), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
+			(m_CurrentOperation), ImGuizmo::WORLD, glm::value_ptr(objectTransform));
 
 		transform->position.x = objectTransform[3][0];
 		transform->position.y = objectTransform[3][1];
+
+		transform->scale.x = objectTransform[0][0];
+		transform->scale.y = objectTransform[1][1];
 
 		transform->angle -= ToDegrees(asin(objectTransform[0][1]));
 	}

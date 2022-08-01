@@ -21,7 +21,6 @@ private:
 	inline static std::shared_ptr<Shader> s_StandartShader;
 
 	inline static std::shared_ptr<Shader> s_BoxColliderShader;
-	inline static std::shared_ptr<Texture> s_CircleColliderTexture;
 public:
 	static void Init();
 	static void BeginScene(const Matrix3x3f& cameraMatrix);

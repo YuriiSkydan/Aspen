@@ -11,6 +11,7 @@ private:
 	char m_FindInput[20];
 	std::string findStr;
 private:
+	void GameObjectPropertiesPopup();
 	void RenderGameObjects();
 	void RenderGameObjectTreeNode(GameObject* gameObject);
 

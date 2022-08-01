@@ -49,7 +49,7 @@ private:
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		io.Fonts->AddFontFromFileTTF("../Editor/Fonts/Montserrat-Bold.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("Fonts/Montserrat-Bold.ttf", 15);
 
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Get().GetWindow().GetNativeWindow(), true);

@@ -47,7 +47,6 @@ void Renderer::Init()
 
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/StandartShader");
 	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
-	s_CircleColliderTexture = TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png");
 }
 
 void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
@@ -139,7 +138,7 @@ void Renderer::DrawCirlceCollider(const Transform* transform, const CircleCollid
 	Color color(0.0f, 1.0f, 0.0f, 1.0f);
 	s_StandartShader->SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 
-	s_CircleColliderTexture->Bind(0);
+	TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png")->Bind(0);
 	s_StandartShader->SetInt("sprite", 0);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);

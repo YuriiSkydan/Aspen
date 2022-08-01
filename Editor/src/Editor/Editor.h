@@ -6,6 +6,7 @@
 #include "src/Scene/Scene.h"
 #include "src/Scene/EditorCamera.h"
 #include "imgui/imgui.h"
+#include "../ImGuizmo/ImGuizmo.h"
 
 #include "Layer.h"
 
@@ -31,6 +32,8 @@ private:
 	Texture m_MoveButtonIcon;
 	Texture m_RotateButtonIcon;
 	Texture m_ScaleButtonIcon;
+
+	ImGuizmo::OPERATION m_CurrentOperation;
 
 	GameObject* m_SelectedObject = nullptr;
 	GameObject* m_HoveredObject = nullptr;
