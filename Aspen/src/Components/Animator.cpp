@@ -10,17 +10,22 @@ void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
 AnimationClip::AnimationClip(const std::string& name)
 	: m_Name(name), m_Duration(0.0f), m_FrameTime(0.0f), m_ElapsedTime(0.0f)
 {
+	m_CurrentFrame = m_Frames.begin();
 }
 
 void AnimationClip::Start()
 {
 	m_CurrentFrame = m_Frames.begin();
-	m_SpriteRenderer->SetSprite(*m_CurrentFrame);
-	
-	m_FrameTime = m_Duration / m_Frames.size();
-	m_ElapsedTime = 0;
 
-	m_LastFrameTime = std::chrono::steady_clock::now();
+	if (m_Frames.size() != 0)
+	{
+		m_SpriteRenderer->SetSprite(*m_CurrentFrame);
+
+		m_FrameTime = m_Duration / m_Frames.size();
+		m_ElapsedTime = 0;
+
+		m_LastFrameTime = std::chrono::steady_clock::now();
+	}
 }
 
 void AnimationClip::Update()

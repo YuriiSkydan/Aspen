@@ -399,7 +399,7 @@ void Inspector::RenderComponent(Animator* animator)
 
 		if (m_ChoosenAnimation != nullptr)
 		{
-			m_ChoosenAnimation->Update();
+			//m_ChoosenAnimation->Update();
 
 			float imageSize = m_ItemWidth;
 			if (m_ItemWidth > 128)
@@ -407,8 +407,19 @@ void Inspector::RenderComponent(Animator* animator)
 
 			ImGui::Text(m_ChoosenAnimation->GetName().c_str());
 
-			if (m_ChoosenAnimation->GetFrame() != nullptr)
+			if (m_ChoosenAnimation->GetFramesAmount() == 0)
+			{
+				SpriteRenderer* renderer = m_SelectedGameObject->GetComponent<SpriteRenderer>();
+
+				if (renderer != nullptr)
+					ImGui::Image((ImTextureID)renderer->GetTexture()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
+			}
+			else if (m_ChoosenAnimation->GetFrame() != nullptr)
+			{
+				m_ChoosenAnimation->Update();
 				ImGui::Image((ImTextureID)m_ChoosenAnimation->GetFrame()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
+			}
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -420,6 +431,7 @@ void Inspector::RenderComponent(Animator* animator)
 					std::wstring wPath = texturePath.c_str();
 					std::string sPath(wPath.begin(), wPath.end());
 					m_ChoosenAnimation->AddFrame(TextureLibrary::Get()->GetTexture(sPath));
+					m_ChoosenAnimation->Start();
 
 					ImGui::EndDragDropTarget();
 				}

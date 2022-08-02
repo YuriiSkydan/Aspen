@@ -21,7 +21,7 @@ void ProjectPanel::ImGuiRender()
 	if (ImGui::IsWindowFocused())
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, {});
-		ImGui::ImageButton((ImTextureID)m_BackArrowIcon.GetID(), { 30, 30 });
+		ImGui::ImageButton((ImTextureID)m_BackArrowIcon.GetID(), { 30, 30 }, { 0, 1 }, { 1, 0 });
 		ImGui::PopStyleColor();
 
 		if (ImGui::IsItemClicked() && m_CurrentDirectory != "Assets")

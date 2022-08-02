@@ -129,7 +129,7 @@ void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 	//if (typeid(T) == typeid(SpriteRenderer))
 	//	m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
 	if (typeid(T) == typeid(Camera))
-	{;
+	{
 		Camera* camera = (Camera*)(component.get());
 		camera->SetRatio(float(m_Height) / float(m_Width));
 	}

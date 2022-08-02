@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\GameObject\LayerMask.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="src\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\ScriptManager.cpp" />
     <ClCompile Include="src\Core\Time.cpp" />
+    <ClCompile Include="src\GameObject\Tag.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
@@ -130,6 +132,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\SceneManager.h" />
     <ClInclude Include="src\Physics\ContactListener.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\GameObject\LayerMask.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="src\Scene\SceneSerializer.h" />
     <ClInclude Include="src\ScriptManager.h" />
     <ClInclude Include="src\Core\Time.h" />
+    <ClInclude Include="src\GameObject\Tag.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />

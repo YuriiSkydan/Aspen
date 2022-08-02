@@ -5,7 +5,7 @@ void LayerMask::Add(std::string_view name)
 	s_Layers.insert({ s_Layers.size(), name.data() });
 }
 
-void LayerMask::Delete(std::string_view name)
+void LayerMask::Remove(std::string_view name)
 {
 	for (auto it = s_Layers.cbegin(); it != s_Layers.cend(); ++it)
 	{
@@ -16,13 +16,11 @@ void LayerMask::Delete(std::string_view name)
 
 LayerMask::LayerMask()
 	: m_Value(0)
-{
-}
+{ }
 
 LayerMask::LayerMask(std::uint8_t value)
 	: m_Value(value)
-{
-}
+{ }
 
 LayerMask LayerMask::GetMask(std::string_view name)
 {
@@ -44,4 +42,34 @@ const std::string& LayerMask::LayerToName(std::uint8_t value)
 	}
 
 	return " ";
+}
+
+LayerMask operator|(const LayerMask& a, const LayerMask& b)
+{
+	return LayerMask(a.m_Value | b.m_Value);
+}
+
+LayerMask operator&(const LayerMask& a, const LayerMask& b)
+{
+	return LayerMask(a.m_Value & b.m_Value);
+}
+
+LayerMask operator|(const LayerMask& layer, std::uint8_t value)
+{
+	return LayerMask(layer.m_Value | value);
+}
+
+LayerMask operator&(const LayerMask& layer, std::uint8_t value)
+{
+	return LayerMask(layer.m_Value & value);
+}
+
+LayerMask operator|(std::uint8_t value, const LayerMask& layer)
+{
+	return LayerMask(value | layer.m_Value);
+}
+
+LayerMask operator&(std::uint8_t value, const LayerMask& layer)
+{
+	return LayerMask(value & layer.m_Value);
 }

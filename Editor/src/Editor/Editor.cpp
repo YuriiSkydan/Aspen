@@ -36,6 +36,7 @@ Editor::Editor()
 
 	//m_HierarchyPanel.SetScene(m_ActiveScene);
 
+	//Setting up frame buffers
 	m_SceneFramebuffer.Bind();
 	m_SceneFramebuffer.AddColorAttachment(GL_RGBA8, GL_RGBA);
 	m_SceneFramebuffer.AddColorAttachment(GL_R32I, GL_RED_INTEGER);
@@ -44,11 +45,15 @@ Editor::Editor()
 	m_GameFramebuffer.Bind();
 	m_GameFramebuffer.AddColorAttachment(GL_RGBA8, GL_RGBA);
 
+	//Initial guizmo operation
+	m_CurrentOperation = ImGuizmo::TRANSLATE_X | ImGuizmo::TRANSLATE_Y;
+
 	DarkStyle();
 }
 
 void Editor::Update()
 {
+
 #pragma region RenderScene
 	if (m_SceneWindowSize.x != m_SceneFramebuffer.GetWidth() ||
 		m_SceneWindowSize.y != m_SceneFramebuffer.GetHeight())

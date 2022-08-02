@@ -20,6 +20,7 @@ private:
 
 	Rigidbody* m_Rigidbody;
 	SpriteRenderer* m_SpriteRenderer;
+	Animator* m_Animator;
 public:
 
 	void Start() override
@@ -61,14 +62,18 @@ public:
 		}
 
 		m_MovingDirection = 0.0f;
+		m_Animator->PlayAnimation("Idle");
+
 		if (Input::IsKeyPressed(Key::D))
 		{
+			m_Animator->PlayAnimation("Run");
 			m_SpriteRenderer->flipX = false;
 			m_MovingDirection = 1.0f;
 		}
 
 		if (Input::IsKeyPressed(Key::A))
 		{
+			m_Animator->PlayAnimation("Run");
 			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
 		}

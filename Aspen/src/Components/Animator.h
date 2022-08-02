@@ -9,10 +9,10 @@
 class ASPEN AnimationClip
 {
 private:
-	SpriteRenderer* m_SpriteRenderer;
 	std::string m_Name;
-	std::list<std::shared_ptr<Texture>> m_Frames;
-	std::list<std::shared_ptr<Texture>>::iterator m_CurrentFrame;
+	SpriteRenderer* m_SpriteRenderer = nullptr;
+	std::vector<std::shared_ptr<Texture>> m_Frames;
+	std::vector<std::shared_ptr<Texture>>::iterator m_CurrentFrame;
 
 	float m_Duration;
 
@@ -36,8 +36,9 @@ public:
 	void SetName(const std::string& name);
 
 	std::shared_ptr<Texture> GetFrame() const { return *m_CurrentFrame; }
-	float GetDuration() const { return m_Duration; }
+	unsigned int GetFramesAmount() const { return m_Frames.size(); }
 	const std::string& GetName() const { return m_Name; }
+	float GetDuration() const { return m_Duration; }
 };
 
 class ASPEN AnimationState

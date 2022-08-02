@@ -97,6 +97,7 @@ void Scene::PhysicsWorldStart()
 			if (collider->IsEnabled())
 			{
 				b2PolygonShape shape;
+				//m_PhysicsWorld->Shap
 
 			}
 		}
