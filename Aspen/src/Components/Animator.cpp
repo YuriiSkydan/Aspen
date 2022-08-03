@@ -23,8 +23,6 @@ void AnimationClip::Start()
 
 		m_FrameTime = m_Duration / m_Frames.size();
 		m_ElapsedTime = 0;
-
-		m_LastFrameTime = std::chrono::steady_clock::now();
 	}
 }
 

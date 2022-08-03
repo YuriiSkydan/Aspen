@@ -154,6 +154,19 @@ GameObject* Scene::GetObjectWithID(int ID)
 	return nullptr;
 }
 
+std::vector<GameObject*> Scene::GetObjectsWithTag(const Tag& tag)
+{
+	std::vector<GameObject*> objectsWithTag;
+
+	for (auto& object : m_GameObjects)
+	{
+		if (object->GetTag() == tag)
+			objectsWithTag.push_back(object.get());
+	}
+
+	return objectsWithTag;
+}
+
 void Scene::DestroyGameObject(GameObject* gameObject)
 {
 	for (auto it = m_GameObjects.begin(); it != m_GameObjects.end(); ++it)

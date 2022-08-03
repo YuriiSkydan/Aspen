@@ -20,8 +20,10 @@ private:
 	unsigned int m_SecondCollumnWidth;
 	unsigned int m_ItemWidth;
 
+	bool m_TagsAndLayersManager = false;
 private:
-	void DrawGameObjectProperties();
+	void RenderGameObject();
+	void RenderGameObjectProperties();
 	void RenderComponents();
 
 	template<typename... Components>
@@ -54,8 +56,8 @@ private:
 	void RenderComponent(PolygonCollider* polygonCollider);
 	void RenderComponent(Animator* animator);
 
-	void ImGuiAddComponentButton();
-
+	void RenderAddComponentButton();
+	void RenderTagsAndLayersManager();
 public:
 	Inspector(Ptr<GameObject>& gameObjectRef);
 	void ImGuiRender();

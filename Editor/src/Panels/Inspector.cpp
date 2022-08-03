@@ -12,24 +12,32 @@ void Inspector::ImGuiRender()
 {
 	ImGui::Begin("Inspector");
 
-	if (m_SelectedGameObject != nullptr)
+	if (m_TagsAndLayersManager)
 	{
-		DrawGameObjectProperties();
-		RenderComponents();
-		ImGuiAddComponentButton();
+		RenderTagsAndLayersManager();
+	}
+	else if (m_SelectedGameObject != nullptr)
+	{
+		RenderGameObject();
 	}
 
 	ImGui::End();
 }
 
-void Inspector::DrawGameObjectProperties()
+void Inspector::RenderGameObject()
+{
+	RenderGameObjectProperties();
+	RenderComponents();
+	RenderAddComponentButton();
+}
+
+void Inspector::RenderGameObjectProperties()
 {
 	bool active = m_SelectedGameObject->IsActive();
 	ImGui::Checkbox("##IsActive", &active);
 	m_SelectedGameObject->SetActive(active);
 
 	ImGui::SameLine();
-
 	ImGui::InputText("##", m_SelectedGameObject->m_Name, 20);
 
 	ImGui::Columns(2, "##Tags and Layers", false);
@@ -37,8 +45,23 @@ void Inspector::DrawGameObjectProperties()
 
 	ImGui::Text("Tag");
 	ImGui::SameLine();
-	if (ImGui::BeginCombo("##Tags", "Untagged"))
+
+	std::string tagName = m_SelectedGameObject->GetTag().GetName();
+	if (ImGui::BeginCombo("##Tags", tagName.c_str()))
 	{
+		for (auto& tag : Tag::GetTags())
+		{
+			if (ImGui::Selectable(tag.c_str()))
+			{
+				m_SelectedGameObject->SetTag(Tag(tag));
+			}
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Add Tag"))
+			m_TagsAndLayersManager = true;
+
 		ImGui::EndCombo();
 	}
 
@@ -440,7 +463,7 @@ void Inspector::RenderComponent(Animator* animator)
 	}
 }
 
-void Inspector::ImGuiAddComponentButton()
+void Inspector::RenderAddComponentButton()
 {
 	int center = ImGui::GetWindowSize().x / 2;
 	ImGui::SameLine(center - 100);
@@ -485,5 +508,46 @@ void Inspector::ImGuiAddComponentButton()
 		}
 
 		ImGui::EndPopup();
+	}
+}
+
+void Inspector::RenderTagsAndLayersManager()
+{
+	if (ImGui::Button("<  "))
+		m_TagsAndLayersManager = false;
+
+	if (ImGui::CollapsingHeader("Tags"))
+	{
+		auto RenderTag = [](std::string& tag)
+		{
+			ImGui::PushID(tag.c_str());
+
+			char inputBuffer[100];
+			strcpy_s(inputBuffer, 100, tag.c_str());
+			ImGui::InputText("##", inputBuffer, 100);
+			tag = inputBuffer;
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("-"))
+			{
+				std::cout << "Button is working!!!\n";
+				Tag::Remove(tag);
+			}
+
+			ImGui::PopID();
+		};
+
+		auto& tags = Tag::GetTags();
+
+		if (ImGui::Button("+"))
+		{
+			Tag::Add("Tag"s + std::to_string(tags.size()));
+		}
+
+		for (size_t i = 1; i < tags.size(); i++)
+		{
+			RenderTag(tags[i]);
+		}
 	}
 }

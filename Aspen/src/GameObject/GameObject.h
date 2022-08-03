@@ -5,6 +5,8 @@
 #include "../Components/PolygonCollider.h"
 #include "../Components/Animator.h"
 #include "../Components/Script.h"
+#include "Tag.h"
+#include "LayerMask.h"
 
 #include <string>
 #include <iostream>
@@ -21,6 +23,7 @@ private:
 	std::vector<std::unique_ptr<Component>> m_Components;
 	std::vector<Script*> m_Scripts;
 	Scene* m_Scene = nullptr;
+	Tag m_Tag;
 
 	char m_Name[20];
 	bool m_IsActive = true;
@@ -91,16 +94,22 @@ public:
 	template<typename T>
 	T* GetComponent() const;
 
+#pragma region Setters
 	void SetName(const std::string& name);
 	void SetActive(bool active);
+	void SetTag(const Tag& tag);
+#pragma endregion
 
+#pragma region Getters
 	const char* GetName() const { return m_Name; }
 	unsigned int GetID() const { return m_ID; }
+	const Tag& GetTag() const { return m_Tag; }
 	Scene* GetScene() const { return m_Scene; }
 	bool IsActive() const { return m_IsActive; }
 
 	const std::vector<std::unique_ptr<Component>>& GetComponents() const { return m_Components; }
 	const std::vector<Script*>& GetScripts() const { return m_Scripts; }
+#pragma endregion
 
 	~GameObject();
 };

@@ -73,12 +73,6 @@ public:
 	Scene(const Scene& other) = delete;
 	const Scene& operator=(const Scene& other) = delete;
 
-	GameObject* CreateGameObject();
-	GameObject* CreateGameObject(const std::string& name);
-	GameObject* GetObjectWithID(int ID);
-
-	void DestroyGameObject(GameObject* gameObject);
-
 	void Start();
 	void Stop();
 
@@ -92,16 +86,18 @@ public:
 	void Resize(unsigned int width, unsigned int height);
 
 	void Copy(const Scene& other);
+	
+	void DestroyGameObject(GameObject* gameObject);
+
+#pragma region Getters
+	GameObject* CreateGameObject();
+	GameObject* CreateGameObject(const std::string& name);
+	GameObject* GetObjectWithID(int ID);
+	std::vector<GameObject*> GetObjectsWithTag(const Tag& tag);
 
 	std::string GetName() const { return m_Name; }
 	unsigned int GetWidth() const { return m_Width; }
 	unsigned int GetHeight() const { return m_Height; }
-
-	template<typename T>
-	void OnComponentAdded(std::unique_ptr<T>& component);
-
-	template<typename T>
-	void OnComponentRemoved(std::unique_ptr<T>& component);
 
 	template<typename T>
 	std::vector<T*> GetObjectsWithComponent()
@@ -117,6 +113,13 @@ public:
 
 		return objectsComponent;
 	}
+#pragma endregion
+
+	template<typename T>
+	void OnComponentAdded(std::unique_ptr<T>& component);
+
+	template<typename T>
+	void OnComponentRemoved(std::unique_ptr<T>& component);
 
 	~Scene();
 };

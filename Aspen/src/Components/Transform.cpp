@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "../GameObject/GameObject.h"
 
 Transform::Transform(GameObject* gameObject)
 	: Component(gameObject, this)
@@ -63,6 +64,41 @@ void Transform::Rotate(float angle, Space relativeTo)
 	else
 	{
 		this->angle += angle;
+	}
+}
+
+void Transform::AddChild(GameObject* child)
+{
+	child->transform->SetParent(this);
+	m_Childs.push_back(child->transform);
+}
+
+void Transform::AddChild(Transform* child)
+{
+	std::cout << "Added child: " << child->gameObject->GetName() << std::endl;
+	child->SetParent(this);
+	m_Childs.push_back(child);
+}
+
+void Transform::SetParent(Transform* parent)
+{
+	if (m_Parent != parent)
+	{
+		if (m_Parent != nullptr)
+		{
+			m_Parent->m_Childs.erase(std::remove_if(m_Parent->m_Childs.begin(), m_Parent->m_Childs.end(),
+				[&](Transform* child)
+				{
+					return child == this;
+				}));
+		}
+
+		m_Parent = parent;
+
+		if (parent != nullptr)
+		{
+			parent->AddChild(this);
+		}
 	}
 }
 

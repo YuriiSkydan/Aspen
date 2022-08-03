@@ -80,6 +80,11 @@ void GameObject::SetActive(bool active)
 	}
 }
 
+void GameObject::SetTag(const Tag& tag)
+{
+	m_Tag = tag;
+}
+
 void GameObject::ComponentsAwake()
 {
 	for (auto& it : m_Components)

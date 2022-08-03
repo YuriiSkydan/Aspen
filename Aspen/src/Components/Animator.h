@@ -1,9 +1,7 @@
 #pragma once
 #include <unordered_map>
-#include <chrono>
 #include <list>
 
-#include "Component.h"
 #include "SpriteRenderer.h"
 
 class ASPEN AnimationClip
@@ -18,8 +16,6 @@ private:
 
 	float m_FrameTime;
 	float m_ElapsedTime;
-
-	std::chrono::high_resolution_clock::time_point m_LastFrameTime;
 	
 	friend class Animator;
 private:

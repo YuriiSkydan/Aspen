@@ -33,7 +33,7 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 	if (gameObject == m_SelectedGameObject)
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
-	if (gameObject->transform->child == nullptr)
+	if (gameObject->transform->GetChilds().size() == 0)
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 	bool nodeOpen = ImGui::TreeNodeEx(gameObject->GetName(), nodeFlags);
@@ -41,7 +41,6 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 	if (ImGui::BeginDragDropSource())
 	{
 		ImGui::SetDragDropPayload("HIERARCHY_PANEL_ITEM", gameObject, sizeof(GameObject));
-		std::cout << "Drag object name: " << gameObject->GetName() << std::endl;
 		ImGui::EndDragDropSource();
 	}
 
@@ -52,14 +51,13 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 			GameObject* dragObject = (GameObject*)payload->Data;
 			if (dragObject != gameObject)
 			{
-				if (dragObject->transform->parent == nullptr ||
-					dragObject->transform->parent->gameObject != gameObject)
+				if (dragObject->transform->GetParent() == nullptr ||
+					dragObject->transform->GetParent()->gameObject != gameObject)
 				{
-					if (dragObject->transform->parent != nullptr)
-						dragObject->transform->parent->child = nullptr;
+					//if (dragObject->transform->parent != nullptr)
+					//	dragObject->transform->parent->child = nullptr;
 
-					dragObject->transform->parent = gameObject->transform;
-					gameObject->transform->child = dragObject->transform;
+					dragObject->transform->SetParent(gameObject->transform);
 					ImGui::EndDragDropTarget();
 				}
 			}
@@ -91,11 +89,12 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 
 	if (nodeOpen && !(nodeFlags & ImGuiTreeNodeFlags_Leaf))
 	{
-		if (gameObject->transform->child != nullptr)
+		auto& childs = gameObject->transform->GetChilds();
+		for (auto& child : childs)
 		{
-			RenderGameObjectTreeNode(gameObject->transform->child->gameObject);
-			ImGui::TreePop();
+			RenderGameObjectTreeNode(child->gameObject);
 		}
+		ImGui::TreePop();
 	}
 }
 
@@ -151,8 +150,20 @@ void HierarchyPanel::ImGuiRender()
 	{
 		for (auto& object : m_Scene->m_GameObjects)
 		{
-			if (object->transform->parent == nullptr)
+			if (object->transform->GetParent() == nullptr)
 				RenderGameObjectTreeNode(object.get());
+		}
+
+		ImGui::Dummy(ImGui::GetWindowSize());
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PANEL_ITEM"))
+			{
+				GameObject* dragObject = (GameObject*)payload->Data;
+				dragObject->transform->SetParent(nullptr);
+				ImGui::EndDragDropTarget();
+			}
 		}
 	}
 
