@@ -4,6 +4,7 @@
 #include "../Components/SpriteRenderer.h"
 #include "../Components/PolygonCollider.h"
 #include "../Components/Animator.h"
+#include "../Components/AudioSource.h"
 #include "../Components/Script.h"
 #include "Tag.h"
 #include "LayerMask.h"
@@ -11,7 +12,9 @@
 #include <string>
 #include <iostream>
 
-#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator
+//class AudioSource;
+
+#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource
 
 class Scene;
 

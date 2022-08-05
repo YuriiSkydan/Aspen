@@ -17,6 +17,11 @@ public:
 	Vector2f scale;
 	float angle;
 
+	//Need to work on local properties
+	Vector2f localPosition;
+	Vector2f localScale;
+	float localAngle;
+
 public:
 	Transform(GameObject* gameObject);
 	Transform(GameObject* gameObject, Transform* transform);

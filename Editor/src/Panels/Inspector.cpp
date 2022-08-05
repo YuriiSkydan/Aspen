@@ -1,5 +1,7 @@
 #include "Inspector.h"
 #include "src/ScriptManager.h"
+#include "src/Components/AudioSource.h"
+#include "imgui/imgui_stdlib.h"
 
 using namespace std::string_literals;
 
@@ -394,21 +396,6 @@ void Inspector::RenderComponent(Animator* animator)
 
 	if (isOpen)
 	{
-		for (auto& animation : animator->m_AnimationClips)
-		{
-			if (ImGui::MenuItem(animation.GetName().c_str()))
-			{
-				m_ChoosenAnimation = &animation;
-				m_ChoosenAnimation->Start();
-			}
-
-			ImGui::SameLine();
-
-			float duration = animation.GetDuration();
-			ImGui::DragFloat(("##"s + animation.GetName()).c_str(), &duration, 0.01f, 0.0f);
-			animation.SetDuration(duration);
-		}
-
 		ImGui::Text("Add Animation");
 		ImGui::SameLine();
 		if (ImGui::Button("+"))
@@ -416,31 +403,68 @@ void Inspector::RenderComponent(Animator* animator)
 			animator->AddAnimation("Animation" + std::to_string(animator->m_AnimationClips.size()));
 		}
 
-		ImGui::Spacing();
-		ImGui::Text("Current Animation: ");
-		ImGui::SameLine();
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
-		if (m_ChoosenAnimation != nullptr)
+		ImGui::Text("Animation ");
+
+		if (m_ChoosenClip != nullptr)
 		{
-			//m_ChoosenAnimation->Update();
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Text("Name ");
+			ImGui::Spacing();
+			ImGui::Text("Duration ");
+		}
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+
+		std::string clipName = "None";
+		if (m_ChoosenClip != nullptr)
+			clipName = m_ChoosenClip->GetName();
+
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		if (ImGui::BeginCombo("##Animation", clipName.c_str()))
+		{
+			for (auto& clip : animator->m_AnimationClips)
+			{
+				if (ImGui::Selectable(clip.GetName().c_str()))
+					m_ChoosenClip = &clip;
+			}
+
+			ImGui::EndCombo();
+		}
+
+
+		if (m_ChoosenClip != nullptr)
+		{
+			//m_ChoosenClip->Update();
+
+			ImGui::Spacing();
+			ImGui::InputText("##ClipName", &clipName);
+
+			float duration = m_ChoosenClip->GetDuration();
+			if (ImGui::DragFloat("##Duration", &duration, 0.01f, 0.0f))
+				m_ChoosenClip->SetDuration(duration);
+
+			ImGui::Spacing();
 
 			float imageSize = m_ItemWidth;
 			if (m_ItemWidth > 128)
 				imageSize = 128;
 
-			ImGui::Text(m_ChoosenAnimation->GetName().c_str());
-
-			if (m_ChoosenAnimation->GetFramesAmount() == 0)
+			if (m_ChoosenClip->GetFramesAmount() == 0)
 			{
 				SpriteRenderer* renderer = m_SelectedGameObject->GetComponent<SpriteRenderer>();
 
 				if (renderer != nullptr)
 					ImGui::Image((ImTextureID)renderer->GetTexture()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
 			}
-			else if (m_ChoosenAnimation->GetFrame() != nullptr)
+			else if (m_ChoosenClip->GetFrame() != nullptr)
 			{
-				m_ChoosenAnimation->Update();
-				ImGui::Image((ImTextureID)m_ChoosenAnimation->GetFrame()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
+				m_ChoosenClip->Update();
+				ImGui::Image((ImTextureID)m_ChoosenClip->GetFrame()->GetID(), { float(imageSize), float(imageSize) }, { 0, 1 }, { 1, 0 });
 			}
 
 			if (ImGui::BeginDragDropTarget())
@@ -453,13 +477,25 @@ void Inspector::RenderComponent(Animator* animator)
 
 					std::wstring wPath = texturePath.c_str();
 					std::string sPath(wPath.begin(), wPath.end());
-					m_ChoosenAnimation->AddFrame(TextureLibrary::Get()->GetTexture(sPath));
-					m_ChoosenAnimation->Start();
+					m_ChoosenClip->AddFrame(TextureLibrary::Get()->GetTexture(sPath));
+					m_ChoosenClip->Start();
 
 					ImGui::EndDragDropTarget();
 				}
 			}
 		}
+
+		ImGui::Columns(1);
+	}
+}
+
+void Inspector::RenderComponent(AudioSource* audioSource)
+{
+	bool isOpen = RenderComponentHeader("Audio Source", audioSource, true);
+
+	if (isOpen)
+	{
+
 	}
 }
 
@@ -495,6 +531,9 @@ void Inspector::RenderAddComponentButton()
 		if (ImGui::MenuItem("Animator"))
 			m_SelectedGameObject->AddComponent<Animator>();
 
+		if (ImGui::MenuItem("Audio Source"))
+			m_SelectedGameObject->AddComponent<AudioSource>();
+
 		ImGui::Separator();
 
 		for (auto& it : ScriptManager::Get().GetScripts())
@@ -516,22 +555,25 @@ void Inspector::RenderTagsAndLayersManager()
 	if (ImGui::Button("<  "))
 		m_TagsAndLayersManager = false;
 
+#pragma region TagsManager
 	if (ImGui::CollapsingHeader("Tags"))
 	{
 		auto RenderTag = [](std::string& tag)
 		{
 			ImGui::PushID(tag.c_str());
 
-			char inputBuffer[100];
-			strcpy_s(inputBuffer, 100, tag.c_str());
-			ImGui::InputText("##", inputBuffer, 100);
-			tag = inputBuffer;
+			static std::string testString = "Test String";
+
+			std::string inputTag = tag;
+			ImGui::InputText("##", &inputTag);
+
+			if (ImGui::IsItemDeactivatedAfterEdit())
+				tag = inputTag;
 
 			ImGui::SameLine();
 
 			if (ImGui::Button("-"))
 			{
-				std::cout << "Button is working!!!\n";
 				Tag::Remove(tag);
 			}
 
@@ -550,4 +592,5 @@ void Inspector::RenderTagsAndLayersManager()
 			RenderTag(tags[i]);
 		}
 	}
+#pragma endregion
 }

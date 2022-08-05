@@ -184,7 +184,7 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
+	auto renderObjects = GetComponentsOfType<SpriteRenderer>();
 	std::sort(renderObjects.begin(), renderObjects.end(),
 		[](SpriteRenderer* a, SpriteRenderer* b)
 		{
@@ -387,7 +387,7 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		auto renderObjects = GetObjectsWithComponent<SpriteRenderer>();
+		auto renderObjects = GetComponentsOfType<SpriteRenderer>();
 
 		std::sort(renderObjects.begin(), renderObjects.end(),
 			[](SpriteRenderer* a, SpriteRenderer* b)

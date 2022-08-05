@@ -9,12 +9,14 @@
 
 #include "imgui/imgui.h"
 
+class AudioSource;
+
 class Inspector
 {
 private:
 	Ptr<GameObject>& m_SelectedGameObject;
 
-	AnimationClip* m_ChoosenAnimation = nullptr;
+	AnimationClip* m_ChoosenClip = nullptr;
 
 	unsigned int m_FirstCollumnWidth = 110;
 	unsigned int m_SecondCollumnWidth;
@@ -55,6 +57,7 @@ private:
 	void RenderComponent(CircleCollider* circleCollider);
 	void RenderComponent(PolygonCollider* polygonCollider);
 	void RenderComponent(Animator* animator);
+	void RenderComponent(AudioSource* audioSource);
 
 	void RenderAddComponentButton();
 	void RenderTagsAndLayersManager();

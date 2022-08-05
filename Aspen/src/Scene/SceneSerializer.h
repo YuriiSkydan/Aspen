@@ -33,6 +33,8 @@ private:
 	void SerializeComponent(json& out, PolygonCollider* collider) const;
 	//Also this function
 	void SerializeComponent(json& out, Animator* animator) const;
+	//Also this function
+	void SerializeComponent(json& out, AudioSource* audioSource) const;
 
 	void DeserializeScene(json& in);
 	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
@@ -47,6 +49,8 @@ private:
 	void DeserializeComponent(json& in, PolygonCollider* collider);
 	//Also this function
 	void DeserializeComponent(json& in, Animator* animator);
+	//Also this
+	void DeserializeComponent(json& in, AudioSource* audioSource);
 
 public:
 	SceneSerializer(std::shared_ptr<Scene> scene);

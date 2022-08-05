@@ -4,8 +4,7 @@
 
 SceneSerializer::SceneSerializer(std::shared_ptr<Scene> scene)
 	: m_Scene(scene)
-{
-}
+{ }
 
 #pragma region Serialization
 
@@ -132,6 +131,10 @@ void SceneSerializer::SerializeComponent(json& out, PolygonCollider* collider) c
 }
 
 void SceneSerializer::SerializeComponent(json& out, Animator* animator) const
+{
+}
+
+void SceneSerializer::SerializeComponent(json& out, AudioSource* audioSource) const
 {
 }
 
@@ -297,6 +300,10 @@ void SceneSerializer::DeserializeComponent(json& in, PolygonCollider* collider)
 }
 
 void SceneSerializer::DeserializeComponent(json& in, Animator* animator)
+{
+}
+
+void SceneSerializer::DeserializeComponent(json& in, AudioSource* audioSource)
 {
 }
 

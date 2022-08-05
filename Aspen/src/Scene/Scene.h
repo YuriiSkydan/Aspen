@@ -89,9 +89,10 @@ public:
 	
 	void DestroyGameObject(GameObject* gameObject);
 
-#pragma region Getters
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const std::string& name);
+
+#pragma region Getters
 	GameObject* GetObjectWithID(int ID);
 	std::vector<GameObject*> GetObjectsWithTag(const Tag& tag);
 
@@ -100,18 +101,31 @@ public:
 	unsigned int GetHeight() const { return m_Height; }
 
 	template<typename T>
-	std::vector<T*> GetObjectsWithComponent()
+	std::vector<T*> GetComponentsOfType() const
 	{
-		std::vector<T*> objectsComponent;
+		std::vector<T*> components;
 		for (auto& object : m_GameObjects)
 		{
 			T* component = object->GetComponent<T>();
 
 			if (component != nullptr)
-				objectsComponent.push_back(component);
+				components.push_back(component);
 		}
 
-		return objectsComponent;
+		return components;
+	}
+
+	template<typename T>
+	std::vector<GameObject*> GetObjectsWithComponent() const
+	{
+		std::vector<T*> objects;
+		for (auto& object : m_GameObjects)
+		{
+			if(object->HasComponent<T>())
+				objects.push_back(object.get());
+		}
+
+		return objects;
 	}
 #pragma endregion
 
@@ -235,4 +249,3 @@ bool Component::HasComponent()
 }
 
 #pragma endregion
-

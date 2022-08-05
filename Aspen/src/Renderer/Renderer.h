@@ -12,7 +12,7 @@ void ASPEN GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id
 
 void ASPEN ErrorCallback(int error, const char* message);
 
-class ASPEN Renderer
+class ASPEN Renderer 
 {
 private:
 	inline static VertexBuffer s_VertexBuffer;

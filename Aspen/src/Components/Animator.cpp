@@ -37,7 +37,8 @@ void AnimationClip::Update()
 		if (m_CurrentFrame == m_Frames.end())
 			m_CurrentFrame = m_Frames.begin();
 
-		m_SpriteRenderer->SetSprite(*m_CurrentFrame);
+		if (m_SpriteRenderer != nullptr)
+			m_SpriteRenderer->SetSprite(*m_CurrentFrame);
 	}
 }
 
@@ -62,7 +63,9 @@ void AnimationClip::SetName(const std::string& name)
 
 void Animator::AddAnimation(const std::string& name)
 {
+	SpriteRenderer* spriteRenderer = gameObject->GetComponent<SpriteRenderer>();
 	m_AnimationClips.push_back(AnimationClip(name));
+	m_AnimationClips.back().SetSpriteRenderer(spriteRenderer);
 	//temporarily
 	m_CurrentClip = m_AnimationClips.begin();
 }
@@ -89,13 +92,19 @@ Animator::Animator(GameObject* gameObject, Transform* transform)
 
 void Animator::Start()
 {
-	m_CurrentClip->SetSpriteRenderer(gameObject->GetComponent<SpriteRenderer>());
-	m_CurrentClip->Start();
+	if (m_AnimationClips.size() != 0)
+	{
+		m_CurrentClip->SetSpriteRenderer(gameObject->GetComponent<SpriteRenderer>());
+		m_CurrentClip->Start();
+	}
 }
 
 void Animator::Update()
 {
-	m_CurrentClip->Update();
+	if (m_AnimationClips.size() != 0)
+	{
+		m_CurrentClip->Update();
+	}
 }
 
 void Animator::SetBool(const std::string& name, bool value)
@@ -111,16 +120,17 @@ void Animator::SetBool(const std::string& name, bool value)
 
 void Animator::PlayAnimation(const std::string& name)
 {
-	auto animation = std::find_if(m_AnimationClips.begin(), m_AnimationClips.end(),
-		[&](const AnimationClip& clip)
-		{
-			if (clip.GetName() == name)
-				return true;
+	if (m_CurrentClip->GetName() != name)
+	{
+		auto animation = std::find_if(m_AnimationClips.begin(), m_AnimationClips.end(),
+			[&](const AnimationClip& clip)
+			{
+				return clip.GetName() == name;
+			});
 
-			return false;
-		});
-
-	m_CurrentClip = animation;
+		if (animation != m_AnimationClips.end())
+			m_CurrentClip = animation;
+	}
 }
 
 void Animator::SetFloat(const std::string& name, float value)
