@@ -129,6 +129,7 @@ void HierarchyPanel::ImGuiRender()
 		{
 			GameObject* gameObject = m_Scene->CreateGameObject();
 			gameObject->AddComponent<Camera>();
+			gameObject->AddComponent<AudioListener>();
 			gameObject->SetName("Camera");
 		}
 		if (ImGui::MenuItem("Rigidbody Square"))

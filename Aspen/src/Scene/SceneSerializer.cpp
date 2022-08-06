@@ -138,6 +138,10 @@ void SceneSerializer::SerializeComponent(json& out, AudioSource* audioSource) co
 {
 }
 
+void SceneSerializer::SerializeComponent(json& out, AudioListener* audioListener) const
+{
+}
+
 #pragma endregion
 
 #pragma region Deserialization
@@ -304,6 +308,10 @@ void SceneSerializer::DeserializeComponent(json& in, Animator* animator)
 }
 
 void SceneSerializer::DeserializeComponent(json& in, AudioSource* audioSource)
+{
+}
+
+void SceneSerializer::DeserializeComponent(json& in, AudioListener* audioListener)
 {
 }
 

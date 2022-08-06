@@ -21,3 +21,9 @@ void AudioSource::Update()
 		m_Sound->setPosition({ position.x, 0.0f, position.y });
 	}
 }
+
+AudioSource::~AudioSource()
+{
+	if (m_Sound != nullptr)
+		m_Sound->drop();
+}

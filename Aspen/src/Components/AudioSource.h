@@ -15,4 +15,6 @@ public:
 	void Update() override;
 
 	void SetFilepath();
+
+	~AudioSource();
 };

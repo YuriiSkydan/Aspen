@@ -8,7 +8,7 @@ void SoundEngine::SetListenerPosition(const Vector2f& position)
 {
 	if (m_Engine != nullptr)
 	{
-		m_Engine->setListenerPosition({ position.x, 0.0f, position.y }, { 0.0f, 1.0f, 0.0f });
+		m_Engine->setListenerPosition({ position.x, 0.0f, position.y }, { 0.0f, 0.0f, 1.0f });
 	}
 }
 
@@ -40,4 +40,12 @@ SoundEngine& SoundEngine::Get()
 	s_Instance = &soundEngine;
 
 	return *s_Instance;
+}
+
+SoundEngine::~SoundEngine()
+{
+	if (m_Engine != nullptr)
+	{
+		m_Engine->drop();
+	}
 }

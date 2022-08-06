@@ -5,6 +5,7 @@
 #include "../Components/PolygonCollider.h"
 #include "../Components/Animator.h"
 #include "../Components/AudioSource.h"
+#include "../Components/AudioListener.h"
 #include "../Components/Script.h"
 #include "Tag.h"
 #include "LayerMask.h"
@@ -13,8 +14,9 @@
 #include <iostream>
 
 //class AudioSource;
+//class AudioListener;
 
-#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource
+#define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
 
 class Scene;
 

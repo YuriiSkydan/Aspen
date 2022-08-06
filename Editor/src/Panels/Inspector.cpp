@@ -1,6 +1,5 @@
 #include "Inspector.h"
 #include "src/ScriptManager.h"
-#include "src/Components/AudioSource.h"
 #include "imgui/imgui_stdlib.h"
 
 using namespace std::string_literals;
@@ -492,6 +491,16 @@ void Inspector::RenderComponent(Animator* animator)
 void Inspector::RenderComponent(AudioSource* audioSource)
 {
 	bool isOpen = RenderComponentHeader("Audio Source", audioSource, true);
+
+	if (isOpen)
+	{
+
+	}
+}
+
+void Inspector::RenderComponent(AudioListener* audioListener)
+{
+	bool isOpen = RenderComponentHeader("Audio Listener", audioListener, true);
 
 	if (isOpen)
 	{

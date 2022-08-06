@@ -9,8 +9,6 @@
 
 #include "imgui/imgui.h"
 
-class AudioSource;
-
 class Inspector
 {
 private:
@@ -58,6 +56,7 @@ private:
 	void RenderComponent(PolygonCollider* polygonCollider);
 	void RenderComponent(Animator* animator);
 	void RenderComponent(AudioSource* audioSource);
+	void RenderComponent(AudioListener* audioListener);
 
 	void RenderAddComponentButton();
 	void RenderTagsAndLayersManager();
