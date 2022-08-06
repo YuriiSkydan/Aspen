@@ -45,8 +45,13 @@ void SceneSerializer::SerializeGameObject(json& out, const std::unique_ptr<GameO
 		{ "ID",  gameObject->m_ID },
 		{ "IsActive",  gameObject->m_IsActive }
 	};
-	
+
 	SerializeComponents<AllComponents>(out, gameObject);
+}
+
+void SceneSerializer::SerializeComponentProperties(json& out, Component* component) const
+{
+	out["IsEnabled"] = component->IsEnabled();
 }
 
 void SceneSerializer::SerializeComponent(json& out, Transform* transform) const
@@ -76,6 +81,8 @@ void SceneSerializer::SerializeComponent(json& out, SpriteRenderer* spriteRender
 		{ "Texture", spriteRenderer->GetTexture()->GetPath() },
 		{ "OrderInLayer", spriteRenderer->orderInLayer}
 	};
+
+	SerializeComponentProperties(out["SpriteRenderer"], spriteRenderer);
 }
 
 void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider) const
@@ -89,6 +96,8 @@ void SceneSerializer::SerializeComponent(json& out, BoxCollider* boxCollider) co
 		{ { "X", boxCollider->offset.x },
 		  { "Y", boxCollider->offset.y } }}
 	};
+
+	SerializeComponentProperties(out["BoxCollider"], boxCollider);
 }
 
 void SceneSerializer::SerializeComponent(json& out, CircleCollider* circleCollider) const
@@ -97,6 +106,8 @@ void SceneSerializer::SerializeComponent(json& out, CircleCollider* circleCollid
 	{
 		{ "Radius", circleCollider->radius }
 	};
+
+	SerializeComponentProperties(out["CircleCollider"], circleCollider);
 }
 
 void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody) const
@@ -124,6 +135,8 @@ void SceneSerializer::SerializeComponent(json& out, Camera* camera) const
 		  { "B", camera->backgroundColor.b},
 		  { "A", camera->backgroundColor.a} }}
 	};
+
+	SerializeComponentProperties(out["Camera"], camera);
 }
 
 void SceneSerializer::SerializeComponent(json& out, PolygonCollider* collider) const
@@ -136,10 +149,20 @@ void SceneSerializer::SerializeComponent(json& out, Animator* animator) const
 
 void SceneSerializer::SerializeComponent(json& out, AudioSource* audioSource) const
 {
+	out["AudioSource"] =
+	{
+		{ "Filename", audioSource->GetFilename() },
+		{ "MinDistance", audioSource->GetMinDistance()},
+		{ "MaxDistance", audioSource->GetMaxDistance()},
+		{ "IsLooped", audioSource->GetIsLooped()}
+	};
+
+	SerializeComponentProperties(out["AudioSource"], audioSource);
 }
 
 void SceneSerializer::SerializeComponent(json& out, AudioListener* audioListener) const
 {
+	SerializeComponentProperties(out["AudioListener"], audioListener);
 }
 
 #pragma endregion
@@ -224,7 +247,7 @@ void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject
 		CircleCollider* collider = gameObject->AddComponent<CircleCollider>();
 		DeserializeComponent(in["CircleCollider"], collider);
 	}
-	
+
 	if (in.find("Rigidbody") != in.end())
 	{
 		Rigidbody* rigidbody = gameObject->AddComponent<Rigidbody>();
@@ -236,6 +259,24 @@ void SceneSerializer::DeserializeGameObject(json& in, std::unique_ptr<GameObject
 		Camera* camera = gameObject->AddComponent<Camera>();
 		DeserializeComponent(in["Camera"], camera);
 	}
+
+	if (in.find("AudioSource") != in.end())
+	{
+		AudioSource* audioSource = gameObject->AddComponent<AudioSource>();
+		DeserializeComponent(in["AudioSource"], audioSource);
+	}
+
+	if (in.find("AudioListener") != in.end())
+	{
+		AudioListener* audioListener = gameObject->AddComponent<AudioListener>();
+		DeserializeComponent(in["AudioListener"], audioListener);
+	}
+}
+
+void SceneSerializer::DeserializeComponentProperties(json& in, Component* component)
+{
+	if (in.find("IsEnabled") != in.end())
+		component->SetEnabled(in["IsEnabled"]);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, Transform* transform)
@@ -260,6 +301,8 @@ void SceneSerializer::DeserializeComponent(json& in, SpriteRenderer* spriteRende
 	spriteRenderer->SetColor(color);
 	spriteRenderer->SetSprite(in["Texture"]);
 	spriteRenderer->orderInLayer = in["OrderInLayer"];
+
+	DeserializeComponentProperties(in, spriteRenderer);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, BoxCollider* collider)
@@ -269,11 +312,15 @@ void SceneSerializer::DeserializeComponent(json& in, BoxCollider* collider)
 
 	collider->offset.x = in["Offset"]["X"];
 	collider->offset.y = in["Offset"]["Y"];
+
+	DeserializeComponentProperties(in, collider);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, CircleCollider* collider)
 {
 	collider->radius = in["Radius"];
+
+	DeserializeComponentProperties(in, collider);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, Rigidbody* rigidbody)
@@ -297,6 +344,8 @@ void SceneSerializer::DeserializeComponent(json& in, Camera* camera)
 	color.b = in["Background color"]["B"];
 	color.a = in["Background color"]["A"];
 	camera->backgroundColor = color;
+
+	DeserializeComponentProperties(in, camera);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, PolygonCollider* collider)
@@ -309,10 +358,17 @@ void SceneSerializer::DeserializeComponent(json& in, Animator* animator)
 
 void SceneSerializer::DeserializeComponent(json& in, AudioSource* audioSource)
 {
+	audioSource->SetFilename(in["Filename"]);
+	audioSource->SetMinDistance(in["MinDistance"]);
+	audioSource->SetMinDistance(in["MaxDistance"]);
+	audioSource->SetLooped(in["IsLooped"]);
+
+	DeserializeComponentProperties(in, audioSource);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, AudioListener* audioListener)
 {
+	DeserializeComponentProperties(in, audioListener);
 }
 
 #pragma endregion

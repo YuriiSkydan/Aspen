@@ -22,6 +22,7 @@ private:
 			}(), ...);
 	}
 	void SerializeGameObject(json& out, const std::unique_ptr<GameObject>& gameObject) const;
+	void SerializeComponentProperties(json& out, Component* component) const;
 	void SerializeComponent(json& out, Transform* transform) const;
 	void SerializeComponent(json& out, SpriteRenderer* spriteRenderer) const;
 	void SerializeComponent(json& out, BoxCollider* collider) const;
@@ -33,13 +34,13 @@ private:
 	void SerializeComponent(json& out, PolygonCollider* collider) const;
 	//Also this function
 	void SerializeComponent(json& out, Animator* animator) const;
-	//Also this function
+
 	void SerializeComponent(json& out, AudioSource* audioSource) const;
-	//Also
 	void SerializeComponent(json& out, AudioListener* audioListener) const;
 
 	void DeserializeScene(json& in);
 	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
+	void DeserializeComponentProperties(json& in, Component* component);
 	void DeserializeComponent(json& in, Transform* transform);
 	void DeserializeComponent(json& in, SpriteRenderer* spriteRenderer);
 	void DeserializeComponent(json& in, BoxCollider* collider);
@@ -51,9 +52,8 @@ private:
 	void DeserializeComponent(json& in, PolygonCollider* collider);
 	//Also this function
 	void DeserializeComponent(json& in, Animator* animator);
-	//Also this
+
 	void DeserializeComponent(json& in, AudioSource* audioSource);
-	//Also
 	void DeserializeComponent(json& in, AudioListener* audioListener);
 
 public:

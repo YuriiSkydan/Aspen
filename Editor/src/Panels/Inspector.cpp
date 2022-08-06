@@ -44,6 +44,7 @@ void Inspector::RenderGameObjectProperties()
 	ImGui::Columns(2, "##Tags and Layers", false);
 	ImGui::SetColumnWidth(0, ImGui::GetWindowSize().x / 2.0f);
 
+	ImGui::Spacing();
 	ImGui::Text("Tag");
 	ImGui::SameLine();
 
@@ -69,6 +70,7 @@ void Inspector::RenderGameObjectProperties()
 	ImGui::NextColumn();
 	ImGui::SetColumnWidth(1, ImGui::GetWindowSize().x / 2.0f);
 
+	ImGui::Spacing();
 	ImGui::Text("Layer");
 	ImGui::SameLine();
 	if (ImGui::BeginCombo("##Layers", "Default"))
@@ -494,7 +496,34 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 
 	if (isOpen)
 	{
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
+		ImGui::Spacing();
+		ImGui::Text("Min Distance");
+		ImGui::Spacing();
+		ImGui::Text("Max Distance");
+		ImGui::Spacing();
+		ImGui::Text("Is Looped");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		float minDistance = audioSource->GetMinDistance();
+		if (ImGui::DragFloat("##MinDistance", &minDistance, 0.01f, 0.0f))
+			audioSource->SetMinDistance(minDistance);
+
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		float maxDistance = audioSource->GetMaxDistance();
+		if (ImGui::DragFloat("##MaxDistance", &maxDistance, 0.01f, 0.0f))
+			audioSource->SetMaxDistance(maxDistance);
+
+		bool isLooped = audioSource->GetIsLooped();
+		if (ImGui::Checkbox("##IsLooped", &isLooped))
+			audioSource->SetLooped(isLooped);
+
+		ImGui::Columns(1);
 	}
 }
 
@@ -569,10 +598,6 @@ void Inspector::RenderTagsAndLayersManager()
 	{
 		auto RenderTag = [](std::string& tag)
 		{
-			ImGui::PushID(tag.c_str());
-
-			static std::string testString = "Test String";
-
 			std::string inputTag = tag;
 			ImGui::InputText("##", &inputTag);
 
@@ -580,13 +605,8 @@ void Inspector::RenderTagsAndLayersManager()
 				tag = inputTag;
 
 			ImGui::SameLine();
-
 			if (ImGui::Button("-"))
-			{
 				Tag::Remove(tag);
-			}
-
-			ImGui::PopID();
 		};
 
 		auto& tags = Tag::GetTags();
@@ -598,7 +618,9 @@ void Inspector::RenderTagsAndLayersManager()
 
 		for (size_t i = 1; i < tags.size(); i++)
 		{
+			ImGui::PushID((tags[i] + std::to_string(i)).c_str());
 			RenderTag(tags[i]);
+			ImGui::PopID();
 		}
 	}
 #pragma endregion
