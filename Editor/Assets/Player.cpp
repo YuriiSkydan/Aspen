@@ -8,19 +8,16 @@
 class Player : public Script
 {
 private:
-	const int widthRange = -50;
-	
-	int currentXPos = -25;
-	int currentYPos = 25;
-
 	float m_Speed = 2.0f;
-	float m_JumpForce = 10.0f;
+	float m_JumpForce = 4.0f;
 
 	float m_MovingDirection = 0.0f;
 
 	Rigidbody* m_Rigidbody;
 	SpriteRenderer* m_SpriteRenderer;
 	Animator* m_Animator;
+
+	GameObject* m_Camera;
 public:
 
 	void Start() override
@@ -34,13 +31,11 @@ public:
 		if (m_SpriteRenderer == nullptr)
 			gameObject->AddComponent<SpriteRenderer>();
 
-		auto objects = gameObject->GetScene()->GetObjectsWithComponent<Transform>();
-		for(auto& obj : objects)
-			obj->
-
-		std::cout << "Getting animator component!!!\n";
 		m_Animator = GetComponent<Animator>();
-		std::cout << "Got animator component!!!\n";
+
+		auto objects = gameObject->GetScene()->GetObjectsWithComponent<Camera>();
+	
+		m_Camera = objects[0];
 	}
 
 	void Update() override
@@ -74,6 +69,9 @@ public:
 		m_MovingDirection = 0.0f;
 		//m_Animator->PlayAnimation("Animation0");
 
+		m_Camera->transform->position.x = transform->position.x;
+		m_Camera->transform->position.y = transform->position.y + 0.25;
+
 		if (Input::IsKeyPressed(Key::D))
 		{
 			//m_Animator->PlayAnimation("Animation1");
@@ -87,15 +85,15 @@ public:
 			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
 		}
-
-		if (Input::GetKeyDown(Key::Space))
-			std::cout << "Key Is Down!!!\n";
 	}
 
 	void FixedUpdate() override
 	{
-		if (Input::IsKeyPressed(Key::Space))
+		if (Input::IsKeyPressed(Key::Space) && m_Rigidbody->GetLinearVelocity().y == 0)
+		{
+			std::cout << "Jumping\n";
 			m_Rigidbody->AddForce(Vector2f(0.0f, m_JumpForce), ForceMode::Impulse);
+		}
 
 		Vector2f currentVelocity = m_Rigidbody->GetLinearVelocity();
 		currentVelocity.x = m_MovingDirection * m_Speed;

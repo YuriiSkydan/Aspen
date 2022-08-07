@@ -7,6 +7,7 @@
 #include "../Components/AudioSource.h"
 #include "../Components/AudioListener.h"
 #include "../Components/Script.h"
+#include "../Components/Rigidbody.h"
 #include "Tag.h"
 #include "LayerMask.h"
 

@@ -118,7 +118,7 @@ public:
 	template<typename T>
 	std::vector<GameObject*> GetObjectsWithComponent() const
 	{
-		std::vector<T*> objects;
+		std::vector<GameObject*> objects;
 		for (auto& object : m_GameObjects)
 		{
 			if(object->HasComponent<T>())

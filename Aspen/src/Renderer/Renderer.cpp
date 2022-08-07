@@ -1,6 +1,10 @@
 #include "Renderer.h"
-#include "../Components/Transform.h"
+
 #include "../GameObject/GameObject.h"
+#include "../Components/Transform.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Camera.h"
 
 void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam)
 {

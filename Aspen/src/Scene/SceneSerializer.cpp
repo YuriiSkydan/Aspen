@@ -117,9 +117,9 @@ void SceneSerializer::SerializeComponent(json& out, Rigidbody* rigidbody) const
 		{ "Mass", rigidbody->GetMass() },
 		{ "LinearDrag", rigidbody->GetLinearDrag() },
 		{ "AngularDrag", rigidbody->GetAngularDrag() },
-		{ "BodyType", int(rigidbody->type) },
-		{ "GravityScale", rigidbody->gravityScale },
-		{ "FixedRotation", rigidbody->fixedRotation }
+		{ "BodyType", int(rigidbody->GetBodyType()) },
+		{ "GravityScale", rigidbody->GetGravityScale()},
+		{ "FixedRotation", rigidbody->GetFixedRotation()}
 	};
 }
 
@@ -328,9 +328,9 @@ void SceneSerializer::DeserializeComponent(json& in, Rigidbody* rigidbody)
 	rigidbody->SetMass(in["Mass"]);
 	rigidbody->SetLinearDrag(in["LinearDrag"]);
 	rigidbody->SetAngularDrag(in["AngularDrag"]);
-	rigidbody->type = BodyType(in["BodyType"]);
-	rigidbody->gravityScale = in["GravityScale"];
-	rigidbody->fixedRotation = in["FixedRotation"];
+	rigidbody->SetBodyType(BodyType(in["BodyType"]));
+	rigidbody->SetGravityScale(in["GravityScale"]);
+	rigidbody->SetFixedRotation(in["FixedRotation"]);
 }
 
 void SceneSerializer::DeserializeComponent(json& in, Camera* camera)

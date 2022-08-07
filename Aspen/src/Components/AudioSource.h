@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "../SoundEngine.h"
+#include "../Sound/SoundEngine.h"
 
 class ASPEN AudioSource : public Component
 {

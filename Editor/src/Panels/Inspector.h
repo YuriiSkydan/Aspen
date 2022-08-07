@@ -22,6 +22,20 @@ private:
 
 	bool m_TagsAndLayersManager = false;
 private:
+	template<typename ComponentType>
+	void DragFloat(std::string_view id, ComponentType* component, float previewValue, void(ComponentType::*function)(float), float speed = 1.0f, float min = FLT_MIN, float max = FLT_MAX)
+	{
+		if (ImGui::DragFloat(id.data(), &previewValue, speed, min, max))
+			(component->*function)(previewValue);
+	}
+
+	template<typename ComponentType>
+	void Checkbox(std::string_view id, ComponentType* component, bool previewValue, void(ComponentType::* function)(bool value))
+	{
+		if (ImGui::Checkbox(id.data(), &previewValue))
+			(component->*function)(previewValue);
+	}
+
 	void RenderGameObject();
 	void RenderGameObjectProperties();
 	void RenderComponents();

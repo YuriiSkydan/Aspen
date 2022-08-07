@@ -1,6 +1,6 @@
 #include "AudioListener.h"
 #include "Transform.h"
-#include "../SoundEngine.h"
+#include "../Sound/SoundEngine.h"
 
 AudioListener::AudioListener(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)

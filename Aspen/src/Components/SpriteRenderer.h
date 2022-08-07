@@ -1,12 +1,7 @@
 #pragma once
-#include <algorithm>
-
 #include "Component.h"
-#include "../Renderer/IndexBuffer.h"
-#include "../Renderer/VertexBuffer.h"
 #include "../Renderer/Texture.h"
 #include "../Renderer/Shader.h"
-//#include "../src/GameObject/GameObject.h"
 
 struct ASPEN Color
 {

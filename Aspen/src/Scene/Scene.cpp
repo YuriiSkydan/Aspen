@@ -26,15 +26,16 @@ void Scene::PhysicsWorldStart()
 
 			if (rigidbody->IsEnabled())
 			{
-				bodyDef.type = b2BodyType(rigidbody->type);
-				bodyDef.gravityScale = rigidbody->gravityScale;
-				bodyDef.fixedRotation = rigidbody->fixedRotation;
+				bodyDef.type = b2BodyType(rigidbody->GetBodyType());
+				bodyDef.gravityScale = rigidbody->GetGravityScale();
+				bodyDef.fixedRotation = rigidbody->GetFixedRotation();
 				bodyDef.linearDamping = rigidbody->GetLinearDrag();
 				bodyDef.angularDamping = rigidbody->GetAngularDrag();
 
 				//	bodyDef.allowSleep = false;
 
 				body = m_PhysicsWorld->CreateBody(&bodyDef);
+
 				rigidbody->SetBody(body);
 			}
 		}
@@ -99,6 +100,21 @@ void Scene::PhysicsWorldStart()
 				b2PolygonShape shape;
 				//m_PhysicsWorld->Shap
 
+			}
+		}
+
+		if (body != nullptr)
+		{
+			if (object->HasComponent<Rigidbody>())
+			{
+				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
+
+				b2MassData massData;
+				massData.mass = rigidbody->GetMass();
+				massData.center = { 0.0f, 0.0f };
+				massData.I = 0.0f;
+
+				body->SetMassData(&massData);
 			}
 		}
 	}

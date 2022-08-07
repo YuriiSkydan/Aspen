@@ -159,6 +159,6 @@ void GameObject::AddScript(Script* script)
 
 GameObject::~GameObject()
 {
-	s_Objects--;
+	//s_Objects--;
 	std::cout << "GameObject destructor!!!\n";
 }

@@ -149,10 +149,11 @@ void HierarchyPanel::ImGuiRender()
 
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
 	{
-		for (auto& object : m_Scene->m_GameObjects)
+		auto& objects = m_Scene->m_GameObjects;
+		for (size_t i = 0; i < objects.size();i++)
 		{
-			if (object->transform->GetParent() == nullptr)
-				RenderGameObjectTreeNode(object.get());
+			if (objects[i]->transform->GetParent() == nullptr)
+				RenderGameObjectTreeNode(objects[i].get());
 		}
 
 		ImGui::Dummy(ImGui::GetWindowSize());

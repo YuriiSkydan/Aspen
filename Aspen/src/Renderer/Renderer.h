@@ -2,11 +2,16 @@
 #include <iostream>
 
 #include "glad/glad.h"
+#include "IndexBuffer.h"
+#include "VertexBuffer.h"
+#include "Shader.h"
 #include "../Core/Core.h"
-#include "../Components/SpriteRenderer.h"
-#include "../Components/Camera.h"
-#include "../Components/BoxCollider.h"
-#include "../Components/CircleCollider.h"
+
+class Transform;
+class SpriteRenderer;
+class Camera;
+class CircleCollider;
+class BoxCollider;
 
 void ASPEN GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam);
 

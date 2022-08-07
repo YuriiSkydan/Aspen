@@ -1,8 +1,12 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 #include <list>
 
-#include "SpriteRenderer.h"
+#include "Component.h"
+#include "../Renderer/Texture.h"
+
+class SpriteRenderer;
 
 class ASPEN AnimationClip
 {

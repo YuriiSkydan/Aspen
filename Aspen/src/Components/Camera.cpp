@@ -3,8 +3,7 @@
 
 Camera::Camera(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
-{
-}
+{ }
 
 void Camera::SetRatio(float aspectRation)
 {

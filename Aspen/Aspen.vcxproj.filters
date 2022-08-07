@@ -174,7 +174,7 @@
     <ClCompile Include="src\Components\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SoundEngine.cpp">
+    <ClCompile Include="src\Sound\SoundEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -383,7 +383,7 @@
     <ClInclude Include="src\Components\AudioSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundEngine.h">
+    <ClInclude Include="src\Sound\SoundEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

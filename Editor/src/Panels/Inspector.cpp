@@ -158,9 +158,9 @@ void Inspector::RenderComponent(Transform* transform)
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat2("##Position ", (float*)&transform->position, 0.02f);
+		ImGui::DragFloat2("##Position ", (float*)&transform->position, 0.01f);
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##Rotation", &transform->angle, 0.02f);
+		ImGui::DragFloat("##Rotation", &transform->angle, 0.01f);
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat2("##Scale  ", (float*)&transform->scale.x, 0.01f);
 
@@ -280,9 +280,9 @@ void Inspector::RenderComponent(Rigidbody* rigidbody)
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		std::string bodyTypeStr;
-		if (rigidbody->type == BodyType(b2_dynamicBody))
+		if (rigidbody->GetBodyType() == BodyType(b2_dynamicBody))
 			bodyTypeStr = "Dynamic";
-		else if (rigidbody->type == BodyType(b2_staticBody))
+		else if (rigidbody->GetBodyType() == BodyType(b2_staticBody))
 			bodyTypeStr = "Static";
 		else
 			bodyTypeStr = "Kinematic";
@@ -291,30 +291,37 @@ void Inspector::RenderComponent(Rigidbody* rigidbody)
 		if (ImGui::BeginCombo("##BodyType", bodyTypeStr.c_str()))
 		{
 			if (ImGui::Selectable("Dynamic"))
-				rigidbody->type = BodyType(b2_dynamicBody);
+				rigidbody->SetBodyType(BodyType(b2_dynamicBody));
 			if (ImGui::Selectable("Static"))
-				rigidbody->type = BodyType(b2_staticBody);
+				rigidbody->SetBodyType(BodyType(b2_staticBody));
 			if (ImGui::Selectable("Kinematic"))
-				rigidbody->type = BodyType(b2_kinematicBody);
+				rigidbody->SetBodyType(BodyType(b2_kinematicBody));
 
 			ImGui::EndCombo();
 		}
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##Mass", &rigidbody->m_Mass, 0.01f);
+		DragFloat("##Mass", rigidbody, rigidbody->GetMass(),
+			&Rigidbody::SetMass, 0.01f, 0.0f);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##GravityScale", &rigidbody->gravityScale, 0.01f);
+		DragFloat("##GravityScale", rigidbody, rigidbody->GetGravityScale(),
+			&Rigidbody::SetGravityScale, 0.01f);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##LinearDrag", &rigidbody->m_LinearDrag, 0.01f);
+		DragFloat("##LinearDrag", rigidbody, rigidbody->GetLinearDrag(),
+			&Rigidbody::SetLinearDrag, 0.01f);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##AngularDrag", &rigidbody->m_AngularDrag, 0.01f);
+		DragFloat("##AngularDrag", rigidbody, rigidbody->GetAngularDrag(),
+			&Rigidbody::SetAngularDrag, 0.01f);
 
 		ImGui::Spacing();
 		ImGui::Spacing();
-		ImGui::Checkbox("##FixedRotation", &rigidbody->fixedRotation);
+
+		Checkbox("##FixedRotation", rigidbody, rigidbody->GetFixedRotation(),
+			&Rigidbody::SetFixedRotation);
+
 		ImGui::Columns(1);
 	}
 }
@@ -449,6 +456,9 @@ void Inspector::RenderComponent(Animator* animator)
 			if (ImGui::DragFloat("##Duration", &duration, 0.01f, 0.0f))
 				m_ChoosenClip->SetDuration(duration);
 
+			DragFloat("##Duration", m_ChoosenClip, m_ChoosenClip->GetDuration(),
+				&AnimationClip::SetDuration);
+
 			ImGui::Spacing();
 
 			float imageSize = m_ItemWidth;
@@ -510,18 +520,15 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		float minDistance = audioSource->GetMinDistance();
-		if (ImGui::DragFloat("##MinDistance", &minDistance, 0.01f, 0.0f))
-			audioSource->SetMinDistance(minDistance);
+		DragFloat("##MinDistance", audioSource, audioSource->GetMinDistance(),
+			&AudioSource::SetMinDistance, 0.01f, 0.0f);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		float maxDistance = audioSource->GetMaxDistance();
-		if (ImGui::DragFloat("##MaxDistance", &maxDistance, 0.01f, 0.0f))
-			audioSource->SetMaxDistance(maxDistance);
+		DragFloat("##MaxDistance", audioSource, audioSource->GetMaxDistance(),
+			&AudioSource::SetMaxDistance, 0.01f, 0.0f);
 
-		bool isLooped = audioSource->GetIsLooped();
-		if (ImGui::Checkbox("##IsLooped", &isLooped))
-			audioSource->SetLooped(isLooped);
+		Checkbox("##IsLooped", audioSource, audioSource->GetIsLooped(),
+			&AudioSource::SetLooped);
 
 		ImGui::Columns(1);
 	}

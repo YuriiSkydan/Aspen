@@ -1,5 +1,4 @@
 #pragma once
-#include "Component.h"
 #include "Trigger.h"
 #include "Collision.h"
 
@@ -18,8 +17,7 @@ private:
 
 public:
 	Script() : Component(nullptr, nullptr)
-	{ 
-	}
+	{ }
 	Script(GameObject* gameObject, Transform* transform);
 
 	virtual	void OnCollisionEnter(Collision* collision) {}
