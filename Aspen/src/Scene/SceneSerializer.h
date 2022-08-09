@@ -8,54 +8,6 @@ class ASPEN SceneSerializer
 private:
 	std::shared_ptr<Scene> m_Scene;
 
-private:
-	template<typename... Components>
-	void SerializeComponents(json& out, const std::unique_ptr<GameObject>& gameObject) const
-	{
-		([&]()
-			{
-				if (gameObject->HasComponent<Components>())
-				{
-					Components* component = gameObject->GetComponent<Components>();
-					SerializeComponent(out, component);
-				}
-			}(), ...);
-	}
-	void SerializeGameObject(json& out, const std::unique_ptr<GameObject>& gameObject) const;
-	void SerializeComponentProperties(json& out, Component* component) const;
-	void SerializeComponent(json& out, Transform* transform) const;
-	void SerializeComponent(json& out, SpriteRenderer* spriteRenderer) const;
-	void SerializeComponent(json& out, BoxCollider* collider) const;
-	void SerializeComponent(json& out, CircleCollider* collider) const;
-	void SerializeComponent(json& out, Rigidbody* rigidbody) const;
-	void SerializeComponent(json& out, Camera* camera) const;
-
-	//Need to finish this function
-	void SerializeComponent(json& out, PolygonCollider* collider) const;
-	//Also this function
-	void SerializeComponent(json& out, Animator* animator) const;
-
-	void SerializeComponent(json& out, AudioSource* audioSource) const;
-	void SerializeComponent(json& out, AudioListener* audioListener) const;
-
-	void DeserializeScene(json& in);
-	void DeserializeGameObject(json& in, std::unique_ptr<GameObject>& gameObject);
-	void DeserializeComponentProperties(json& in, Component* component);
-	void DeserializeComponent(json& in, Transform* transform);
-	void DeserializeComponent(json& in, SpriteRenderer* spriteRenderer);
-	void DeserializeComponent(json& in, BoxCollider* collider);
-	void DeserializeComponent(json& in, CircleCollider* collider);
-	void DeserializeComponent(json& in, Rigidbody* rigidbody);
-	void DeserializeComponent(json& in, Camera* camera);
-
-	//Need to finish this function
-	void DeserializeComponent(json& in, PolygonCollider* collider);
-	//Also this function
-	void DeserializeComponent(json& in, Animator* animator);
-
-	void DeserializeComponent(json& in, AudioSource* audioSource);
-	void DeserializeComponent(json& in, AudioListener* audioListener);
-
 public:
 	SceneSerializer(std::shared_ptr<Scene> scene);
 

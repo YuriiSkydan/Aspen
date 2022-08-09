@@ -32,6 +32,8 @@ public:
 	void Update();
 
 	void AddFrame(const std::shared_ptr<Texture>& texture);
+	void AddFrame(std::string_view path);
+
 	void SetDuration(float duration);
 	void SetName(const std::string& name);
 
@@ -51,14 +53,16 @@ private:
 class ASPEN Animator : public Component
 {
 private:
-	std::list<AnimationClip> m_AnimationClips;
-	std::list<AnimationClip>::iterator m_CurrentClip;
+	std::vector<AnimationClip> m_AnimationClips;
+	std::vector<AnimationClip>::iterator m_CurrentClip;
 
 	std::unordered_map<std::string, bool> m_BoolParameters;
 	std::unordered_map<std::string, float> m_FloatParameters;
 	std::unordered_map<std::string, int> m_IntParameters;
 	//std::unordered_map<std::string> m_TriggerParameters;
+
 	friend class Inspector;
+	friend class SceneSerializer;
 private:
 	void AddFrameToAnimation(const Texture& newFrame);
 	void AddAnimation(const std::string& name);

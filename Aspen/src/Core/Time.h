@@ -14,7 +14,6 @@ private:
 	friend class Engine;
 private:
 	static void FrameStart();
-	static void FrameEnd();
 
 public:
 	static double DeltaTime() { return m_DeltaTime; }

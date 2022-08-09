@@ -55,4 +55,7 @@ public:
 	bool GetFixedRotation() const { return m_FixedRotation; }
 	BodyType GetBodyType() const { return m_Type; }
 #pragma endregion
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };

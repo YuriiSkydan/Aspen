@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_set>
+#include <unordered_map>
 
 #include "../Engine/Window.h"
 #include "../Math/Vector2.h"
@@ -9,8 +9,7 @@
 class ASPEN Input
 {
 private:
-	inline static std::unordered_set<KeyCode> s_PreviousFramePressed;
-	inline static std::unordered_set<KeyCode> s_ThisFramePressed;
+	inline static std::unordered_map<KeyCode, int> s_KeyPressed;
 
 	friend class Engine;
 private:

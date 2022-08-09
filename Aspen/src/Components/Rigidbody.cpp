@@ -157,3 +157,26 @@ void Rigidbody::SetBody(b2Body* body)
 {
 	m_Body = body;
 }
+
+void Rigidbody::Serialize(json& out) const
+{
+	out["Rigidbody"] =
+	{
+		{ "Mass", m_Mass },
+		{ "LinearDrag", m_LinearDrag },
+		{ "AngularDrag", m_AngularDrag },
+		{ "BodyType", int(m_Type) },
+		{ "GravityScale", m_GravityScale},
+		{ "FixedRotation", m_FixedRotation }
+	};
+}
+
+void Rigidbody::Deserialize(json& in)
+{
+	SetMass(in["Mass"]);
+	SetLinearDrag(in["LinearDrag"]);
+	SetAngularDrag(in["AngularDrag"]);
+	SetBodyType(BodyType(in["BodyType"]));
+	SetGravityScale(in["GravityScale"]);
+	SetFixedRotation(in["FixedRotation"]);
+}

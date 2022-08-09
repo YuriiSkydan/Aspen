@@ -58,6 +58,29 @@ void AudioSource::SetLooped(bool value)
 		m_Sound->setIsLooped(m_IsLooped);
 }
 
+void AudioSource::Serialize(json& out) const
+{
+	Component::Serialize(out["AudioSource"]);
+
+	out["AudioSource"] =
+	{
+		{ "Filename",  GetFilename() },
+		{ "MinDistance",  GetMinDistance()},
+		{ "MaxDistance",  GetMaxDistance()},
+		{ "IsLooped",  GetIsLooped()}
+	};
+}
+
+void AudioSource::Deserialize(json& in)
+{
+	Component::Deserialize(in);
+
+	SetFilename(in["Filename"]);
+	SetMinDistance(in["MinDistance"]);
+	SetMinDistance(in["MaxDistance"]);
+	SetLooped(in["IsLooped"]);
+}
+
 AudioSource::~AudioSource()
 {
 	if (m_Sound != nullptr)

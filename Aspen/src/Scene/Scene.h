@@ -135,6 +135,9 @@ public:
 	template<typename T>
 	void OnComponentRemoved(std::unique_ptr<T>& component);
 
+	void Serialize() const;
+	void Deserialize(json& in);
+
 	~Scene();
 };
 
@@ -237,13 +240,13 @@ T* GameObject::GetComponent() const
 #pragma region Component 
 
 template<typename T>
-T* Component::GetComponent()
+T* Component::GetComponent() const
 {
 	return gameObject->GetComponent<T>();
 }
 
 template<typename T>
-bool Component::HasComponent()
+bool Component::HasComponent() const
 {
 	return gameObject->HasComponent<T>();
 }

@@ -47,6 +47,13 @@ void AnimationClip::AddFrame(const std::shared_ptr<Texture>& texture)
 	m_Frames.push_back(texture);
 }
 
+void AnimationClip::AddFrame(std::string_view path)
+{
+	std::shared_ptr<Texture> newFrame;
+	TextureLibrary::Get()->GetTexture(path.data(), newFrame);
+	m_Frames.push_back(newFrame);
+}
+
 void AnimationClip::SetDuration(float duration)
 {
 	if (duration < 0)

@@ -84,7 +84,8 @@ void ProjectPanel::ImGuiRender()
 				{
 					std::wstring wPath = file.path();
 					std::string path(wPath.begin(), wPath.end());
-					icon = TextureLibrary::Get()->GetTexture(path).get();
+					//m_FilesIcons.push_back(TextureLibrary::Get()->GetTexture(path));
+					icon = m_FilesIcons.back().get();
 				}
 				else
 				{
@@ -116,8 +117,6 @@ void ProjectPanel::ImGuiRender()
 			ImGui::NextColumn();
 
 			ImGui::PopID();
-
-			m_FilesIcons.push_back(icon);
 		}
 		ImGui::Columns(1);
 	}

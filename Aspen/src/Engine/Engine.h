@@ -11,9 +11,6 @@
 class ASPEN Engine
 {
 private:
-	std::unique_ptr<TextureLibrary> m_TextureLibrary;
-	//std::unique_ptr<ShaderLibrary> m_ShaderLibrary;
-
 	std::unique_ptr<Window> m_Window;
 	std::unique_ptr<Layer> m_Editor;
 
@@ -50,7 +47,6 @@ private:
 		}
 
 		io.Fonts->AddFontFromFileTTF("Fonts/Montserrat-Bold.ttf", 15);
-
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Get().GetWindow().GetNativeWindow(), true);
 		ImGui_ImplOpenGL3_Init("#version 410");

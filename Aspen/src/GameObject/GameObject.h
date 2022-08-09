@@ -42,6 +42,8 @@ public:
 	Transform* transform;
 
 private:
+
+#pragma region ComponentsUpdates
 	void ComponentsAwake();
 	void ComponentsStart();
 	void ComponentsUpdate();
@@ -49,6 +51,7 @@ private:
 	void ComponentsLateUpdate();
 	void ComponentsEnable();
 	void ComponentsDisable();
+#pragma endregion
 
 	void AddScript(Script* script);
 
@@ -74,6 +77,7 @@ public:
 	GameObject(const GameObject& other) = delete;
 	const GameObject& operator=(const GameObject& other) = delete;
 
+#pragma region ComponentMethods
 	//In Scene.h
 	template<typename T>
 	T* AddComponent();
@@ -99,6 +103,7 @@ public:
 
 	template<typename T>
 	T* GetComponent() const;
+#pragma endregion
 
 #pragma region Setters
 	void SetName(const std::string& name);
@@ -116,6 +121,9 @@ public:
 	const std::vector<std::unique_ptr<Component>>& GetComponents() const { return m_Components; }
 	const std::vector<Script*>& GetScripts() const { return m_Scripts; }
 #pragma endregion
+
+	void Serialize(json& out) const;
+	void Deserialize(json& in);
 
 	~GameObject();
 };

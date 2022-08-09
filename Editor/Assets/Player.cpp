@@ -85,6 +85,9 @@ public:
 			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
 		}
+
+		if (Input::GetKeyDown(Key::Space))
+			std::cout << "Key is down!!!\n";
 	}
 
 	void FixedUpdate() override

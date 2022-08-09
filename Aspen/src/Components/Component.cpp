@@ -2,8 +2,7 @@
 
 Component::Component(GameObject* gameObject, Transform* transform)
 	: gameObject(gameObject), transform(transform)
-{
-}
+{ }
 
 const Component& Component::operator=(const Component& other)
 {
@@ -33,4 +32,15 @@ bool Component::operator==(const Component& other)
 bool Component::operator!=(const Component& other)
 {
 	return ((transform != other.transform) && (gameObject != other.gameObject));
+}
+
+void Component::Serialize(json& out) const
+{
+	out["IsEnabled"] = m_IsEnabled;
+}
+
+void Component::Deserialize(json& in)
+{
+	if (in.find("IsEnabled") != in.end())
+		SetEnabled(in["IsEnabled"]);
 }

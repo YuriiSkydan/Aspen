@@ -22,7 +22,6 @@ private:
 	std::shared_ptr<Shader> m_Shader;
 	Color m_Color;
 
-	friend class Inspector;
 public:
 	bool flipX = false;
 	bool flipY = false;
@@ -40,4 +39,7 @@ public:
 	const Color& GetColor() const { return m_Color; }
 	const std::shared_ptr<Texture>& GetTexture() const { return m_Sprite; }
 	const std::shared_ptr<Shader>& GetShader() { return m_Shader; }
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };

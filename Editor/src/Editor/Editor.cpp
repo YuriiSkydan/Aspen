@@ -173,8 +173,8 @@ void Editor::SceneWindow()
 			std::string objectName = sPath.substr(startPos, endPos);
 			GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
 			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
-			spriteRenderer->SetSprite(TextureLibrary::Get()->GetTexture(sPath));
-
+			spriteRenderer->SetSprite(sPath);
+			
 			gameObject->transform->position = m_EditorCamera.GetPosition();
 
 			m_SelectedObject = gameObject;
@@ -251,9 +251,23 @@ void Editor::OpenScene()
 	if (m_SceneState != SceneState::PLAY)
 	{
 		auto newScene = std::make_shared<Scene>();
-		SceneSerializer serializer(newScene);
 
-		serializer.Deserialize();
+		using namespace nlohmann;
+		std::ifstream fileStream(newScene->GetName() + ".scene", std::ofstream::binary);
+
+		if (!fileStream.is_open())
+		{
+			ERROR("Failed to open the file!!!");
+			return;
+		}
+
+		json in;
+		fileStream >> in;
+
+		newScene->Deserialize(in);
+
+		fileStream.close();
+
 		if (newScene != nullptr)
 		{
 			m_EditorScene = newScene;
@@ -273,8 +287,7 @@ void Editor::SaveScene()
 {
 	if (m_SceneState != SceneState::PLAY)
 	{
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.Serialize();
+		m_ActiveScene->Serialize();
 	}
 	else
 	{
@@ -351,7 +364,6 @@ void Editor::UpdateGuizmo()
 		glm::mat4 CameraView = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		CameraView = glm::translate(CameraView, glm::vec3(-cameraPos.x * XAxis, -cameraPos.y * YAxis, 0.0f));
 
-
 		ImGuizmo::SetLineThickness(6.3f);
 
 		ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(Projection),
@@ -360,8 +372,8 @@ void Editor::UpdateGuizmo()
 		transform->position.x = objectTransform[3][0];
 		transform->position.y = objectTransform[3][1];
 
-		transform->scale.x = objectTransform[0][0];
-		transform->scale.y = objectTransform[1][1];
+		transform->scale.x = Vector2f(objectTransform[0][0], objectTransform[1][0]).Magnitude();
+		transform->scale.y = Vector2f(objectTransform[1][0], objectTransform[1][1]).Magnitude();
 
 		transform->angle -= ToDegrees(asin(objectTransform[0][1]));
 	}

@@ -157,6 +157,70 @@ void GameObject::AddScript(Script* script)
 	m_Scripts.push_back(script);
 }
 
+void GameObject::Serialize(json& out) const
+{
+	out =
+	{
+		{ "Name",  m_Name },
+		{ "ID", m_ID },
+		{ "IsActive", m_IsActive }
+	};
+
+	for (auto& component : m_Components)
+		component->Serialize(out);
+}
+
+void GameObject::Deserialize(json& in)
+{
+	strcpy_s(m_Name, 20, std::string(in["Name"]).c_str());
+	m_ID = in["ID"];
+	m_IsActive = in["IsActive"];
+
+	transform->Deserialize(in["Transform"]);
+	
+	if (in.find("SpriteRenderer") != in.end())
+	{
+		SpriteRenderer* spriteRenderer = AddComponent<SpriteRenderer>();
+		spriteRenderer->Deserialize(in["SpriteRenderer"]);
+	}
+
+	if (in.find("BoxCollider") != in.end())
+	{
+		BoxCollider* collider = AddComponent<BoxCollider>();
+		collider->Deserialize(in["BoxCollider"]);
+	}
+
+	if (in.find("CircleCollider") != in.end())
+	{
+		CircleCollider* collider = AddComponent<CircleCollider>();
+		collider->Deserialize(in["CircleCollider"]);
+	}
+
+	if (in.find("Rigidbody") != in.end())
+	{
+		Rigidbody* rigidbody = AddComponent<Rigidbody>();
+		rigidbody->Deserialize(in["Rigidbody"]);
+	}
+
+	if (in.find("Camera") != in.end())
+	{
+		Camera* camera = AddComponent<Camera>();
+		camera->Deserialize(in["Camera"]);
+	}
+
+	if (in.find("AudioSource") != in.end())
+	{
+		AudioSource* audioSource = AddComponent<AudioSource>();
+		audioSource->Deserialize(in["AudioSource"]);
+	}
+
+	if (in.find("AudioListener") != in.end())
+	{
+		AudioListener* audioListener = AddComponent<AudioListener>();
+		audioListener->Deserialize(in["AudioListener"]);
+	}
+}
+
 GameObject::~GameObject()
 {
 	//s_Objects--;

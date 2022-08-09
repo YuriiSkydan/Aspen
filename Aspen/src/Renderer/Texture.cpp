@@ -36,16 +36,16 @@ Texture::Texture(std::string_view path)
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
-	/*	glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
-		glTextureStorage2D(m_ID, 1, internalFormat, m_Width, m_Height);
+		/*	glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
+			glTextureStorage2D(m_ID, 1, internalFormat, m_Width, m_Height);
 
-		glTextureParameteri(m_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(m_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(m_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTextureParameteri(m_ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTextureParameteri(m_ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(m_ID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);*/
+			glTextureSubImage2D(m_ID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);*/
 
 		stbi_image_free(data);
 	}
@@ -67,25 +67,36 @@ void Texture::UnBind() const
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_ID);
-}
+	//Think it's not a good practive but I haven't came up with something better
+	if (TextureLibrary::Get() != nullptr)
+		TextureLibrary::Get()->Erase(m_Path);
 
-TextureLibrary::TextureLibrary()
-{
-	s_Instance = this;
+	std::cout << "Texture destroying!!!\n";
+
+	glDeleteTextures(1, &m_ID);
 }
 
 TextureLibrary* TextureLibrary::Get()
 {
+	static TextureLibrary textureLibrary;
+	s_Instance = &textureLibrary;
 	return s_Instance;
 }
 
-const std::shared_ptr<Texture>& TextureLibrary::GetTexture(const std::string& filePath)
+void TextureLibrary::Erase(const std::string& filePath)
 {
 	if (m_Textures.find(filePath) != m_Textures.end())
-		return m_Textures[filePath];
+		m_Textures.erase(filePath);
+}
 
-	std::shared_ptr<Texture> texture = std::make_shared<Texture>(filePath);
-	m_Textures.insert({ filePath, texture });
-	return texture;
+void TextureLibrary::GetTexture(const std::string& filePath, std::shared_ptr<Texture>& texturePtr)
+{
+	if (m_Textures.find(filePath) != m_Textures.end())
+	{
+		texturePtr = m_Textures[filePath].lock();
+		return;
+	}
+
+	texturePtr = std::make_shared<Texture>(filePath);
+	m_Textures.insert({ filePath, texturePtr });
 }

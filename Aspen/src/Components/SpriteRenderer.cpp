@@ -2,12 +2,43 @@
 
 #include "SpriteRenderer.h"
 #include "../GameObject/GameObject.h"
-#include "../Input/Input.h"
+
+void SpriteRenderer::Serialize(json& out) const
+{
+	Component::Serialize(out["SpriteRenderer"]);
+
+	const Color& color =  GetColor();
+	out["SpriteRenderer"] =
+	{
+		{ "Color",
+			{{ "R", color.r },
+			 { "G", color.g },
+			 { "B", color.b },
+			 { "A", color.a }}},
+		{ "Texture",  GetTexture()->GetPath() },
+		{ "OrderInLayer",  orderInLayer}
+	};
+}
+
+void SpriteRenderer::Deserialize(json& in)
+{
+	Component::Deserialize(in);
+
+	Color color;
+	color.r = in["Color"]["R"];
+	color.g = in["Color"]["G"];
+	color.b = in["Color"]["B"];
+	color.a = in["Color"]["A"];
+
+	SetColor(color);
+	SetSprite(in["Texture"]);
+	orderInLayer = in["OrderInLayer"];
+}
 
 SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform)
 {
-	m_Sprite = TextureLibrary::Get()->GetTexture("Assets/Sprites/StandartSprite.png");
+	TextureLibrary::Get()->GetTexture("Assets/Sprites/StandartSprite.png", m_Sprite);
 	m_Shader = ShaderLibrary::Get()->GetShader("Shaders/StandartShader");
 }
 
@@ -18,7 +49,7 @@ void SpriteRenderer::SetColor(const Color& color)
 
 void SpriteRenderer::SetSprite(const std::string_view path)
 {
-	m_Sprite = TextureLibrary::Get()->GetTexture(path.data());
+	TextureLibrary::Get()->GetTexture(path.data(), m_Sprite);
 }
 
 void SpriteRenderer::SetSprite(const std::shared_ptr<Texture>& sprite)

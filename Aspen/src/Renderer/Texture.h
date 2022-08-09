@@ -36,13 +36,17 @@ class ASPEN TextureLibrary
 {
 private:
 	inline static TextureLibrary* s_Instance = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
+	std::unordered_map<std::string, std::weak_ptr<Texture>> m_Textures;
 
+	friend class Texture;
+private:
+	void Erase(const std::string& filePath);
+
+	TextureLibrary() = default;
 public:
-	TextureLibrary();
 	TextureLibrary(const TextureLibrary& other) = delete;
 	const TextureLibrary& operator=(const TextureLibrary& other) = delete;
 
 	static TextureLibrary* Get();
-	const std::shared_ptr<Texture>& GetTexture(const std::string& filePath);
+	void GetTexture(const std::string& filePath, std::shared_ptr<Texture>& texturePtr);
 };

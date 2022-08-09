@@ -14,7 +14,6 @@ Engine::Engine()
 	s_Instance = this;
 	m_Window = std::make_unique<Window>();
 
-	m_TextureLibrary = std::make_unique<TextureLibrary>();
 
 	Renderer::Init();
 	InitImGui();
@@ -25,8 +24,6 @@ void Engine::Run()
 {
 	while (m_Running)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		
 		Time::FrameStart();
 		Input::FrameStart();
 
@@ -37,7 +34,6 @@ void Engine::Run()
 		ImGuiEnd();
 
 		m_Window->Update();
-		Time::FrameEnd();
 
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());

@@ -100,8 +100,8 @@ void Renderer::EndScene()
 void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider)
 {
 	Vector2f scale(transform->scale);
-	scale.x *= boxCollider->size.x * 2;
-	scale.y *= boxCollider->size.y * 2;
+	scale.x = boxCollider->size.x * 2;
+	scale.y = boxCollider->size.y * 2;
 
 	Vector2f position(transform->position);
 	position += boxCollider->offset;
@@ -110,9 +110,11 @@ void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* bo
 
 	Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
 
-	transformMatrix = MatrixTransform::Translate(transformMatrix, position);
+	transformMatrix = MatrixTransform::Translate(transformMatrix, boxCollider->offset);
 	transformMatrix = MatrixTransform::Scale(transformMatrix, scale);
-	transformMatrix = MatrixTransform::Rotate(transformMatrix, angle);
+	//transformMatrix = MatrixTransform::Rotate(transformMatrix, angle);
+
+	transformMatrix = transform->GetTransformMatrix() * transformMatrix;
 
 	s_BoxColliderShader->Bind();
 	s_BoxColliderShader->SetMat3("transform", transformMatrix);
@@ -142,7 +144,7 @@ void Renderer::DrawCirlceCollider(const Transform* transform, const CircleCollid
 	Color color(0.0f, 1.0f, 0.0f, 1.0f);
 	s_StandartShader->SetVec4f("spriteColor", color.r, color.g, color.b, color.a);
 
-	TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png")->Bind(0);
+	//TextureLibrary::Get()->GetTexture("Resources/CircleCollider.png")->Bind(0);
 	s_StandartShader->SetInt("sprite", 0);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);

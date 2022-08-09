@@ -8,4 +8,7 @@ public:
 
 public:
 	BoxCollider(GameObject* gameObject, Transform* transform);
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };

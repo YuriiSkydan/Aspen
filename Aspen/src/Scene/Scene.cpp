@@ -28,7 +28,8 @@ void Scene::PhysicsWorldStart()
 			{
 				bodyDef.type = b2BodyType(rigidbody->GetBodyType());
 				bodyDef.gravityScale = rigidbody->GetGravityScale();
-				bodyDef.fixedRotation = rigidbody->GetFixedRotation();
+				bodyDef.fixedRotation = true;
+				//bodyDef.fixedRotation = rigidbody->GetFixedRotation();
 				bodyDef.linearDamping = rigidbody->GetLinearDrag();
 				bodyDef.angularDamping = rigidbody->GetAngularDrag();
 
@@ -109,12 +110,11 @@ void Scene::PhysicsWorldStart()
 			{
 				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
 
-				b2MassData massData;
+				b2MassData massData = body->GetMassData();
 				massData.mass = rigidbody->GetMass();
-				massData.center = { 0.0f, 0.0f };
-				massData.I = 0.0f;
-
+				
 				body->SetMassData(&massData);
+				body->SetFixedRotation(rigidbody->GetFixedRotation());
 			}
 		}
 	}
@@ -431,6 +431,50 @@ void Scene::Render()
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
+}
+
+void Scene::Serialize() const
+{
+	std::ofstream fileStream(m_Name + ".scene", std::ofstream::binary);
+
+	if (!fileStream.is_open())
+	{
+		return;
+		ERROR("Failed to open the file!!!");
+	}
+
+	json serializer =
+	{
+		{ "Scene", {
+			{ "Name", m_Name},
+			{ "Objects amount", m_GameObjects.size() },
+			{ "Gravity",{{"X", m_Gravity.x}, {"Y", m_Gravity.y}}}
+		}}
+	};
+
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		m_GameObjects[i]->Serialize(serializer[std::to_string(i)]);
+	}
+
+	fileStream << serializer;
+
+	fileStream.close();
+}
+
+void Scene::Deserialize(json& in)
+{
+	m_Name = in["Scene"]["Name"];
+	m_GameObjects.resize(in["Scene"]["Objects amount"]);
+	m_Gravity.x = in["Scene"]["Gravity"]["X"];
+	m_Gravity.y = in["Scene"]["Gravity"]["Y"];
+
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		auto newGameObject = std::make_unique<GameObject>(this);
+		newGameObject->Deserialize(in[std::to_string(i)]);
+		m_GameObjects[i] = std::move(newGameObject);
+	};
 }
 
 Scene::~Scene()

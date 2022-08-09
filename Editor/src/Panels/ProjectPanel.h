@@ -6,7 +6,7 @@ class ProjectPanel
 {
 private:
 	std::filesystem::path m_CurrentDirectory;
-	std::vector<Texture*> m_FilesIcons;
+	std::vector<std::shared_ptr<Texture>> m_FilesIcons;
 	Texture m_BackArrowIcon;
 	Texture m_FolderIcon;
 	Texture m_FileIcon;

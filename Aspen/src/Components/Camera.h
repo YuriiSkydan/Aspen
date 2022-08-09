@@ -21,5 +21,8 @@ public:
 
 	float GetAspectRation() const { return m_AspectRation; }
 	Matrix3x3f GetCameraMatrix() const;
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };
 

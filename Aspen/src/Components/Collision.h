@@ -7,4 +7,3 @@ protected:
 	Collision(GameObject* gameObject, Transform* transform);
 	virtual ~Collision() = default;
 };
-

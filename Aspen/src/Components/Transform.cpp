@@ -6,8 +6,7 @@ Transform::Transform(GameObject* gameObject)
 	, position{ 0.0f, 0.0f }
 	, scale{ 1.0f, 1.0f }
 	, angle(0)
-{
-}
+{ }
 
 Transform::Transform(GameObject* gameObject, Transform* transform)
 	: Transform(gameObject)
@@ -110,4 +109,29 @@ bool Transform::operator==(const Transform* other)
 bool Transform::operator!=(const Transform* other)
 {
 	return (this != other);
+}
+
+void Transform::Serialize(json& out) const
+{
+	out["Transform"] =
+	{
+		{ "Position",
+			{{ "X", position.x },
+			 { "Y", position.y }}},
+		{ "Angle", angle },
+		{ "Scale",
+			{{"X", scale.x},
+			 {"Y", scale.y }}}
+	};
+}
+
+void Transform::Deserialize(json& in)
+{
+	position.x = in["Position"]["X"];
+	position.y = in["Position"]["Y"];
+
+	angle = in["Angle"];
+
+	scale.x = in["Scale"]["X"];
+	scale.y = in["Scale"]["Y"];
 }

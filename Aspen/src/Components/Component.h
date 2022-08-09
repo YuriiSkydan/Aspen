@@ -1,10 +1,12 @@
 #pragma once
-#include <iostream> // for debug
-
+#include <iostream> // delete later
+#include "JSON/json.hpp"
 #include "../Core/Core.h"
 
 class Transform;
 class GameObject;
+
+using namespace nlohmann;
 
 class ASPEN Component
 {
@@ -33,13 +35,16 @@ public:
 	bool IsEnabled() const { return m_IsEnabled; }
 
 	template<typename T>
-	T* GetComponent();
+	T* GetComponent() const;
 
 	template<typename T>
-	bool HasComponent();
+	bool HasComponent() const;
 
 	bool operator==(const Component& other);
 	bool operator!=(const Component& other);
+
+	virtual void Serialize(json& out) const;
+	virtual void Deserialize(json& in);
 
 	virtual ~Component()
 	{

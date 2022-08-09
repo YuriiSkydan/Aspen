@@ -6,3 +6,15 @@ Collider::Collider(GameObject* gameObject, Transform* transform)
 	, Component(gameObject, transform)
 {
 }
+
+void Collider::Serialize(json& out) const
+{
+	Trigger::Serialize(out);
+	Collision::Serialize(out);
+}
+
+void Collider::Deserialize(json& in)
+{
+	Trigger::Deserialize(in);
+	Collision::Deserialize(in);
+}

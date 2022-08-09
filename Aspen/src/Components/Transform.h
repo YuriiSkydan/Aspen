@@ -26,10 +26,6 @@ public:
 	Transform(GameObject* gameObject);
 	Transform(GameObject* gameObject, Transform* transform);
 
-	Matrix3x3f GetTransformMatrix() const;
-	Vector2f Right() const;
-	Vector2f Up() const;
-
 	void Translate(const Vector2f& translation, Space relativeTo = Space::Self);
 	void Rotate(float angle, Space relativeTo = Space::Self);
 	//void LookAt();
@@ -37,12 +33,18 @@ public:
 	void AddChild(GameObject* child);
 	void AddChild(Transform* child);
 	void SetParent(Transform* parent);
-	Transform* GetParent() const { return m_Parent; }
 
 	const std::vector<Transform*>& GetChilds() const { return m_Childs; }
+	Transform* GetParent() const { return m_Parent; }
+	Matrix3x3f GetTransformMatrix() const;
+	Vector2f Right() const;
+	Vector2f Up() const;
 
 	bool operator==(const Transform* other);
 	bool operator!=(const Transform* other);
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 
 	~Transform() = default;
 };

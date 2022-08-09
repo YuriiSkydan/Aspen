@@ -195,7 +195,9 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		ImGui::DragInt("##Order In Layer", &spriteRenderer->orderInLayer, 1, 0);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::ColorEdit4("##Color", (float*)&spriteRenderer->m_Color);
+		auto color = spriteRenderer->GetColor();
+		if (ImGui::ColorEdit4("##Color", (float*)&color))
+			spriteRenderer->SetColor(color);
 
 		ImGui::Checkbox("##FlipX", &spriteRenderer->flipX);
 		ImGui::Checkbox("##FlipY", &spriteRenderer->flipY);
@@ -204,7 +206,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		if (m_ItemWidth > 128)
 			imageButtonSize = 128;
 
-		ImGui::Image((ImTextureID)spriteRenderer->m_Sprite->GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)spriteRenderer->GetTexture()->GetID(), {float(imageButtonSize), float(imageButtonSize)}, {0, 1}, {1, 0});
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
@@ -215,7 +217,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 
 				std::wstring wPath = texturePath.c_str();
 				std::string sPath(wPath.begin(), wPath.end());
-				spriteRenderer->m_Sprite = TextureLibrary::Get()->GetTexture(sPath);
+				spriteRenderer->SetSprite(sPath);
 
 				ImGui::EndDragDropTarget();
 			}
@@ -346,6 +348,8 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::Spacing();
 		ImGui::Text("Friction");
 		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Dencity");
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
@@ -358,6 +362,8 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::NewLine();
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat("##Friction", &boxCollider->material.friction, 0.01f, 0.0f, FLT_MAX);
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		ImGui::DragFloat("##Dencity", &boxCollider->material.dencity, 0.01f, 0.0f, FLT_MAX);
 		//ImGui::Text("Bounciness     ");
 		//ImGui::SameLine();
 		//ImGui::DragFloat("##Bounciness", &material.restitution, 0.01f, 0.0f, FLT_MAX);
@@ -452,12 +458,8 @@ void Inspector::RenderComponent(Animator* animator)
 			ImGui::Spacing();
 			ImGui::InputText("##ClipName", &clipName);
 
-			float duration = m_ChoosenClip->GetDuration();
-			if (ImGui::DragFloat("##Duration", &duration, 0.01f, 0.0f))
-				m_ChoosenClip->SetDuration(duration);
-
 			DragFloat("##Duration", m_ChoosenClip, m_ChoosenClip->GetDuration(),
-				&AnimationClip::SetDuration);
+				&AnimationClip::SetDuration, 0.01f, 0.0f);
 
 			ImGui::Spacing();
 
@@ -488,7 +490,7 @@ void Inspector::RenderComponent(Animator* animator)
 
 					std::wstring wPath = texturePath.c_str();
 					std::string sPath(wPath.begin(), wPath.end());
-					m_ChoosenClip->AddFrame(TextureLibrary::Get()->GetTexture(sPath));
+					m_ChoosenClip->AddFrame(sPath);
 					m_ChoosenClip->Start();
 
 					ImGui::EndDragDropTarget();
