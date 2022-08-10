@@ -24,6 +24,27 @@ void Inspector::ImGuiRender()
 	ImGui::End();
 }
 
+void Inspector::RenderMaterial(unsigned int collumnIndex, Material* material)
+{
+	switch (collumnIndex)
+	{
+	case 0:
+		ImGui::Text("Material");
+		ImGui::Spacing();
+		ImGui::Text("Friction");
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Dencity");
+		break;
+	case 1:
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		ImGui::DragFloat("##Friction", &material->friction, 0.01f, 0.0f, FLT_MAX);
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		ImGui::DragFloat("##Dencity", &material->dencity, 0.01f, 0.0f, FLT_MAX);
+		break;
+	}
+}
+
 void Inspector::RenderGameObject()
 {
 	RenderGameObjectProperties();
@@ -201,22 +222,15 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 		ImGui::Checkbox("##FlipX", &spriteRenderer->flipX);
 		ImGui::Checkbox("##FlipY", &spriteRenderer->flipY);
 
-		float imageButtonSize = m_ItemWidth;
-		if (m_ItemWidth > 128)
-			imageButtonSize = 128;
-
-		ImGui::Image((ImTextureID)spriteRenderer->GetTexture()->GetID(), {float(imageButtonSize), float(imageButtonSize)}, {0, 1}, {1, 0});
+		float imageButtonSize = m_ItemWidth > 128 ? 128 : m_ItemWidth;
+		ImGui::Image((ImTextureID)spriteRenderer->GetTexture()->GetID(), { float(imageButtonSize), float(imageButtonSize) }, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
-				std::filesystem::path texturePath = "Assets";
-				texturePath /= path;
-
-				std::wstring wPath = texturePath.c_str();
-				std::string sPath(wPath.begin(), wPath.end());
-				spriteRenderer->SetSprite(sPath);
+				const char* path = (const char*)payload->Data;
+				std::cout << "Path: " << path << std::endl;
+				spriteRenderer->SetSprite(path);
 
 				ImGui::EndDragDropTarget();
 			}
@@ -343,12 +357,8 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::Spacing();
 		ImGui::Text("Is Trigger");
 		ImGui::Spacing();
-		ImGui::Text("Material");
-		ImGui::Spacing();
-		ImGui::Text("Friction");
-		ImGui::Spacing();
-		ImGui::Spacing();
-		ImGui::Text("Dencity");
+
+		RenderMaterial(0);
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
@@ -359,13 +369,9 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::DragFloat2("##Offset", (float*)&boxCollider->offset, 0.01f);
 		ImGui::Checkbox("##IsTrigger", &boxCollider->isTrigger);
 		ImGui::NewLine();
-		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##Friction", &boxCollider->material.friction, 0.01f, 0.0f, FLT_MAX);
-		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##Dencity", &boxCollider->material.dencity, 0.01f, 0.0f, FLT_MAX);
-		//ImGui::Text("Bounciness     ");
-		//ImGui::SameLine();
-		//ImGui::DragFloat("##Bounciness", &material.restitution, 0.01f, 0.0f, FLT_MAX);
+
+		RenderMaterial(1, &boxCollider->material);
+
 		ImGui::Columns(1);
 	}
 }
@@ -382,12 +388,24 @@ void Inspector::RenderComponent(CircleCollider* circleCollider)
 		ImGui::Spacing();
 		ImGui::Text("Radius");
 		ImGui::Spacing();
+		ImGui::Text("Offset");
+		ImGui::Spacing();
+		ImGui::Text("Is Trigger");
+		ImGui::Spacing();
+
+		RenderMaterial(0);
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat("##Radius", &circleCollider->radius, 0.001f, 0.0f);
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		ImGui::DragFloat2("##Offset", (float*)&circleCollider->offset, 0.01f);
+		ImGui::Checkbox("##IsTrigger", &circleCollider->isTrigger);
+		ImGui::NewLine();
+
+		RenderMaterial(1, &circleCollider->material);
 
 		ImGui::Columns(1);
 	}
@@ -413,7 +431,14 @@ void Inspector::RenderComponent(Animator* animator)
 		ImGui::SameLine();
 		if (ImGui::Button("+"))
 		{
+			std::string name;
+			if (m_ChoosenClip != nullptr)
+				name = m_ChoosenClip->GetName();
+
 			animator->AddAnimation("Animation" + std::to_string(animator->m_AnimationClips.size()));
+
+			if (m_ChoosenClip != nullptr)
+				m_ChoosenClip = &animator->GetAnimation(name);
 		}
 
 		ImGui::Columns(2, 0, false);
@@ -449,7 +474,6 @@ void Inspector::RenderComponent(Animator* animator)
 			ImGui::EndCombo();
 		}
 
-
 		if (m_ChoosenClip != nullptr)
 		{
 			//m_ChoosenClip->Update();
@@ -483,13 +507,8 @@ void Inspector::RenderComponent(Animator* animator)
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path texturePath = "Assets";
-					texturePath /= path;
-
-					std::wstring wPath = texturePath.c_str();
-					std::string sPath(wPath.begin(), wPath.end());
-					m_ChoosenClip->AddFrame(sPath);
+					const char* path = (const char*)payload->Data;
+					m_ChoosenClip->AddFrame(path);
 					m_ChoosenClip->Start();
 
 					ImGui::EndDragDropTarget();
@@ -579,6 +598,9 @@ void Inspector::RenderAddComponentButton()
 
 		if (ImGui::MenuItem("Audio Source"))
 			m_SelectedGameObject->AddComponent<AudioSource>();
+
+		if (ImGui::MenuItem("Audio Listener"))
+			m_SelectedGameObject->AddComponent<AudioListener>();
 
 		ImGui::Separator();
 

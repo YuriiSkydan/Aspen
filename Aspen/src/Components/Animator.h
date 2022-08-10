@@ -86,7 +86,8 @@ public:
 	void SetInteger(const std::string& name, int value);
 	void SetTrigger(const std::string& name);
 
-	const AnimationClip& GetAnimation(const std::string& name);
+    AnimationClip& GetAnimation(const std::string& name);
+	AnimationClip& GetCurrentAnimation() const { return *m_CurrentClip; }
 
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;

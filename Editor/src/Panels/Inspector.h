@@ -36,6 +36,8 @@ private:
 			(component->*function)(previewValue);
 	}
 
+	void RenderMaterial(unsigned int collumnIndex, Material* material = nullptr);
+
 	void RenderGameObject();
 	void RenderGameObjectProperties();
 	void RenderComponents();

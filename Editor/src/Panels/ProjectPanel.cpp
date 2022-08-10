@@ -10,8 +10,7 @@ ProjectPanel::ProjectPanel()
 	, m_FolderIcon("Resources/FolderIcon_3.png")
 	, m_FileIcon("Resources/FileIcon_2.png")
 	, m_CppFileIcon("Resources/CppFileIcon_2.png")
-{
-}
+{ }
 
 void ProjectPanel::ImGuiRender()
 {
@@ -91,9 +90,8 @@ void ProjectPanel::ImGuiRender()
 
 		if (ImGui::BeginDragDropSource())
 		{
-			auto relativePath = std::filesystem::relative(path, "Assets");
-			const wchar_t* itemPath = relativePath.c_str();
-			ImGui::SetDragDropPayload("PROJECT_PANEL_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+			const std::string itemPath = path.string().c_str();
+			ImGui::SetDragDropPayload("PROJECT_PANEL_ITEM", itemPath.c_str(), (itemPath.size() + 1) * sizeof(char));
 			ImGui::EndDragDropSource();
 		}
 

@@ -160,20 +160,14 @@ void Editor::SceneWindow()
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 		{
-			const wchar_t* path = (const wchar_t*)payload->Data;
-			std::filesystem::path texturePath = "Assets";
-			texturePath /= path;
+			const std::string path = (const char*)payload->Data;
+			size_t startPos = path.find_last_of("\\") + 1;
+			size_t endPos = path.find_last_of(".") - startPos;
 
-			std::wstring wPath = texturePath.c_str();
-			std::string sPath(wPath.begin(), wPath.end());
-
-			size_t startPos = sPath.find_last_of("\\") + 1;
-			size_t endPos = sPath.find_last_of(".") - startPos;
-
-			std::string objectName = sPath.substr(startPos, endPos);
+			std::string objectName = path.substr(startPos, endPos);
 			GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
 			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
-			spriteRenderer->SetSprite(sPath);
+			spriteRenderer->SetSprite(path);
 			
 			gameObject->transform->position = m_EditorCamera.GetPosition();
 

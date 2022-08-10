@@ -3,8 +3,7 @@
 
 Rigidbody::Rigidbody(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform)
-{
-}
+{ }
 
 void Rigidbody::Update()
 {

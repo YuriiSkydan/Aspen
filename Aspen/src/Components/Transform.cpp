@@ -10,8 +10,7 @@ Transform::Transform(GameObject* gameObject)
 
 Transform::Transform(GameObject* gameObject, Transform* transform)
 	: Transform(gameObject)
-{
-}
+{ }
 
 Matrix3x3f Transform::GetTransformMatrix() const
 {

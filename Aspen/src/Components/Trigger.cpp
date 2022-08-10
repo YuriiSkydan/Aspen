@@ -2,8 +2,7 @@
 
 Trigger::Trigger(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
-{ 
-}
+{ }
 
 void Trigger::Serialize(json& out) const
 {

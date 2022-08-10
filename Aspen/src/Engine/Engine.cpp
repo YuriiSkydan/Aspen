@@ -17,7 +17,7 @@ Engine::Engine()
 
 	Renderer::Init();
 	InitImGui();
-	Input::Init();
+	//Input::Init();
 }
 
 void Engine::Run()

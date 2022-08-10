@@ -9,14 +9,14 @@ class ASPEN Rigidbody : public Component
 {
 private:
 	b2Body* m_Body = nullptr;
+	BodyType m_Type = BodyType::Dynamic;
 
-	float m_Mass = 1.0f;
-	float m_LinearDrag = 0.0f;
-	float m_AngularDrag = 0.05f;
+	float m_Mass         = 1.0f;
+	float m_LinearDrag   = 0.0f;
+	float m_AngularDrag  = 0.05f;
+	float m_GravityScale = 1.0f;
 
 	bool m_FixedRotation = false;
-	float m_GravityScale = 1.0f;
-	BodyType m_Type = BodyType::Dynamic;
 
 	friend class Scene;
 private:

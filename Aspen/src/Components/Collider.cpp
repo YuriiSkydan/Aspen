@@ -4,8 +4,7 @@ Collider::Collider(GameObject* gameObject, Transform* transform)
 	: Trigger(gameObject, transform)
 	, Collision(gameObject, transform)
 	, Component(gameObject, transform)
-{
-}
+{ }
 
 void Collider::Serialize(json& out) const
 {

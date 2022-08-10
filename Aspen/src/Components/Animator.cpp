@@ -1,5 +1,5 @@
 #include "Animator.h"
-#include "../GameObject/GameObject.h"
+#include "../Scene/Scene.h"
 #include "../Core/Time.h"
 
 void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
@@ -122,8 +122,7 @@ void Animator::AddIntegerParameter(const std::string& name)
 
 Animator::Animator(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
-{
-}
+{ }
 
 void Animator::Start()
 {
@@ -164,7 +163,11 @@ void Animator::PlayAnimation(const std::string& name)
 			});
 
 		if (animation != m_AnimationClips.end())
+		{
+			animation->SetSpriteRenderer(GetComponent<SpriteRenderer>());
+			animation->Start();
 			m_CurrentClip = animation;
+		}
 	}
 }
 
@@ -190,9 +193,9 @@ void Animator::SetInteger(const std::string& name, int value)
 	m_IntParameters[name] = value;
 }
 
-const AnimationClip& Animator::GetAnimation(const std::string& name)
+AnimationClip& Animator::GetAnimation(const std::string& name)
 {
-	auto returnClip = std::find_if(m_AnimationClips.cbegin(), m_AnimationClips.cend(),
+	auto returnClip = std::find_if(m_AnimationClips.begin(), m_AnimationClips.end(),
 		[&](const AnimationClip& clip)
 		{
 			if (clip.GetName() == name)
@@ -224,6 +227,10 @@ void Animator::Deserialize(json& in)
 	{
 		AnimationClip newClip("New Clip");
 		newClip.Deserialize(in[std::to_string(i)]);
+		newClip.SetSpriteRenderer(GetComponent<SpriteRenderer>());
 		m_AnimationClips.push_back(newClip);
+		m_AnimationClips.back().Start();
 	}
+
+	m_CurrentClip = m_AnimationClips.begin();
 }

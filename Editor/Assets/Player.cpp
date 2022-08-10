@@ -34,7 +34,7 @@ public:
 		m_Animator = GetComponent<Animator>();
 
 		auto objects = gameObject->GetScene()->GetObjectsWithComponent<Camera>();
-	
+
 		m_Camera = objects[0];
 	}
 
@@ -67,21 +67,25 @@ public:
 		}
 
 		m_MovingDirection = 0.0f;
-		//m_Animator->PlayAnimation("Animation0");
+
+		if (!Input::IsKeyPressed(Key::D) && !Input::IsKeyPressed(Key::A))
+			m_Animator->PlayAnimation("Animation0");
 
 		m_Camera->transform->position.x = transform->position.x;
 		m_Camera->transform->position.y = transform->position.y + 0.25;
 
 		if (Input::IsKeyPressed(Key::D))
 		{
-			//m_Animator->PlayAnimation("Animation1");
+			m_Animator->PlayAnimation("Animation1");
+
 			m_SpriteRenderer->flipX = false;
 			m_MovingDirection = 1.0f;
 		}
 
 		if (Input::IsKeyPressed(Key::A))
 		{
-			//m_Animator->PlayAnimation("Animation1");
+			m_Animator->PlayAnimation("Animation1");
+
 			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
 		}
