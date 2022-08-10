@@ -26,18 +26,17 @@ class ASPEN GameObject
 private:
 	inline static unsigned int s_Objects = 0;
 
-	std::vector<std::unique_ptr<Component>> m_Components;
-	std::vector<Script*> m_Scripts;
+	char m_Name[20];
+	unsigned int m_ID;
+	bool m_IsActive = true;
 	Scene* m_Scene = nullptr;
 	Tag m_Tag;
 
-	char m_Name[20];
-	bool m_IsActive = true;
-	unsigned int m_ID;
+	std::vector<std::unique_ptr<Component>> m_Components;
+	std::vector<Script*> m_Scripts;
 
 	friend class Inspector;
 	friend class Scene;
-	friend class SceneSerializer;
 public:
 	Transform* transform;
 

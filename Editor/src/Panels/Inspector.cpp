@@ -6,8 +6,7 @@ using namespace std::string_literals;
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
-{
-}
+{ }
 
 void Inspector::ImGuiRender()
 {

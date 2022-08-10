@@ -10,31 +10,31 @@ SceneSerializer::SceneSerializer(std::shared_ptr<Scene> scene)
 
 void SceneSerializer::Serialize() const
 {
-	std::ofstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
+	//std::ofstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
 
-	if (!fileStream.is_open())
-	{
-		return;
-		ERROR("Failed to open the file!!!");
-	}
+	//if (!fileStream.is_open())
+	//{
+	//	return;
+	//	ERROR("Failed to open the file!!!");
+	//}
 
-	json serializer =
-	{
-		{ "Scene", {
-			{ "Name", m_Scene->m_Name},
-			{ "Objects amount",  m_Scene->m_GameObjects.size() },
-			{ "Gravity",{{"X", m_Scene->m_Gravity.x}, {"Y", m_Scene->m_Gravity.y}}}
-		}}
-	};
+	//json serializer =
+	//{
+	//	{ "Scene", {
+	//		{ "Name", m_Scene->m_Name},
+	//		{ "Objects amount",  m_Scene->m_GameObjects.size() },
+	//		{ "Gravity",{{"X", m_Scene->m_Gravity.x}, {"Y", m_Scene->m_Gravity.y}}}
+	//	}}
+	//};
 
-	for (size_t i = 0; i < m_Scene->m_GameObjects.size(); i++)
-	{
-		//SerializeGameObject(serializer[std::to_string(i)], m_Scene->m_GameObjects[i]);
-	}
+	//for (size_t i = 0; i < m_Scene->m_GameObjects.size(); i++)
+	//{
+	//	//SerializeGameObject(serializer[std::to_string(i)], m_Scene->m_GameObjects[i]);
+	//}
 
-	fileStream << serializer;
+	//fileStream << serializer;
 
-	fileStream.close();
+	//fileStream.close();
 }
 
 #pragma endregion
@@ -43,21 +43,21 @@ void SceneSerializer::Serialize() const
 
 void SceneSerializer::Deserialize()
 {
-	using namespace nlohmann;
-	std::ifstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
+	//using namespace nlohmann;
+	//std::ifstream fileStream(m_Scene->m_Name + ".scene", std::ofstream::binary);
 
-	if (!fileStream.is_open())
-	{
-		ERROR("Failed to open the file!!!");
-		return;
-	}
+	//if (!fileStream.is_open())
+	//{
+	//	ERROR("Failed to open the file!!!");
+	//	return;
+	//}
 
-	json in;
-	fileStream >> in;
+	//json in;
+	//fileStream >> in;
 
-	//DeserializeScene(in);
+	////DeserializeScene(in);
 
-	fileStream.close();
+	//fileStream.close();
 }
 
 void SceneSerializer::Deserialize(const std::string& filename)

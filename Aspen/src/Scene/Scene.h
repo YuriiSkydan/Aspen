@@ -13,7 +13,6 @@
 #include "box2d/b2_contact.h"
 #include "box2d/b2_world_callbacks.h"
 
-#include <chrono>
 #include <map>
 #include <list>
 
@@ -56,13 +55,7 @@ private:
 	unsigned int m_Height;
 
 	friend class HierarchyPanel;
-	friend class SceneSerializer;
 	friend class ContactListener;
-private:
-	//delete later
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
 private:
 	void PhysicsWorldStart();
 	void PhysicsWorldStop();

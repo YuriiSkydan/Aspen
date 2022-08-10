@@ -67,6 +67,34 @@ void AnimationClip::SetName(const std::string& name)
 	m_Name = name;
 }
 
+void AnimationClip::Serialize(json& out) const
+{
+	out =
+	{
+		{ "Name", m_Name },
+		{ "Duration", m_Duration },
+		{ "FramesAmount", m_Frames.size() }
+	};
+
+	for (size_t i = 0; i < m_Frames.size(); i++)
+		out[std::to_string(i)] = m_Frames[i]->GetPath();
+}
+
+void AnimationClip::Deserialize(json& in)
+{
+	m_Name = in["Name"];
+	m_Duration = in["Duration"];
+
+	size_t framesAmount = in["FramesAmount"];
+	for (size_t i = 0; i < framesAmount; i++)
+	{
+		std::string path = in[std::to_string(i)];
+		std::shared_ptr<Texture> frame;
+		TextureLibrary::Get()->GetTexture(path, frame);
+		m_Frames.push_back(frame);
+	}
+}
+
 
 void Animator::AddAnimation(const std::string& name)
 {
@@ -172,4 +200,30 @@ const AnimationClip& Animator::GetAnimation(const std::string& name)
 		});
 
 	return *returnClip;
+}
+
+void Animator::Serialize(json& out) const
+{
+	Component::Serialize(out["Animator"]);
+
+	out["Animator"] =
+	{
+		{ "ClipsAmount", m_AnimationClips.size() }
+	};
+
+	for (size_t i = 0; i < m_AnimationClips.size(); i++)
+		m_AnimationClips[i].Serialize(out["Animator"][std::to_string(i)]);
+}
+
+void Animator::Deserialize(json& in)
+{
+	Component::Deserialize(in);
+
+	size_t clipsAmount = in["ClipsAmount"];
+	for (size_t i = 0; i < clipsAmount; i++)
+	{
+		AnimationClip newClip("New Clip");
+		newClip.Deserialize(in[std::to_string(i)]);
+		m_AnimationClips.push_back(newClip);
+	}
 }

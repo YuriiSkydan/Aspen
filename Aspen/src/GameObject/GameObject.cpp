@@ -219,6 +219,12 @@ void GameObject::Deserialize(json& in)
 		AudioListener* audioListener = AddComponent<AudioListener>();
 		audioListener->Deserialize(in["AudioListener"]);
 	}
+
+	if (in.find("Animator") != in.end())
+	{
+		Animator* animator = AddComponent<Animator>();
+		animator->Deserialize(in["Animator"]);
+	}
 }
 
 GameObject::~GameObject()

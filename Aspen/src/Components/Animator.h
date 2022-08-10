@@ -41,6 +41,9 @@ public:
 	unsigned int GetFramesAmount() const { return m_Frames.size(); }
 	const std::string& GetName() const { return m_Name; }
 	float GetDuration() const { return m_Duration; }
+
+	void Serialize(json& out) const;
+	void Deserialize(json& in);
 };
 
 class ASPEN AnimationState
@@ -62,7 +65,6 @@ private:
 	//std::unordered_map<std::string> m_TriggerParameters;
 
 	friend class Inspector;
-	friend class SceneSerializer;
 private:
 	void AddFrameToAnimation(const Texture& newFrame);
 	void AddAnimation(const std::string& name);
@@ -85,4 +87,7 @@ public:
 	void SetTrigger(const std::string& name);
 
 	const AnimationClip& GetAnimation(const std::string& name);
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };

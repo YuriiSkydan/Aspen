@@ -18,129 +18,106 @@ void ProjectPanel::ImGuiRender()
 	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	ImGui::Begin("Project ");
 
-	if (ImGui::IsWindowFocused())
+	ImGui::PushStyleColor(ImGuiCol_Button, {});
+	ImGui::ImageButton((ImTextureID)m_BackArrowIcon.GetID(), { 30, 30 }, { 0, 1 }, { 1, 0 });
+	ImGui::PopStyleColor();
+
+	if (ImGui::IsItemClicked() && m_CurrentDirectory != "Assets")
 	{
-		ImGui::PushStyleColor(ImGuiCol_Button, {});
-		ImGui::ImageButton((ImTextureID)m_BackArrowIcon.GetID(), { 30, 30 }, { 0, 1 }, { 1, 0 });
-		ImGui::PopStyleColor();
+		m_CurrentDirectory = m_CurrentDirectory.parent_path();
+		m_IsNewDirectory = true;
+	}
 
-		if (ImGui::IsItemClicked() && m_CurrentDirectory != "Assets")
+	float padding = 15;
+	float iconSize = 90;
+	float cellSize = iconSize + padding;
+
+	float panelWidth = ImGui::GetContentRegionAvail().x;
+	int columnCount = (int)(panelWidth / cellSize);
+	if (columnCount < 1)
+		columnCount = 1;
+
+	ImGui::Columns(columnCount, 0, false);
+
+	if (m_IsNewDirectory)
+	{
+		m_IsNewDirectory = false;
+		m_DirectoryFiles.clear();
+
+		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			m_CurrentDirectory = m_CurrentDirectory.parent_path();
-		}
-
-		float padding = 15;
-		float iconSize = 90;
-		float cellSize = iconSize + padding;
-
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		if (columnCount < 1)
-			columnCount = 1;
-
-		ImGui::Columns(columnCount, 0, false);
-
-		std::vector<std::filesystem::directory_entry> files;
-		for (auto& directory : std::filesystem::directory_iterator(m_CurrentDirectory))
-		{
-			files.push_back(directory);
-		}
-
-		std::sort(files.begin(), files.end(),
-			[](std::filesystem::directory_entry& a, std::filesystem::directory_entry& b)
+			if (!entry.is_directory())
 			{
-				if (a.is_directory())
+				if (entry.path().extension() == ".cpp"s)
 				{
-					if (b.is_directory())
-						return a < b;
-					else
-						return true;
+					m_DirectoryFiles.insert({ entry, &m_CppFileIcon });
 				}
-				else if (b.is_directory())
-					return false;
-
-				return a > b;
-			});
-
-		m_FilesIcons.clear();
-		for (auto& file : files)
-		{
-			const auto& path = file.path();
-			auto relativePath = std::filesystem::relative(path, "Assets");
-			std::string filenameString = relativePath.filename().string();
-
-			ImGui::PushID(filenameString.c_str());
-
-			Texture* icon = &m_FolderIcon;
-
-			if (!file.is_directory())
-			{
-				if (file.path().extension() == ".cpp"s)
+				else if (entry.path().extension() == ".png" ||
+					entry.path().extension() == ".jpg")
 				{
-					icon = &m_CppFileIcon;
-				}
-				else if (file.path().extension() == ".png" ||
-					file.path().extension() == ".jpg")
-				{
-					std::wstring wPath = file.path();
+					std::wstring wPath = entry.path();
 					std::string path(wPath.begin(), wPath.end());
-					//m_FilesIcons.push_back(TextureLibrary::Get()->GetTexture(path));
-					icon = m_FilesIcons.back().get();
+					std::shared_ptr<Texture> image;
+					TextureLibrary::Get()->GetTexture(path, image);
+					m_DirectoryFiles.insert({ entry, image });
 				}
 				else
 				{
-					icon = &m_FileIcon;
+					m_DirectoryFiles.insert({ entry, &m_FileIcon });
 				}
 			}
-
-			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
-			ImGui::ImageButton((ImTextureID)icon->GetID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
-			ImGui::PopStyleColor();
-
-			if (ImGui::BeginDragDropSource())
+			else
 			{
-				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload("PROJECT_PANEL_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
-				ImGui::EndDragDropSource();
+				m_DirectoryFiles.insert({ entry, &m_FolderIcon });
 			}
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (file.is_directory())
-					m_CurrentDirectory /= path.filename();
-				//else if(file.path().extension() == ".scene")
-				//m
-			}
-
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
-
-			ImGui::PopID();
 		}
-		ImGui::Columns(1);
 	}
-	else
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+	for (auto& file : m_DirectoryFiles)
 	{
-		float padding = 15;
-		float iconSize = 90;
-		float cellSize = iconSize + padding;
+		const auto& path = file.first.path();
+		std::string filenameString = path.filename().string();
 
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		if (columnCount < 1)
-			columnCount = 1;
+		ImGui::PushID(filenameString.c_str());
 
-		ImGui::Columns(columnCount, 0, false);
-		for (auto& icon : m_FilesIcons)
+		Texture* icon;
+		if (std::get_if<Texture*>(&file.second) == nullptr)
+			icon = std::get<std::shared_ptr<Texture>>(file.second).get();
+		else
+			icon = std::get<Texture*>(file.second);
+
+		ImGui::ImageButton((ImTextureID)icon->GetID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
+
+		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
-			ImGui::ImageButton((ImTextureID)icon->GetID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
-			ImGui::PopStyleColor();
-			ImGui::NextColumn();
+			auto relativePath = std::filesystem::relative(path, "Assets");
+			const wchar_t* itemPath = relativePath.c_str();
+			ImGui::SetDragDropPayload("PROJECT_PANEL_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		{
+			if (file.first.is_directory())
+			{
+				m_CurrentDirectory /= path.filename();
+				m_IsNewDirectory = true;
+			}
+			//else if(file.path().extension() == ".scene")
 
 		}
-		ImGui::Columns(1);
+
+		ImGui::TextWrapped(filenameString.c_str());
+
+		ImGui::NextColumn();
+
+		ImGui::PopID();
+
 	}
+	ImGui::PopStyleColor();
+
+	ImGui::Columns(1);
+
 	ImGui::End();
 }

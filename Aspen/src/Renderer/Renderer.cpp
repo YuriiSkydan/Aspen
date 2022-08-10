@@ -103,18 +103,18 @@ void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* bo
 	scale.x = boxCollider->size.x * 2;
 	scale.y = boxCollider->size.y * 2;
 
-	Vector2f position(transform->position);
-	position += boxCollider->offset;
-
-	float angle = transform->angle;
-
 	Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
 
-	transformMatrix = MatrixTransform::Translate(transformMatrix, boxCollider->offset);
+	transformMatrix = MatrixTransform::Translate(transformMatrix, transform->position);
 	transformMatrix = MatrixTransform::Scale(transformMatrix, scale);
-	//transformMatrix = MatrixTransform::Rotate(transformMatrix, angle);
+	transformMatrix = MatrixTransform::Scale(transformMatrix, transform->scale);
+	transformMatrix = MatrixTransform::Rotate(transformMatrix, transform->angle);
 
-	transformMatrix = transform->GetTransformMatrix() * transformMatrix;
+	Matrix3x3f position = MatrixTransform::Rotate(Matrix3x3f(1.0f), transform->angle);
+	position = MatrixTransform::Translate(position, boxCollider->offset);
+
+	transformMatrix[0][2] += position[0][2];
+	transformMatrix[1][2] += position[1][2];
 
 	s_BoxColliderShader->Bind();
 	s_BoxColliderShader->SetMat3("transform", transformMatrix);

@@ -331,13 +331,13 @@ void Scene::Stop()
 
 void Scene::Update()
 {
-	begin = std::chrono::high_resolution_clock::now();
-	double duration = std::chrono::duration<double>(begin - end).count();
+	static double duration = 0;
+	duration += Time::DeltaTime();
 
 	//Fixed Update
 	if (duration >= Time::FixedDeltaTime())
 	{
-		end = std::chrono::steady_clock::now();
+		duration = 0;
 
 		int32 velocityIterations = 6;
 		int32 positionIterations = 2;
