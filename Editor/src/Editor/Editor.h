@@ -1,11 +1,11 @@
 #pragma once
-#include "../Panels/HierarchyPanel.h"
-#include "../Panels/Inspector.h"
-#include "../Panels/ProjectPanel.h"
 #include "src/Renderer/Framebuffer.h"
 #include "src/Scene/Scene.h"
 #include "src/Scene/EditorCamera.h"
-#include "imgui/imgui.h"
+#include "../Panels/HierarchyPanel.h"
+#include "../Panels/Inspector.h"
+#include "../Panels/ProjectPanel.h"
+
 #include "../ImGuizmo/ImGuizmo.h"
 
 #include "Layer.h"

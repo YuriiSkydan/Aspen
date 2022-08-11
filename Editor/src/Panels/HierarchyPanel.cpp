@@ -1,25 +1,17 @@
 #include "HierarchyPanel.h"
 #include "src/GameObject/GameObject.h"
-#include "src/Components/BoxCollider.h"
-#include "src/Components/CircleCollider.h"
-#include "src/Components/Rigidbody.h"
-#include "src/Log/Log.h"
 #include "imgui/imgui.h"
 
 using namespace std::string_literals;
 
-//HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
-//	:m_SelectedGameObject(gameObjectRef)
-//{
-//}
+HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
+	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
+{ }
 
 void HierarchyPanel::GameObjectPropertiesPopup()
 {
 	if (ImGui::MenuItem("Delete"))
 	{
-		//change it later
-		//gameObjects.erase(gameObjects.begin() + i);
-
 		m_Scene->DestroyGameObject(m_SelectedGameObject);
 		m_SelectedGameObject = nullptr;
 	}
@@ -98,77 +90,89 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 	}
 }
 
-HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
-	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
+void HierarchyPanel::RenderSceneHeader()
 {
+	auto& objects = m_Scene->m_GameObjects;
+
+	if (strlen(m_FindInput) != 0)
+	{
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+			std::string objName = objects[i]->GetName();
+			if (objName.find(m_FindInput) != std::string::npos)
+				RenderGameObjectTreeNode(objects[i].get());
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+			if (objects[i]->transform->GetParent() == nullptr)
+				RenderGameObjectTreeNode(objects[i].get());
+		}
+	}
+
+	ImGui::Dummy(ImGui::GetWindowSize());
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PANEL_ITEM"))
+		{
+			GameObject* dragObject = (GameObject*)payload->Data;
+			dragObject->transform->SetParent(nullptr);
+			ImGui::EndDragDropTarget();
+		}
+	}
+}
+
+void HierarchyPanel::AddGameObjectPopup()
+{
+	if (ImGui::MenuItem("Create Empty"))
+	{
+		m_Scene->CreateGameObject();
+	}
+	if (ImGui::MenuItem("Create Sprite"))
+	{
+		GameObject* gameObject = m_Scene->CreateGameObject();
+		gameObject->AddComponent<SpriteRenderer>();
+		gameObject->SetName("Sprite");
+	}
+	if (ImGui::MenuItem("Create Camera"))
+	{
+		GameObject* gameObject = m_Scene->CreateGameObject();
+		gameObject->AddComponent<Camera>();
+		gameObject->AddComponent<AudioListener>();
+		gameObject->SetName("Camera");
+	}
+	if (ImGui::MenuItem("Rigidbody Square"))
+	{
+		GameObject* gameObject = m_Scene->CreateGameObject();
+		gameObject->AddComponent<SpriteRenderer>();
+		gameObject->AddComponent<Rigidbody>();
+		gameObject->AddComponent<BoxCollider>();
+	}
 }
 
 void HierarchyPanel::ImGuiRender()
 {
 	ImGui::Begin("Hierarchy");
 
-	ImGuiTreeNodeFlags flags = 0;
-	flags |= ImGuiTreeNodeFlags_DefaultOpen;
-
 	if (ImGui::Button("+"))
 		ImGui::OpenPopup("Game Objects");
 
 	if (ImGui::BeginPopup("Game Objects"))
 	{
-		if (ImGui::MenuItem("Create Empty"))
-		{
-			m_Scene->CreateGameObject();
-		}
-		if (ImGui::MenuItem("Create Sprite"))
-		{
-			GameObject* gameObject = m_Scene->CreateGameObject();
-			gameObject->AddComponent<SpriteRenderer>();
-			gameObject->SetName("Sprite");
-		}
-		if (ImGui::MenuItem("Create Camera"))
-		{
-			GameObject* gameObject = m_Scene->CreateGameObject();
-			gameObject->AddComponent<Camera>();
-			gameObject->AddComponent<AudioListener>();
-			gameObject->SetName("Camera");
-		}
-		if (ImGui::MenuItem("Rigidbody Square"))
-		{
-			GameObject* gameObject = m_Scene->CreateGameObject();
-			gameObject->AddComponent<SpriteRenderer>();
-			gameObject->AddComponent<Rigidbody>();
-			gameObject->AddComponent<BoxCollider>();
-		}
-
+		AddGameObjectPopup();
 		ImGui::EndPopup();
 	}
 
 	ImGui::SameLine();
-
 	ImGui::InputText("##", m_FindInput, 20);
 
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
 	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
-	{
-		auto& objects = m_Scene->m_GameObjects;
-		for (size_t i = 0; i < objects.size();i++)
-		{
-			if (objects[i]->transform->GetParent() == nullptr)
-				RenderGameObjectTreeNode(objects[i].get());
-		}
-
-		ImGui::Dummy(ImGui::GetWindowSize());
-
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PANEL_ITEM"))
-			{
-				GameObject* dragObject = (GameObject*)payload->Data;
-				dragObject->transform->SetParent(nullptr);
-				ImGui::EndDragDropTarget();
-			}
-		}
-	}
-
+		RenderSceneHeader();
+	
 	ImGui::End();
 }
 

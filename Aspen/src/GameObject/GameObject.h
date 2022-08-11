@@ -29,8 +29,10 @@ private:
 	char m_Name[20];
 	unsigned int m_ID;
 	bool m_IsActive = true;
-	Scene* m_Scene = nullptr;
+	
 	Tag m_Tag;
+	LayerMask m_Layer;
+	Scene* m_Scene = nullptr;
 
 	std::vector<std::unique_ptr<Component>> m_Components;
 	std::vector<Script*> m_Scripts;
@@ -105,12 +107,14 @@ public:
 #pragma endregion
 
 #pragma region Setters
+	void SetLayer(const LayerMask& layer);
 	void SetName(const std::string& name);
 	void SetActive(bool active);
 	void SetTag(const Tag& tag);
 #pragma endregion
 
 #pragma region Getters
+	const LayerMask& GetLayer() const { return m_Layer; }
 	const char* GetName() const { return m_Name; }
 	unsigned int GetID() const { return m_ID; }
 	const Tag& GetTag() const { return m_Tag; }

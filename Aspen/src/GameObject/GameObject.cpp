@@ -61,6 +61,11 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 	}
 }
 
+void GameObject::SetLayer(const LayerMask& layer)
+{
+	m_Layer = layer;
+}
+
 void GameObject::SetName(const std::string& name)
 {
 	strcpy_s(m_Name, 20, name.data());

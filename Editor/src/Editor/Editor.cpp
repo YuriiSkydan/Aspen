@@ -2,7 +2,6 @@
 #include "../ImGuizmo/ImSequencer.h"
 
 #include "src/Math/Math.h"
-#include "src/Scene/SceneSerializer.h"
 
 #include "../vendor/glm/glm.hpp"
 #include "../vendor/glm/gtc/matrix_transform.hpp"
@@ -386,8 +385,8 @@ void Editor::Toolbar()
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
 		| ImGuiWindowFlags_NoScrollbar
-		| ImGuiWindowFlags_NoSavedSettings
-		;
+		| ImGuiWindowFlags_NoSavedSettings;
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 	ImGui::Begin("TOOLBAR", NULL, window_flags);
 	ImGui::PopStyleVar();

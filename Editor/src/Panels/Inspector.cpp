@@ -93,8 +93,19 @@ void Inspector::RenderGameObjectProperties()
 	ImGui::Spacing();
 	ImGui::Text("Layer");
 	ImGui::SameLine();
-	if (ImGui::BeginCombo("##Layers", "Default"))
+	if (ImGui::BeginCombo("##Layers", LayerMask::GetLayers().at(m_SelectedGameObject->GetLayer().m_Value).c_str()))
 	{
+		for (auto& layer : LayerMask::GetLayers())
+		{
+			if (ImGui::Selectable(layer.second.c_str()))
+				m_SelectedGameObject->SetLayer(layer.first);
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Add Layer"))
+			m_TagsAndLayersManager = true;
+
 		ImGui::EndCombo();
 	}
 
@@ -229,7 +240,6 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 			{
 				const char* path = (const char*)payload->Data;
-				std::cout << "Path: " << path << std::endl;
 				spriteRenderer->SetSprite(path);
 
 				ImGui::EndDragDropTarget();
@@ -626,10 +636,10 @@ void Inspector::RenderTagsAndLayersManager()
 #pragma region TagsManager
 	if (ImGui::CollapsingHeader("Tags"))
 	{
-		auto RenderTag = [](std::string& tag)
+		auto RenderTag = [](std::string& tag, ImGuiInputTextFlags flags = 0)
 		{
 			std::string inputTag = tag;
-			ImGui::InputText("##", &inputTag);
+			ImGui::InputText("##", &inputTag, flags);
 
 			if (ImGui::IsItemDeactivatedAfterEdit())
 				tag = inputTag;
@@ -641,15 +651,66 @@ void Inspector::RenderTagsAndLayersManager()
 
 		auto& tags = Tag::GetTags();
 
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth - 40);
+		ImGui::Spacing();
+		ImGui::Text(" Add Tag");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 		if (ImGui::Button("+"))
 		{
 			Tag::Add("Tag"s + std::to_string(tags.size()));
 		}
+		ImGui::Columns(1);
 
+		ImGui::InputText("##Untagged", &tags[0], ImGuiInputTextFlags_ReadOnly);
 		for (size_t i = 1; i < tags.size(); i++)
 		{
 			ImGui::PushID((tags[i] + std::to_string(i)).c_str());
 			RenderTag(tags[i]);
+			ImGui::PopID();
+		}
+	}
+#pragma endregion
+
+#pragma region LayerManager
+	if (ImGui::CollapsingHeader("Layers"))
+	{
+		auto RenderLayer = [](std::string& layer, ImGuiInputTextFlags flags = 0)
+		{
+			std::string inputLayer = layer;
+			ImGui::InputText("##", &inputLayer, flags);
+
+			if (ImGui::IsItemDeactivatedAfterEdit())
+				layer = inputLayer;
+
+			ImGui::SameLine();
+			if (ImGui::Button("-"))
+				LayerMask::Remove(layer);
+		};
+
+		auto& layers = LayerMask::GetLayers();
+
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth - 40);
+		ImGui::Spacing();
+		ImGui::Text(" Add Layer");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+		if (ImGui::Button("+"))
+		{
+			LayerMask::Add("Layer"s + std::to_string(layers.size()));
+		}
+		ImGui::Columns(1);
+
+		std::string defaultLayer = layers.at(0);
+		ImGui::InputText("##Default", &defaultLayer, ImGuiInputTextFlags_ReadOnly);
+		for (auto it = ++layers.begin(); it != layers.end(); ++it)
+		{
+			ImGui::PushID(it->first);
+			RenderLayer(it->second);
 			ImGui::PopID();
 		}
 	}

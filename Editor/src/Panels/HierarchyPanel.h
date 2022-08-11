@@ -14,6 +14,8 @@ private:
 	void GameObjectPropertiesPopup();
 	void RenderGameObjects();
 	void RenderGameObjectTreeNode(GameObject* gameObject);
+	void RenderSceneHeader();
+	void AddGameObjectPopup();
 
 public:
 	HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef);

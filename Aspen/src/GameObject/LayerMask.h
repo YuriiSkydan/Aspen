@@ -8,13 +8,13 @@ class ASPEN LayerMask
 private:
 	inline static std::unordered_map <std::uint8_t, std::string> s_Layers{ {0, "Default"} };
 
-	std::uint8_t m_Value;
+	std::uint8_t m_Value = 0;
 
 	friend class Inspector;
 private:
 	static void Add(std::string_view name);
 	static void Remove(std::string_view name);
-	static const std::unordered_map<std::uint8_t, std::string>& GetLayers() { return s_Layers; }
+	static std::unordered_map<std::uint8_t, std::string>& GetLayers() { return s_Layers; }
 
 public:
 	LayerMask();
