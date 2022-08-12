@@ -1,8 +1,4 @@
-#include <filesystem>
-
 #include "SpriteRenderer.h"
-#include "../GameObject/GameObject.h"
-
 
 SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform)

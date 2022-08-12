@@ -18,20 +18,16 @@ public:
 	void Start() override;
 	void Update() override;
 
-#pragma region Setters
 	void SetFilename(std::string_view filename);
 	void SetMaxDistance(float distance);
 	void SetMinDistance(float distance);
 	void SetLooped(bool value);
-#pragma endregion
 
-#pragma region Getters
 	std::string_view GetFilename() const { return m_Filename; }
 	float GetMinDistance() const { return m_MinDistance; }
 	float GetMaxDistance() const { return m_MaxDistance; }
 	bool GetIsLooped() const { return m_IsLooped; }
-#pragma endregion
-
+	
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;
 

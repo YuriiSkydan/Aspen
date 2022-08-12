@@ -1,15 +1,12 @@
 #pragma once
-#include "../Scene/EditorCamera.h"
-#include "../Components/SpriteRenderer.h"
-#include "../Components/BoxCollider.h"
-#include "../Components/CircleCollider.h"
-#include "../Components/Rigidbody.h"
-#include "../Components/Camera.h"
 #include "../GameObject/GameObject.h"
+#include "../Components/Camera.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/Rigidbody.h"
+#include "../Components/AudioListener.h"
+#include "EditorCamera.h"
 
-#include "box2d/b2_api.h" // maybe move it to the physics
 #include "box2d/b2_world.h"
-#include "box2d/b2_math.h"
 #include "box2d/b2_contact.h"
 #include "box2d/b2_world_callbacks.h"
 
@@ -36,7 +33,6 @@ public:
 	void BeginContact(b2Contact* contact) override;
 	void EndContact(b2Contact* contact) override;
 };
-
 
 class ASPEN Scene
 {
@@ -66,12 +62,10 @@ public:
 	Scene(const Scene& other) = delete;
 	const Scene& operator=(const Scene& other) = delete;
 
+	//------------------------------------------------------------
+	//Update Functions
 	void Start();
 	void Stop();
-
-	void Pause(); // I'm not sure whether I will use this function
-	void Resume();
-
 	void Update();
 	void Render();
 
@@ -79,20 +73,22 @@ public:
 	void Resize(unsigned int width, unsigned int height);
 
 	void Copy(const Scene& other);
-	
-	void DestroyGameObject(GameObject* gameObject);
 
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const std::string& name);
+	void DestroyGameObject(GameObject* gameObject);
 
-#pragma region Getters
+	//------------------------------------------------------------
+	//Getters
 	GameObject* GetObjectWithID(int ID);
 	std::vector<GameObject*> GetObjectsWithTag(const Tag& tag);
 
 	std::string GetName() const { return m_Name; }
 	unsigned int GetWidth() const { return m_Width; }
 	unsigned int GetHeight() const { return m_Height; }
-
+	
+	//------------------------------------------------------------
+	//Component operations
 	template<typename T>
 	std::vector<T*> GetComponentsOfType() const
 	{
@@ -114,13 +110,12 @@ public:
 		std::vector<GameObject*> objects;
 		for (auto& object : m_GameObjects)
 		{
-			if(object->HasComponent<T>())
+			if (object->HasComponent<T>())
 				objects.push_back(object.get());
 		}
 
 		return objects;
 	}
-#pragma endregion
 
 	template<typename T>
 	void OnComponentAdded(std::unique_ptr<T>& component);
@@ -128,14 +123,16 @@ public:
 	template<typename T>
 	void OnComponentRemoved(std::unique_ptr<T>& component);
 
+	//------------------------------------------------------------
+	//Serialization
 	void Serialize() const;
 	void Deserialize(json& in);
 
 	~Scene();
 };
 
-#pragma region Scene
-
+//---------------------------------------------
+//Scene Component Operations
 template<typename T>
 void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 {
@@ -154,10 +151,8 @@ void Scene::OnComponentRemoved(std::unique_ptr<T>& component)
 
 }
 
-#pragma endregion
-
-#pragma region GameObject
-
+//---------------------------------------------
+//GameObject Component Operations
 template<typename T>
 T* GameObject::AddComponent()
 {
@@ -202,6 +197,21 @@ T* GameObject::AddComponent()
 //	}
 //}
 
+template<typename T>
+void GameObject::RemoveComponent()
+{
+	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+	{
+		T* component = dynamic_cast<T*>(it->get());
+		if (component != nullptr)
+		{
+			m_Components.erase(it);
+			return;
+		}
+	}
+
+	WARN("Component doesn't exist.");
+}
 
 template<typename T>
 bool GameObject::HasComponent() const
@@ -228,10 +238,8 @@ T* GameObject::GetComponent() const
 	return nullptr;
 }
 
-#pragma endregion
-
-#pragma region Component 
-
+//---------------------------------------------
+//Component Component Operations
 template<typename T>
 T* Component::GetComponent() const
 {
@@ -243,5 +251,3 @@ bool Component::HasComponent() const
 {
 	return gameObject->HasComponent<T>();
 }
-
-#pragma endregion

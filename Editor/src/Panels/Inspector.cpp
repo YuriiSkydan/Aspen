@@ -1,5 +1,6 @@
 #include "Inspector.h"
 #include "src/ScriptManager.h"
+#include "Components/AllComponents.h"
 #include "imgui/imgui_stdlib.h"
 
 using namespace std::string_literals;
@@ -490,6 +491,9 @@ void Inspector::RenderComponent(Animator* animator)
 
 			ImGui::Spacing();
 			ImGui::InputText("##ClipName", &clipName);
+
+			if (ImGui::IsItemDeactivatedAfterEdit())
+				m_ChoosenClip->SetName(clipName);
 
 			DragFloat("##Duration", m_ChoosenClip, m_ChoosenClip->GetDuration(),
 				&AnimationClip::SetDuration, 0.01f, 0.0f);

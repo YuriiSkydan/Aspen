@@ -3,6 +3,10 @@
 #include "../Math/Math.h"
 #include "../Core/Time.h"
 #include "../Renderer/Renderer.h"
+#include "../Components/PolygonCollider.h"
+#include "../Components/BoxCollider.h"
+#include "../Components/CircleCollider.h"
+#include "../Components/Rigidbody.h"
 
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"

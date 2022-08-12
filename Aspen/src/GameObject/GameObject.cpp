@@ -1,8 +1,6 @@
 #include "GameObject.h"
 #include "../ScriptManager.h"
-#include "../Components/BoxCollider.h"
-#include "../Components/CircleCollider.h"
-#include "../Components/Rigidbody.h"
+#include "../Components/AllComponents.h"
 
 void GameObject::RemoveComponent(Component* component)
 {

@@ -1,38 +1,34 @@
 #pragma once
 #include "../Log/Log.h"
-#include "../Components/Transform.h"
-#include "../Components/SpriteRenderer.h"
-#include "../Components/PolygonCollider.h"
-#include "../Components/Animator.h"
-#include "../Components/AudioSource.h"
-#include "../Components/AudioListener.h"
 #include "../Components/Script.h"
-#include "../Components/Rigidbody.h"
 #include "Tag.h"
 #include "LayerMask.h"
 
-#include <string>
-#include <iostream>
-
-//class AudioSource;
-//class AudioListener;
+class SpriteRenderer;
+class Camera;
+class Rigidbody;
+class BoxCollider;
+class CircleCollider;
+class PolygonCollider;
+class Animator;
+class AudioSource;
+class AudioListener;
+class Scene;
 
 #define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
-
-class Scene;
 
 class ASPEN GameObject
 {
 private:
 	inline static unsigned int s_Objects = 0;
 
-	char m_Name[20];
 	unsigned int m_ID;
 	bool m_IsActive = true;
+	char m_Name[20];
 	
-	Tag m_Tag;
 	LayerMask m_Layer;
 	Scene* m_Scene = nullptr;
+	Tag m_Tag;
 
 	std::vector<std::unique_ptr<Component>> m_Components;
 	std::vector<Script*> m_Scripts;
@@ -43,8 +39,6 @@ public:
 	Transform* transform;
 
 private:
-
-#pragma region ComponentsUpdates
 	void ComponentsAwake();
 	void ComponentsStart();
 	void ComponentsUpdate();
@@ -52,7 +46,6 @@ private:
 	void ComponentsLateUpdate();
 	void ComponentsEnable();
 	void ComponentsDisable();
-#pragma endregion
 
 	void AddScript(Script* script);
 
@@ -68,7 +61,6 @@ private:
 				}
 			}(), ...);
 	}
-
 	void RemoveComponent(Component* component);
 
 public:
@@ -78,42 +70,30 @@ public:
 	GameObject(const GameObject& other) = delete;
 	const GameObject& operator=(const GameObject& other) = delete;
 
-#pragma region ComponentMethods
-	//In Scene.h
+	//------------------------------------------------------------
+	//Component operations
+	//Realization in Scene.h
 	template<typename T>
 	T* AddComponent();
 
 	template<typename T>
-	void RemoveComponent()
-	{
-		for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
-		{
-			T* component = dynamic_cast<T*>(it->get());
-			if (component != nullptr)
-			{
-				m_Components.erase(it);
-				return;
-			}
-		}
+	T* GetComponent() const;
 
-		WARN("Component doesn't exist.");
-	}
+	template<typename T>
+	void RemoveComponent();
 
 	template<typename T>
 	bool HasComponent() const;
 
-	template<typename T>
-	T* GetComponent() const;
-#pragma endregion
-
-#pragma region Setters
+	//------------------------------------------------------------
+	//Setters
 	void SetLayer(const LayerMask& layer);
 	void SetName(const std::string& name);
 	void SetActive(bool active);
 	void SetTag(const Tag& tag);
-#pragma endregion
 
-#pragma region Getters
+	//------------------------------------------------------------
+	//Getters
 	const LayerMask& GetLayer() const { return m_Layer; }
 	const char* GetName() const { return m_Name; }
 	unsigned int GetID() const { return m_ID; }
@@ -123,8 +103,9 @@ public:
 
 	const std::vector<std::unique_ptr<Component>>& GetComponents() const { return m_Components; }
 	const std::vector<Script*>& GetScripts() const { return m_Scripts; }
-#pragma endregion
 
+	//------------------------------------------------------------
+	//Serialization
 	void Serialize(json& out) const;
 	void Deserialize(json& in);
 

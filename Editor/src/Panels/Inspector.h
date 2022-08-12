@@ -9,6 +9,9 @@
 
 #include "imgui/imgui.h"
 
+class AnimationClip;
+class Material;
+
 class Inspector
 {
 private:

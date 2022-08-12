@@ -1,11 +1,8 @@
 #pragma once
-#include <iostream>
-
 #include "glad/glad.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "Shader.h"
-#include "../Core/Core.h"
 
 class Transform;
 class SpriteRenderer;

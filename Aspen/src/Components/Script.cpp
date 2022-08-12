@@ -1,5 +1,8 @@
 #include "Script.h"
-#include "../ScriptManager.h"
+
+Script::Script() 
+	: Component(nullptr, nullptr)
+{ }
 
 Script::Script(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)

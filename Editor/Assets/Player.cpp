@@ -18,6 +18,7 @@ private:
 	Animator* m_Animator;
 
 	GameObject* m_Camera;
+	std::string currentAnimation;
 public:
 
 	void Start() override
@@ -68,15 +69,14 @@ public:
 
 		m_MovingDirection = 0.0f;
 
-		if (!Input::IsKeyPressed(Key::D) && !Input::IsKeyPressed(Key::A))
-			m_Animator->PlayAnimation("Animation0");
+		currentAnimation = "Idle";
 
 		m_Camera->transform->position.x = transform->position.x;
 		m_Camera->transform->position.y = transform->position.y + 0.25;
 
 		if (Input::IsKeyPressed(Key::D))
 		{
-			m_Animator->PlayAnimation("Animation1");
+			currentAnimation = "Run";
 
 			m_SpriteRenderer->flipX = false;
 			m_MovingDirection = 1.0f;
@@ -84,14 +84,24 @@ public:
 
 		if (Input::IsKeyPressed(Key::A))
 		{
-			m_Animator->PlayAnimation("Animation1");
+			currentAnimation = "Run";
 
 			m_SpriteRenderer->flipX = true;
 			m_MovingDirection = -1.0f;
 		}
 
+		if (Input::IsKeyPressed(Key::C))
+		{
+			currentAnimation = "Roll";
+
+			if (m_Rigidbody->GetLinearVelocity().x < 1.0f)
+				m_Rigidbody->AddForce(Vector2f(2.0f, 0.0f));
+		}
+
 		if (Input::GetKeyDown(Key::Space))
 			std::cout << "Key is down!!!\n";
+
+		m_Animator->PlayAnimation(currentAnimation);
 	}
 
 	void FixedUpdate() override

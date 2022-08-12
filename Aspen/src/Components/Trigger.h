@@ -14,4 +14,3 @@ protected:
 
 	virtual ~Trigger() = default;
 };
-

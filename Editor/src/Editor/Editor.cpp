@@ -9,11 +9,12 @@
 #include "../vendor/glm/gtc/type_ptr.hpp"
 
 #include "src/Input/Input.h"
-
 #include "src/Renderer/Renderer.h" // delete later
 #include "src/Engine/Engine.h"
-
 #include "src/ScriptManager.h"
+#include "Components/Transform.h"
+#include "Components/BoxCollider.h"
+#include "Components/CircleCollider.h"
 
 Editor::Editor()
 	: Layer("Editor")

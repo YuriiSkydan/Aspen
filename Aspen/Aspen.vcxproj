@@ -136,6 +136,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\AllComponents.h" />
     <ClInclude Include="src\Sound\SoundEngine.h" />
     <ClInclude Include="src\Components\AudioSource.h" />
     <ClInclude Include="src\Components\AudioListener.h" />

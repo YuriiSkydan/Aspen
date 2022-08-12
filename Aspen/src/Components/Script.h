@@ -2,7 +2,7 @@
 #include "Trigger.h"
 #include "Collision.h"
 
-//#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create() { return new className(); }}
+#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create() { return new className(); }}
 
 class ASPEN Script : public Component
 {
@@ -16,8 +16,7 @@ private:
 	const std::string GetName() const { return m_Name; }
 
 public:
-	Script() : Component(nullptr, nullptr)
-	{ }
+	Script();
 	Script(GameObject* gameObject, Transform* transform);
 
 	virtual	void OnCollisionEnter(Collision* collision) {}

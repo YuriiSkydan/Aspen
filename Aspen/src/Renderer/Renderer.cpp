@@ -1,5 +1,4 @@
 #include "Renderer.h"
-
 #include "../GameObject/GameObject.h"
 #include "../Components/Transform.h"
 #include "../Components/BoxCollider.h"
@@ -24,6 +23,7 @@ float vertices[] =
 	-0.5f, -0.5f, 0.0f, 0.0f,  // bottom left
 	-0.5f,  0.5f, 0.0f, 1.0f   // top left 
 };
+
 unsigned int indices[] =
 {
 	0, 1, 3,   // first triangle

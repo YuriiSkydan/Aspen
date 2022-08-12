@@ -32,7 +32,8 @@ public:
 	void AddAngularImpulse(float impulse);
 	void AddTorque(float torque);
 
-#pragma region Setters
+	//---------------------------------------------------------
+	//Setters
 	void SetLinearVelocity(const Vector2f& velocity);
 	void SetAngularVelocity(float velocity);
 	void SetAngularDrag(float drag);
@@ -41,9 +42,9 @@ public:
 	void SetGravityScale(float scale);
 	void SetBodyType(BodyType type);
 	void SetMass(float mass);
-#pragma endregion
 
-#pragma region Getters
+	//---------------------------------------------------------
+	//Getters
 	Vector2f GetLinearVelocity() const;
 
 	float GetAngularVelocity() const { return m_Body->GetAngularVelocity(); };
@@ -54,8 +55,9 @@ public:
 
 	bool GetFixedRotation() const { return m_FixedRotation; }
 	BodyType GetBodyType() const { return m_Type; }
-#pragma endregion
 
+	//---------------------------------------------------------
+	//Serialization
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;
 };

@@ -1,5 +1,6 @@
 #include "HierarchyPanel.h"
 #include "src/GameObject/GameObject.h"
+#include "Components/Transform.h"
 #include "imgui/imgui.h"
 
 using namespace std::string_literals;
