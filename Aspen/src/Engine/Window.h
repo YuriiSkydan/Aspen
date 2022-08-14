@@ -14,8 +14,7 @@ struct ASPEN WindowData
 
 	WindowData(const std::string& title = "Aspen", unsigned int width = 1920, unsigned int height = 1080)
 		: title(title), width(width), height(height)
-	{
-	}
+	{ }
 };
 
 class ASPEN Window
@@ -43,10 +42,5 @@ public:
 	unsigned int GetWidth() const { return m_Data.width; };
 	unsigned int GetHeight() const { return m_Data.height; }
 
-	~Window()
-	{
-		//maybe move it to shutdown
-		glfwDestroyWindow(m_Window);
-		glfwTerminate();
-	}
+	~Window();
 };

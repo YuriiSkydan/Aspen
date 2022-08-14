@@ -1,6 +1,7 @@
 #include "Windows.h"
 #include "../../Aspen/src/Engine/Engine.h"
 #include "../../Aspen/src/GameObject/GameObject.h"
+#include "../../Aspen/src/Components/AllComponents.h"
 #include "../../Aspen/src/Scene/Scene.h"
 #include "../../Aspen/src/Input/Input.h"
 #include "../../Aspen/src/Core/Time.h"

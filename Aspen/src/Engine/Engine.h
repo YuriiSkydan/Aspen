@@ -3,7 +3,6 @@
 
 #include "Window.h"
 #include "../Layer.h"
-#include "../Renderer/Texture.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "ImGuizmo/ImGuizmo.h"
@@ -16,7 +15,6 @@ private:
 
 	bool m_Running = true;
 	bool m_Minimized = false;
-	float m_LastFrameTime = 0.0f;
 
 	inline static Engine* s_Instance = nullptr;
 
@@ -99,8 +97,6 @@ public:
 	}
 
 	ImGuiContext* GetImGuiContext() const { return m_Context; }
-
-	static void Set(Engine* engine);
 	static Engine& Get() { return *s_Instance; }
 
 	~Engine()

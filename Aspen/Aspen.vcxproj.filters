@@ -391,7 +391,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="imgui.ini" />
     <None Include="vendor\ImGuizmo\.editorconfig" />
     <None Include="vendor\ImGuizmo\.gitignore" />
     <None Include="vendor\ImGuizmo\LICENSE" />

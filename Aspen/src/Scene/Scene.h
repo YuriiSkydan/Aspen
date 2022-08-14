@@ -4,42 +4,19 @@
 #include "../Components/BoxCollider.h"
 #include "../Components/Rigidbody.h"
 #include "../Components/AudioListener.h"
-#include "EditorCamera.h"
 
 #include "box2d/b2_world.h"
-#include "box2d/b2_contact.h"
-#include "box2d/b2_world_callbacks.h"
 
-#include <map>
-#include <list>
-
-//Make a seperate file for it
-class ContactListener : public b2ContactListener
-{
-private:
-	Scene* m_ScenePtr;
-
-private:
-	void OnTriggerEnter(GameObject* gameObject);
-	void OnTriggerStay(GameObject* gameObject);
-	void OnTriggerExit(GameObject* gameObject);
-
-	void OnCollisionEnter(GameObject* gameObject, GameObject* entered);
-	void OnCollisionStay(GameObject* gameObject);
-	void OnCollisionExit(GameObject* gameObject);
-
-public:
-	ContactListener(Scene* scene);
-	void BeginContact(b2Contact* contact) override;
-	void EndContact(b2Contact* contact) override;
-};
+class EditorCamera;
+class ContactListener;
 
 class ASPEN Scene
 {
 private:
 	std::string m_Name = "Sample Scene";
+	unsigned int m_Width;
+	unsigned int m_Height;
 
-	//when vector is resized object will be destory that why you use unique_ptr
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
 	//std::vector<SpriteRenderer*>             m_RenderObjects;
 
@@ -47,11 +24,7 @@ private:
 	std::unique_ptr<ContactListener> m_ContactListener;
 	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
 
-	unsigned int m_Width;
-	unsigned int m_Height;
-
 	friend class HierarchyPanel;
-	friend class ContactListener;
 private:
 	void PhysicsWorldStart();
 	void PhysicsWorldStop();

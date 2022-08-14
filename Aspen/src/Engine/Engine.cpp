@@ -47,8 +47,3 @@ void Engine::Close()
 {
 	m_Running = false;
 }
-
-void Engine::Set(Engine* engine)
-{
-	s_Instance = engine;
-}

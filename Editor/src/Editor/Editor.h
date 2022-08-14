@@ -36,7 +36,6 @@ private:
 	ImGuizmo::OPERATION m_CurrentOperation;
 
 	GameObject* m_SelectedObject = nullptr;
-	GameObject* m_HoveredObject = nullptr;
 
 	Framebuffer m_SceneFramebuffer;
 	Framebuffer m_GameFramebuffer;
@@ -58,7 +57,8 @@ private:
 	void MainMenuBar();
 	void SceneWindow();  // maybe move it to seperate class
 	void GameWindow();   // maybe move it to seperate class	
-	
+	void ProjectPreferencesWindow();
+
 	void OpenScene();
 	void SaveScene();
 	void SaveSceneAs(); 

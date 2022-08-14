@@ -149,6 +149,11 @@ void Editor::GameWindow()
 	ImGui::PopStyleVar();
 }
 
+void Editor::ProjectPreferencesWindow()
+{
+	ImGui::Begin("Project Preferences");
+}
+
 void Editor::SceneWindow()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -165,11 +170,26 @@ void Editor::SceneWindow()
 			size_t endPos = path.find_last_of(".") - startPos;
 
 			std::string objectName = path.substr(startPos, endPos);
+
 			GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
 			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
 			spriteRenderer->SetSprite(path);
-			
-			gameObject->transform->position = m_EditorCamera.GetPosition();
+
+			Vector2f objectPosition;
+			Matrix3x3f cameraMatrix = m_EditorCamera.GetCameraMatrix();
+			objectPosition.x = -((1.0f / cameraMatrix[0][0]) * cameraMatrix[0][2]);
+			objectPosition.y = -((1.0f / cameraMatrix[1][1]) * cameraMatrix[1][2]);
+
+			ImVec2 mousePosition = ImGui::GetMousePos();
+			auto offset = ImGui::GetWindowPos();
+			ImVec2 windowCenter;
+			windowCenter.x = offset.x + m_SceneWindowSize.x / 2.0f;
+			windowCenter.y = offset.y + m_SceneWindowSize.y / 2.0f;
+
+			objectPosition.x += ((mousePosition.x - windowCenter.x) / (m_SceneWindowSize.x / 2.0f)) * (1.0f / cameraMatrix[0][0]);
+			objectPosition.y -= ((mousePosition.y - windowCenter.y) / (m_SceneWindowSize.y / 2.0f)) * (1.0f / cameraMatrix[1][1]);
+
+			gameObject->transform->position = objectPosition;
 
 			m_SelectedObject = gameObject;
 
@@ -229,8 +249,7 @@ void Editor::SceneWindow()
 			int pData = m_SceneFramebuffer.ReadPixel(1, mousePos.x, mousePos.y);
 			m_SceneFramebuffer.Unbind();
 
-			m_HoveredObject = m_ActiveScene->GetObjectWithID(pData);
-			m_SelectedObject = m_HoveredObject;
+			m_SelectedObject = m_ActiveScene->GetObjectWithID(pData);
 		}
 	}
 	

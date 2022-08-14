@@ -11,9 +11,9 @@ EditorCamera::EditorCamera(float ratio)
 void EditorCamera::Update()
 {
 	if (Input::IsMouseButtonPressed(Mouse::Button3) || Input::IsKeyPressed(Key::Up))
-		m_Scale += 0.01f;
+		m_Scale += 0.001f;
 	else if ((Input::IsMouseButtonPressed(Mouse::Button4) || Input::IsKeyPressed(Key::Down)) && m_Scale > 0.01f)
-		m_Scale -= 0.01f;
+		m_Scale -= 0.001f;
 
 	static Vector2 startPosition;
 	if (Input::IsMouseButtonPressed(Mouse::Button1))

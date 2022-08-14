@@ -20,7 +20,7 @@ void HierarchyPanel::GameObjectPropertiesPopup()
 
 void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 {
-	ImGui::PushID(("##"s + gameObject->GetName()).c_str());
+	ImGui::PushID(("##"s + gameObject->GetName() + std::to_string(gameObject->GetID())).c_str());
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	if (gameObject == m_SelectedGameObject)

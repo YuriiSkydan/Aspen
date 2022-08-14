@@ -46,7 +46,8 @@ void Window::Init(const WindowData& data)
 
 void Window::ShutDown()
 {
-	
+	glfwDestroyWindow(m_Window);
+	glfwTerminate();
 }
 
 void Window::Update()
@@ -68,4 +69,10 @@ void Window::SetVSync(bool enabled)
 bool Window::IsVSync() const
 {
 	return m_VSync;
+}
+
+Window::~Window()
+{
+	ShutDown();
+	INFO("Window context is deleted!!!\n");
 }
