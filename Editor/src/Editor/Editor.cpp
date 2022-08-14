@@ -373,7 +373,11 @@ void Editor::UpdateGuizmo()
 		objectTransform = glm::scale(objectTransform, scale);
 		//objectTransform = glm::rotate(objectTransform, -ToRads(transform->angle), glm::vec3(0.0, 0.0, 1.0f));
 
+		Matrix3x3f cameraMatrix = m_EditorCamera.GetCameraMatrix();
 		Vector2f cameraPos = m_EditorCamera.GetPosition();
+		cameraPos.x *= cameraMatrix[0][0];
+		cameraPos.y *= cameraMatrix[1][1];
+
 		glm::mat4 CameraView = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		CameraView = glm::translate(CameraView, glm::vec3(-cameraPos.x * XAxis, -cameraPos.y * YAxis, 0.0f));
 
