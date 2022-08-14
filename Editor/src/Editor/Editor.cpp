@@ -160,7 +160,7 @@ void Editor::SceneWindow()
 
 	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoScrollbar);
 
-	ImGui::Dummy(m_SceneWindowSize);
+	ImGui::Dummy({ m_SceneWindowSize.x, m_SceneWindowSize.y - 30 });
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
