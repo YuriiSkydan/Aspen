@@ -31,6 +31,8 @@ public:
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}
 
+	GameObject* CreateGameObject();
+
 	void SetEnabled(bool enabled);
 	bool IsEnabled() const { return m_IsEnabled; }
 
@@ -38,7 +40,13 @@ public:
 	T* GetComponent() const;
 
 	template<typename T>
+	T* GetComponentInParent() const;
+
+	template<typename T>
 	bool HasComponent() const;
+
+	template<typename T>
+	bool HasComponentInParent() const;
 
 	bool operator==(const Component& other);
 	bool operator!=(const Component& other);

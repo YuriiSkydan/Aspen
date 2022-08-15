@@ -120,6 +120,7 @@
     <ClCompile Include="src\ScriptManager.cpp" />
     <ClCompile Include="src\Core\Time.cpp" />
     <ClCompile Include="src\GameObject\Tag.cpp" />
+    <ClCompile Include="src\Utils\File.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="src\ScriptManager.h" />
     <ClInclude Include="src\Core\Time.h" />
     <ClInclude Include="src\GameObject\Tag.h" />
+    <ClInclude Include="src\Utils\File.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />

@@ -38,6 +38,8 @@ public:
 		auto objects = gameObject->GetScene()->GetObjectsWithComponent<Camera>();
 
 		m_Camera = objects[0];
+
+		
 	}
 
 	void Update() override

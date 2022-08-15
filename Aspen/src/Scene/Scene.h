@@ -220,7 +220,21 @@ T* Component::GetComponent() const
 }
 
 template<typename T>
+inline T* Component::GetComponentInParent() const
+{
+	Transform* parentTransform = gameObject->transform->GetParent();
+	return parentTransform->GetComponent<T>();
+}
+
+template<typename T>
 bool Component::HasComponent() const
 {
 	return gameObject->HasComponent<T>();
+}
+
+template<typename T>
+inline bool Component::HasComponentInParent() const
+{
+	Transform* parentTransform = gameObject->transform->GetParent();
+	return parentTransform->HasComponent<T>();
 }

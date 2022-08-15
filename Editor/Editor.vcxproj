@@ -87,6 +87,7 @@
     <ClCompile Include="src\Panels\HierarchyPanel.cpp" />
     <ClCompile Include="src\Panels\Inspector.cpp" />
     <ClCompile Include="src\Panels\ProjectPanel.cpp" />
+    <ClCompile Include="src\Utils\File.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Panels\AnimatorWindow.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Inspector.h" />
     <ClInclude Include="src\Panels\ProjectPanel.h" />
+    <ClInclude Include="src\Utils\File.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

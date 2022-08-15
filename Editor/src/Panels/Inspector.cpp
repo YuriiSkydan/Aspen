@@ -3,6 +3,8 @@
 #include "Components/AllComponents.h"
 #include "imgui/imgui_stdlib.h"
 
+#include "../Utils/File.h"
+
 using namespace std::string_literals;
 
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
@@ -241,7 +243,11 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 			{
 				const char* path = (const char*)payload->Data;
-				spriteRenderer->SetSprite(path);
+
+				if (File::IsOfTypes(path, { ".png", ".jpg", ".jpeg"}))
+				{
+					spriteRenderer->SetSprite(path);
+				}
 
 				ImGui::EndDragDropTarget();
 			}

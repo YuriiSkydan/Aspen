@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "../Scene/Scene.h"
 
 Component::Component(GameObject* gameObject, Transform* transform)
 	: gameObject(gameObject), transform(transform)
@@ -8,6 +9,12 @@ const Component& Component::operator=(const Component& other)
 {
 	m_IsEnabled = other.m_IsEnabled;
 	return *this;
+}
+
+GameObject* Component::CreateGameObject()
+{
+	GameObject* newObject = gameObject->GetScene()->CreateGameObject();
+	return newObject;
 }
 
 void Component::SetEnabled(bool enabled)

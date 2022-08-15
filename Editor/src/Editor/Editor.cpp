@@ -252,8 +252,9 @@ void Editor::SceneWindow()
 			m_SelectedObject = m_ActiveScene->GetObjectWithID(pData);
 		}
 	}
-	
-	m_EditorCamera.Update(); // maybe move it to update method
+
+	if (ImGui::IsWindowHovered())
+		m_EditorCamera.Update();
 
 	ImGui::End();
 	ImGui::PopStyleVar();
