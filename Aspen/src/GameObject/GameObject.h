@@ -77,13 +77,25 @@ public:
 	T* AddComponent();
 
 	template<typename T>
+	T* AddComponentToParent();
+
+	template<typename T>
 	T* GetComponent() const;
+
+	template<typename T>
+	T* GetComponentInParent() const;
 
 	template<typename T>
 	void RemoveComponent();
 
 	template<typename T>
+	void RemoveComponentInParent();
+
+	template<typename T>
 	bool HasComponent() const;
+
+	template<typename T>
+	bool HasComponentInParent() const;
 
 	//------------------------------------------------------------
 	//Setters

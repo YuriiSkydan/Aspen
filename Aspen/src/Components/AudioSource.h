@@ -12,6 +12,7 @@ private:
 	float m_MinDistance = 0.0f;
 	
 	bool m_IsLooped = false;
+	bool m_StartPaused = false;
 public:
 	AudioSource(GameObject* gameObject, Transform* transform);
 
@@ -22,12 +23,14 @@ public:
 	void SetMaxDistance(float distance);
 	void SetMinDistance(float distance);
 	void SetLooped(bool value);
+	void SetStartPaused(bool value);
 
 	std::string_view GetFilename() const { return m_Filename; }
 	float GetMinDistance() const { return m_MinDistance; }
 	float GetMaxDistance() const { return m_MaxDistance; }
 	bool GetIsLooped() const { return m_IsLooped; }
-	
+	bool GetStartPaused() const { return m_StartPaused; }
+
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;
 

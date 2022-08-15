@@ -244,7 +244,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 			{
 				const char* path = (const char*)payload->Data;
 
-				if (File::IsOfTypes(path, { ".png", ".jpg", ".jpeg"}))
+				if (File::IsOfTypes(path, { ".png", ".jpg", ".jpeg" }))
 				{
 					spriteRenderer->SetSprite(path);
 				}
@@ -555,6 +555,10 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 		ImGui::Text("Max Distance");
 		ImGui::Spacing();
 		ImGui::Text("Is Looped");
+		ImGui::Spacing();
+		ImGui::Text("Start Paused");
+		ImGui::Spacing();
+		ImGui::Text("Source");
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
@@ -569,6 +573,25 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 
 		Checkbox("##IsLooped", audioSource, audioSource->GetIsLooped(),
 			&AudioSource::SetLooped);
+
+		Checkbox("##IsLooped", audioSource, audioSource->GetStartPaused(),
+			&AudioSource::SetStartPaused);
+
+		std::string filename = audioSource->GetFilename().data();
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		ImGui::InputText("##Source", &filename, ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
+			{
+				const char* path = (const char*)payload->Data;
+
+				if (File::IsOfTypes(path, { ".mp3" }))
+					audioSource->SetFilename(path);
+
+				ImGui::EndDragDropTarget();
+			}
+		}
 
 		ImGui::Columns(1);
 	}

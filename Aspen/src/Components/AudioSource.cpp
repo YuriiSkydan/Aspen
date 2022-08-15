@@ -9,7 +9,7 @@ AudioSource::AudioSource(GameObject* gameObject, Transform* transform)
 
 void AudioSource::Start()
 {
-	m_Sound = SoundEngine::Get().Play(m_Filename, transform->position, false, false, true);
+	m_Sound = SoundEngine::Get().Play(m_Filename, transform->position, m_IsLooped, m_StartPaused, true);
 
 	if (m_Sound != nullptr)
 	{
@@ -58,6 +58,11 @@ void AudioSource::SetLooped(bool value)
 		m_Sound->setIsLooped(m_IsLooped);
 }
 
+void AudioSource::SetStartPaused(bool value)
+{
+	m_StartPaused = value;
+}
+
 void AudioSource::Serialize(json& out) const
 {
 	Component::Serialize(out["AudioSource"]);
@@ -84,5 +89,8 @@ void AudioSource::Deserialize(json& in)
 AudioSource::~AudioSource()
 {
 	if (m_Sound != nullptr)
+	{
+		m_Sound->stop();
 		m_Sound->drop();
+	}
 }

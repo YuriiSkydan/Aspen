@@ -153,6 +153,14 @@ T* GameObject::AddComponent()
 	return nullptr;
 }
 
+template<typename T>
+inline T* GameObject::AddComponentToParent()
+{
+	Transform* parent = transform->GetParent();
+	if (parent != nullptr)
+		return parent->gameObject->AddComponent<T>();
+}
+
 //template<typename T>
 //T* GameObject::AddComponent()
 //{
@@ -187,6 +195,14 @@ void GameObject::RemoveComponent()
 }
 
 template<typename T>
+void GameObject::RemoveComponentInParent()
+{
+	Transform* parent = transform->GetParent();
+	if (parent != nullptr)
+		parent->gameObject->RemoveComponent<T>();
+}
+
+template<typename T>
 bool GameObject::HasComponent() const
 {
 	for (auto& component : m_Components)
@@ -194,6 +210,16 @@ bool GameObject::HasComponent() const
 		if (typeid(T) == typeid(*component))
 			return true;
 	}
+
+	return false;
+}
+
+template<typename T>
+bool GameObject::HasComponentInParent() const
+{
+	Transform* parent = transform->GetParent();
+	if (parent != nullptr)
+		return parent->gameObject->HasComponent<T>();
 
 	return false;
 }
@@ -211,6 +237,16 @@ T* GameObject::GetComponent() const
 	return nullptr;
 }
 
+template<typename T>
+T* GameObject::GetComponentInParent() const
+{
+	Transform* parent = transform->GetParent();
+	if (parent != nullptr)
+		return parent->gameObject->GetComponent<T>();
+	
+	return nullptr;
+}
+
 //---------------------------------------------
 //Component Component Operations
 template<typename T>
@@ -220,10 +256,9 @@ T* Component::GetComponent() const
 }
 
 template<typename T>
-inline T* Component::GetComponentInParent() const
+T* Component::GetComponentInParent() const
 {
-	Transform* parentTransform = gameObject->transform->GetParent();
-	return parentTransform->GetComponent<T>();
+	return gameObject->GetComponentInParent<T>();
 }
 
 template<typename T>
@@ -233,8 +268,7 @@ bool Component::HasComponent() const
 }
 
 template<typename T>
-inline bool Component::HasComponentInParent() const
+bool Component::HasComponentInParent() const
 {
-	Transform* parentTransform = gameObject->transform->GetParent();
-	return parentTransform->HasComponent<T>();
+	return gameObject->GetComponentInParent<T>();
 }
