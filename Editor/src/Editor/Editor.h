@@ -60,6 +60,7 @@ private:
 	void ProjectPreferencesWindow();
 
 	void OpenScene();
+	void OpenScene(std::string_view path);
 	void SaveScene();
 	void SaveSceneAs(); 
 

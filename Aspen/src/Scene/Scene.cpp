@@ -254,6 +254,13 @@ void Scene::Update()
 	static double duration = 0;
 	duration += Time::DeltaTime();
 
+	//Update
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsUpdate();
+	}
+
 	//Fixed Update
 	if (duration >= Time::FixedDeltaTime())
 	{
@@ -268,13 +275,6 @@ void Scene::Update()
 			if (m_GameObjects[i]->IsActive())
 				m_GameObjects[i]->ComponentsFixedUpdate();
 		}
-	}
-
-	//Update
-	for (size_t i = 0; i < m_GameObjects.size(); i++)
-	{
-		if (m_GameObjects[i]->IsActive())
-			m_GameObjects[i]->ComponentsUpdate();
 	}
 
 	//Late Update

@@ -145,8 +145,9 @@ T* GameObject::AddComponent()
 		T* returnComponent = newComponent.get();
 
 		m_Scene->OnComponentAdded<T>(newComponent);
+		m_NewComponents.push_back(newComponent.get());
 		m_Components.push_back(std::move(newComponent));
-
+		
 		return returnComponent;
 	}
 
@@ -154,7 +155,7 @@ T* GameObject::AddComponent()
 }
 
 template<typename T>
-inline T* GameObject::AddComponentToParent()
+T* GameObject::AddComponentToParent()
 {
 	Transform* parent = transform->GetParent();
 	if (parent != nullptr)

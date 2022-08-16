@@ -88,6 +88,17 @@ void GameObject::SetTag(const Tag& tag)
 	m_Tag = tag;
 }
 
+void GameObject::ProcessNewComponents()
+{
+	for (auto& component : m_NewComponents)
+		component->Awake();
+
+	for (auto& component : m_NewComponents)
+		component->Start();
+
+	m_NewComponents.clear();
+}
+
 void GameObject::ComponentsAwake()
 {
 	for (auto& it : m_Components)
@@ -108,6 +119,8 @@ void GameObject::ComponentsStart()
 
 void GameObject::ComponentsUpdate()
 {
+	ProcessNewComponents();
+
 	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())
@@ -157,6 +170,7 @@ void GameObject::AddScript(Script* script)
 	script->transform = transform;
 
 	m_Components.push_back(std::unique_ptr<Component>(script));
+	m_NewComponents.push_back(script);
 	m_Scripts.push_back(script);
 }
 

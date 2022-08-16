@@ -18,6 +18,8 @@ private:
 	Texture m_FolderIcon;
 	Texture m_FileIcon;
 	Texture m_CppFileIcon;
+	Texture m_SceneFileIcon;
+	Texture m_AudioFileIcon;
 
 public:
 	ProjectPanel();

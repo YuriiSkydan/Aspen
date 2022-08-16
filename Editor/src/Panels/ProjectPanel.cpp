@@ -10,6 +10,8 @@ ProjectPanel::ProjectPanel()
 	, m_FolderIcon("Resources/FolderIcon_3.png")
 	, m_FileIcon("Resources/FileIcon_2.png")
 	, m_CppFileIcon("Resources/CppFileIcon_2.png")
+	, m_SceneFileIcon("Resources/SceneIcon.png")
+	, m_AudioFileIcon("Resources/AudioIcon.png")
 { }
 
 void ProjectPanel::ImGuiRender()
@@ -47,18 +49,24 @@ void ProjectPanel::ImGuiRender()
 		{
 			if (!entry.is_directory())
 			{
-				if (entry.path().extension() == ".cpp"s)
+				if (entry.path().extension() == ".png" ||
+					entry.path().extension() == ".jpg")
+				{
+					std::shared_ptr<Texture> image;
+					TextureLibrary::Get()->GetTexture(entry.path().string(), image);
+					m_DirectoryFiles.insert({ entry, image });
+				}
+				else if (entry.path().extension() == ".cpp"s)
 				{
 					m_DirectoryFiles.insert({ entry, &m_CppFileIcon });
 				}
-				else if (entry.path().extension() == ".png" ||
-					entry.path().extension() == ".jpg")
+				else if(entry.path().extension() == ".scene")
 				{
-					std::wstring wPath = entry.path();
-					std::string path(wPath.begin(), wPath.end());
-					std::shared_ptr<Texture> image;
-					TextureLibrary::Get()->GetTexture(path, image);
-					m_DirectoryFiles.insert({ entry, image });
+					m_DirectoryFiles.insert({ entry, &m_SceneFileIcon });
+				}
+				else if(entry.path().extension() == ".mp3")
+				{
+					m_DirectoryFiles.insert({ entry, &m_AudioFileIcon });
 				}
 				else
 				{

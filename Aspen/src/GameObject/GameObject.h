@@ -31,6 +31,7 @@ private:
 	Tag m_Tag;
 
 	std::vector<std::unique_ptr<Component>> m_Components;
+	std::vector<Component*> m_NewComponents;
 	std::vector<Script*> m_Scripts;
 
 	friend class Inspector;
@@ -39,6 +40,7 @@ public:
 	Transform* transform;
 
 private:
+	void ProcessNewComponents();
 	void ComponentsAwake();
 	void ComponentsStart();
 	void ComponentsUpdate();

@@ -16,6 +16,8 @@
 #include "Components/BoxCollider.h"
 #include "Components/CircleCollider.h"
 
+#include "../Utils/File.h"
+
 Editor::Editor()
 	: Layer("Editor")
 	, m_HierarchyPanel(m_ActiveScene, m_SelectedObject)
@@ -166,32 +168,40 @@ void Editor::SceneWindow()
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PROJECT_PANEL_ITEM"))
 		{
 			const std::string path = (const char*)payload->Data;
-			size_t startPos = path.find_last_of("\\") + 1;
-			size_t endPos = path.find_last_of(".") - startPos;
 
-			std::string objectName = path.substr(startPos, endPos);
+			if (File::IsOfTypes(path, { ".png", ".jpg", ".jpeg" }))
+			{
+				size_t startPos = path.find_last_of("\\") + 1;
+				size_t endPos = path.find_last_of(".") - startPos;
 
-			GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
-			SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
-			spriteRenderer->SetSprite(path);
+				std::string objectName = path.substr(startPos, endPos);
 
-			Vector2f objectPosition;
-			Matrix3x3f cameraMatrix = m_EditorCamera.GetCameraMatrix();
-			objectPosition.x = -((1.0f / cameraMatrix[0][0]) * cameraMatrix[0][2]);
-			objectPosition.y = -((1.0f / cameraMatrix[1][1]) * cameraMatrix[1][2]);
+				GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
+				SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
+				spriteRenderer->SetSprite(path);
 
-			ImVec2 mousePosition = ImGui::GetMousePos();
-			auto offset = ImGui::GetWindowPos();
-			ImVec2 windowCenter;
-			windowCenter.x = offset.x + m_SceneWindowSize.x / 2.0f;
-			windowCenter.y = offset.y + m_SceneWindowSize.y / 2.0f;
+				Vector2f objectPosition;
+				Matrix3x3f cameraMatrix = m_EditorCamera.GetCameraMatrix();
+				objectPosition.x = -((1.0f / cameraMatrix[0][0]) * cameraMatrix[0][2]);
+				objectPosition.y = -((1.0f / cameraMatrix[1][1]) * cameraMatrix[1][2]);
 
-			objectPosition.x += ((mousePosition.x - windowCenter.x) / (m_SceneWindowSize.x / 2.0f)) * (1.0f / cameraMatrix[0][0]);
-			objectPosition.y -= ((mousePosition.y - windowCenter.y) / (m_SceneWindowSize.y / 2.0f)) * (1.0f / cameraMatrix[1][1]);
+				ImVec2 mousePosition = ImGui::GetMousePos();
+				auto offset = ImGui::GetWindowPos();
+				ImVec2 windowCenter;
+				windowCenter.x = offset.x + m_SceneWindowSize.x / 2.0f;
+				windowCenter.y = offset.y + m_SceneWindowSize.y / 2.0f;
 
-			gameObject->transform->position = objectPosition;
+				objectPosition.x += ((mousePosition.x - windowCenter.x) / (m_SceneWindowSize.x / 2.0f)) * (1.0f / cameraMatrix[0][0]);
+				objectPosition.y -= ((mousePosition.y - windowCenter.y) / (m_SceneWindowSize.y / 2.0f)) * (1.0f / cameraMatrix[1][1]);
 
-			m_SelectedObject = gameObject;
+				gameObject->transform->position = objectPosition;
+
+				m_SelectedObject = gameObject;
+			}
+			else if (File::IsOfType(path, ".scene"))
+			{
+				OpenScene(path);
+			}
 
 			ImGui::EndDragDropTarget();
 		}
@@ -268,6 +278,43 @@ void Editor::OpenScene()
 
 		using namespace nlohmann;
 		std::ifstream fileStream(newScene->GetName() + ".scene", std::ofstream::binary);
+
+		if (!fileStream.is_open())
+		{
+			ERROR("Failed to open the file!!!");
+			return;
+		}
+
+		json in;
+		fileStream >> in;
+
+		newScene->Deserialize(in);
+
+		fileStream.close();
+
+		if (newScene != nullptr)
+		{
+			m_EditorScene = newScene;
+			m_ActiveScene = m_EditorScene;
+			m_SelectedObject = nullptr;
+
+			//m_HierarchyPanel.SetScene(m_ActiveScene);
+		}
+	}
+	else
+	{
+		WARN("Exit play mode to open scene.");
+	}
+}
+
+void Editor::OpenScene(std::string_view path)
+{
+	if (m_SceneState != SceneState::PLAY)
+	{
+		auto newScene = std::make_shared<Scene>();
+
+		using namespace nlohmann;
+		std::ifstream fileStream(path.data(), std::ofstream::binary);
 
 		if (!fileStream.is_open())
 		{

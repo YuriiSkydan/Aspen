@@ -1,9 +1,7 @@
 #include "EditorCamera.h"
 #include "../Input/Input.h"
 
-
 #include "imgui.h"
-#include <iostream>
 
 EditorCamera::EditorCamera(float ratio)
 	: m_Ratio(ratio), m_Scale(1.0f)
@@ -20,8 +18,8 @@ void EditorCamera::Update()
 		Vector2 moved;
 		moved += Input::GetMousePosition() - startPosition;
 
-		m_Position.x -= moved.x * 0.001f;
-		m_Position.y += moved.y * 0.001f;
+		m_Position.x -= moved.x * 0.001f * 1.0f / m_Scale;
+		m_Position.y += moved.y * 0.001f * 1.0f / m_Scale;
 		startPosition = Input::GetMousePosition();
 	}
 	else

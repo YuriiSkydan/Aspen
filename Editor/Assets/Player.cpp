@@ -24,51 +24,45 @@ public:
 
 	void Start() override
 	{
-		std::cout << "Player Start!!!\n";
-		//if (gameObject->HasComponent<SpriteRenderer>())
-		//	renderer = gameObject->GetComponent<SpriteRenderer>();
-
+		std::cout << "Player start!!!\n";
 		m_Rigidbody = GetComponent<Rigidbody>();
 		m_SpriteRenderer = GetComponent<SpriteRenderer>();
-		if (m_SpriteRenderer == nullptr)
-			gameObject->AddComponent<SpriteRenderer>();
-
 		m_Animator = GetComponent<Animator>();
 
 		auto objects = gameObject->GetScene()->GetObjectsWithComponent<Camera>();
 
 		m_Camera = objects[0];
-
-		
 	}
 
+	int currentXPos = -25;
+	int currentYPos = 25;
 	void Update() override
 	{
-		{
-			//if (Input::IsKeyPressed(Key::Space))
-			//{
-			//	auto created = gameObject->GetScene()->CreateGameObject();
-			//	SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-			//	//created->AddComponent<Rigidbody>();
-			//	created->transform->position.x = currentXPos;
-			//	created->transform->position.y = currentYPos;
+		//{
+		//	if (Input::IsKeyPressed(Key::Space))
+		//	{
+		//		auto created = CreateGameObject();
+		//		SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+		//		//created->AddComponent<Rigidbody>();
+		//		created->transform->position.x = currentXPos;
+		//		created->transform->position.y = currentYPos;
 
-			//	currentXPos++;
-			//	if (currentXPos >= 25)
-			//	{
-			//		currentYPos--;
-			//		currentXPos = -25;
-			//	}
+		//		currentXPos++;
+		//		if (currentXPos >= 25)
+		//		{
+		//			currentYPos--;
+		//			currentXPos = -25;
+		//		}
 
-			//	Color color;
-			//	color.r = (rand() % 255) / 255.0f;
-			//	color.g = (rand() % 255) / 255.0f;
-			//	color.b = (rand() % 255) / 255.0f;
-			//	color.a = 1.0f;
+		//		Color color;
+		//		color.r = (rand() % 255) / 255.0f;
+		//		color.g = (rand() % 255) / 255.0f;
+		//		color.b = (rand() % 255) / 255.0f;
+		//		color.a = 1.0f;
 
-			//	renderer->SetColor(color);
-			//}
-		}
+		//		renderer->SetColor(color);
+		//	}
+		//}
 
 		m_MovingDirection = 0.0f;
 
