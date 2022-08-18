@@ -3,14 +3,14 @@ My first 2D Game Engine
 
 Game Engine supports Physics, Animations, Audio and C++ Scripting.
 Game Engine Components:
-Transform
-SpriteRenderer
-BoxCollider
-CircleCollider
-Rigidbody
-Camera
-Animator
-AudioSource
+Transform,
+SpriteRenderer,
+BoxCollider,
+CircleCollider,
+Rigidbody,
+Camera,
+Animator,
+AudioSource,
 AudioListener
 
 Game Engine Interface:
