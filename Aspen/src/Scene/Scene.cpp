@@ -7,123 +7,8 @@
 #include "../Components/PolygonCollider.h"
 #include "../Components/Rigidbody.h"
 #include "../Physics/ContactListener.h"
+#include "../Physics/Physics.h"
 #include "EditorCamera.h"
-
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_fixture.h"
-#include "box2d/b2_circle_shape.h"
-
-void Scene::PhysicsWorldStart()
-{
-	for (auto& object : m_GameObjects)
-	{
-		Vector2f position = object->transform->position;
-		float angle = ToRads(-object->transform->angle);
-
-		b2BodyDef bodyDef;
-		bodyDef.position = b2Vec2(position.x, position.y);
-		bodyDef.angle = angle;
-
-		b2Body* body = nullptr;
-		if (object->HasComponent<Rigidbody>())
-		{
-			Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
-
-			if (rigidbody->IsEnabled())
-			{
-				bodyDef.type = b2BodyType(rigidbody->GetBodyType());
-				bodyDef.gravityScale = rigidbody->GetGravityScale();
-				bodyDef.fixedRotation = true;
-				//bodyDef.fixedRotation = rigidbody->GetFixedRotation();
-				bodyDef.linearDamping = rigidbody->GetLinearDrag();
-				bodyDef.angularDamping = rigidbody->GetAngularDrag();
-
-				//	bodyDef.allowSleep = false;
-
-				body = m_PhysicsWorld->CreateBody(&bodyDef);
-
-				rigidbody->SetBody(body);
-			}
-		}
-
-		if (object->HasComponent<BoxCollider>())
-		{
-			BoxCollider* collider = object->GetComponent<BoxCollider>();
-
-			if (collider->IsEnabled())
-			{
-				float sizeX = collider->size.x * object->transform->scale.x;
-				float sizeY = collider->size.y * object->transform->scale.y;
-				b2Vec2 center = b2Vec2(collider->offset.x, collider->offset.y);
-
-				b2PolygonShape boxShape;
-				boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &boxShape;
-				fixtureDef.density = collider->material.dencity;
-				fixtureDef.restitution = collider->material.restitution;
-				fixtureDef.friction = collider->material.friction;
-				fixtureDef.isSensor = collider->isTrigger;
-				fixtureDef.userData.pointer = object->GetID();
-
-				if (body == nullptr)
-					body = m_PhysicsWorld->CreateBody(&bodyDef);
-
-				body->CreateFixture(&fixtureDef);
-			}
-		}
-
-		if (object->HasComponent<CircleCollider>())
-		{
-			CircleCollider* collider = object->GetComponent<CircleCollider>();
-
-			if (collider->IsEnabled())
-			{
-				b2CircleShape circleShape;
-				circleShape.m_radius = collider->radius;
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &circleShape;
-				fixtureDef.density = collider->material.dencity;
-				fixtureDef.restitution = collider->material.restitution;
-				fixtureDef.friction = collider->material.friction;
-				fixtureDef.isSensor = collider->isTrigger;
-
-				if (body == nullptr)
-					body = m_PhysicsWorld->CreateBody(&bodyDef);
-
-				body->CreateFixture(&fixtureDef);
-			}
-		}
-
-		if (object->HasComponent<PolygonCollider>())
-		{
-			PolygonCollider* collider = object->GetComponent<PolygonCollider>();
-
-			if (collider->IsEnabled())
-			{
-				b2PolygonShape shape;
-				//m_PhysicsWorld->Shap
-
-			}
-		}
-
-		if (body != nullptr)
-		{
-			if (object->HasComponent<Rigidbody>())
-			{
-				Rigidbody* rigidbody = object->GetComponent<Rigidbody>();
-
-				b2MassData massData = body->GetMassData();
-				massData.mass = rigidbody->GetMass();
-				
-				body->SetMassData(&massData);
-				body->SetFixedRotation(rigidbody->GetFixedRotation());
-			}
-		}
-	}
-}
 
 void Scene::Copy(const Scene& other)
 {
@@ -135,7 +20,6 @@ void Scene::Copy(const Scene& other)
 	std::cout << "Scene coping!!!\n" << m_Name << std::endl;
 
 	m_GameObjects.resize(other.m_GameObjects.size());
-	m_Gravity = other.m_Gravity;
 
 	for (size_t i = 0; i < other.m_GameObjects.size(); i++)
 	{
@@ -204,16 +88,9 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	auto renderObjects = GetComponentsOfType<SpriteRenderer>();
-	std::sort(renderObjects.begin(), renderObjects.end(),
-		[](SpriteRenderer* a, SpriteRenderer* b)
-		{
-			return a->orderInLayer < b->orderInLayer;
-		});
-
 	Renderer::BeginScene(camera.GetCameraMatrix());
 	//Render objects
-	for (auto& renderObj : renderObjects)
+	for (auto& renderObj : m_RenderObjects)
 	{
 		if (renderObj != nullptr)
 		{
@@ -229,12 +106,15 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 
 void Scene::Start()
 {
-	m_PhysicsWorld = std::make_unique<b2World>(m_Gravity);
 	m_ContactListener = std::make_unique<ContactListener>(this);
+	Physics::CreateWorld();
+	Physics::SetContactListener(m_ContactListener.get());
 
-	m_PhysicsWorld->SetContactListener(m_ContactListener.get());
-
-	PhysicsWorldStart();
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsAwake();
+	}
 
 	for (size_t i = 0; i < m_GameObjects.size(); i++)
 	{
@@ -245,7 +125,7 @@ void Scene::Start()
 
 void Scene::Stop()
 {
-	m_PhysicsWorld.reset();
+	Physics::DestoryWorld();
 	m_ContactListener.reset();
 }
 
@@ -254,27 +134,25 @@ void Scene::Update()
 	static double duration = 0;
 	duration += Time::DeltaTime();
 
-	//Update
-	for (size_t i = 0; i < m_GameObjects.size(); i++)
-	{
-		if (m_GameObjects[i]->IsActive())
-			m_GameObjects[i]->ComponentsUpdate();
-	}
-
 	//Fixed Update
 	if (duration >= Time::FixedDeltaTime())
 	{
 		duration = 0;
 
-		int32 velocityIterations = 6;
-		int32 positionIterations = 2;
-		m_PhysicsWorld->Step(Time::FixedDeltaTime(), velocityIterations, positionIterations);
+		Physics::Update();
 
 		for (size_t i = 0; i < m_GameObjects.size(); i++)
 		{
 			if (m_GameObjects[i]->IsActive())
 				m_GameObjects[i]->ComponentsFixedUpdate();
 		}
+	}
+
+	//Update
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsUpdate();
 	}
 
 	//Late Update
@@ -368,7 +246,6 @@ void Scene::Serialize() const
 		{ "Scene", {
 			{ "Name", m_Name},
 			{ "Objects amount", m_GameObjects.size() },
-			{ "Gravity",{{"X", m_Gravity.x}, {"Y", m_Gravity.y}}}
 		}}
 	};
 
@@ -386,8 +263,6 @@ void Scene::Deserialize(json& in)
 {
 	m_Name = in["Scene"]["Name"];
 	m_GameObjects.resize(in["Scene"]["Objects amount"]);
-	m_Gravity.x = in["Scene"]["Gravity"]["X"];
-	m_Gravity.y = in["Scene"]["Gravity"]["Y"];
 
 	for (size_t i = 0; i < m_GameObjects.size(); i++)
 	{

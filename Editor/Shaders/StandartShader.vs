@@ -1,4 +1,4 @@
-#version 450 core
+/*#version 450 core
 
 layout(location = 0) in vec2 v_Pos;
 layout(location = 1) in vec2 v_TexCoords;
@@ -28,4 +28,26 @@ void main()
 	  texCoords.y *= -1.0f;
    
    f_TexCoords = texCoords;
+}*/
+#version 450 core
+
+layout(location = 0) in vec2 v_Pos;
+layout(location = 1) in vec4 v_Color;
+layout(location = 2) in vec2 v_TexCoords;
+layout(location = 4) in float v_GameObjectID;
+
+out vec4 f_Color;
+out vec2 f_TexCoords;
+out int f_GameObjectID;
+
+uniform mat3 camera;
+
+void main()
+{
+	vec3 pos = vec3(v_Pos, 1.0f) * camera;
+	gl_Position = vec4(pos, 1.0f);
+
+	f_Color = v_Color;
+	f_TexCoords = v_TexCoords;
+	f_GameObjectID = int(v_GameObjectID);
 }

@@ -14,7 +14,6 @@ Engine::Engine()
 	s_Instance = this;
 	m_Window = std::make_unique<Window>();
 
-
 	Renderer::Init();
 	InitImGui();
 	//Input::Init();

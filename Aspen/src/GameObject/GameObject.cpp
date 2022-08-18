@@ -57,6 +57,9 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 		m_Components.push_back(std::unique_ptr<Component>(newScript));
 		m_Scripts.push_back(newScript);
 	}
+
+	//I don't like this, maybe change it
+	m_NewComponents.clear();
 }
 
 void GameObject::SetLayer(const LayerMask& layer)
@@ -130,6 +133,8 @@ void GameObject::ComponentsUpdate()
 
 void GameObject::ComponentsFixedUpdate()
 {
+	ProcessNewComponents();
+
 	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())

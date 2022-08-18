@@ -5,8 +5,6 @@
 #include "../Components/Rigidbody.h"
 #include "../Components/AudioListener.h"
 
-#include "box2d/b2_world.h"
-
 class EditorCamera;
 class ContactListener;
 
@@ -18,16 +16,14 @@ private:
 	unsigned int m_Height;
 
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
-	//std::vector<SpriteRenderer*>             m_RenderObjects;
+	std::vector<SpriteRenderer*>             m_RenderObjects;
 
-	std::unique_ptr<b2World> m_PhysicsWorld;
 	std::unique_ptr<ContactListener> m_ContactListener;
-	b2Vec2 m_Gravity = b2Vec2(0.0f, -10.0f);
 
 	friend class HierarchyPanel;
 private:
-	void PhysicsWorldStart();
-	void PhysicsWorldStop();
+	//void PhysicsWorldStart();
+	//void PhysicsWorldStop();
 
 public:
 	Scene();
@@ -109,19 +105,31 @@ public:
 template<typename T>
 void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 {
-	//if (typeid(T) == typeid(SpriteRenderer))
-	//	m_RenderObjects.emplace_back((SpriteRenderer*)component.get());
 	if (typeid(T) == typeid(Camera))
 	{
 		Camera* camera = (Camera*)(component.get());
 		camera->SetRatio(float(m_Height) / float(m_Width));
+	}
+	else if (typeid(T) == typeid(SpriteRenderer))
+	{
+		SpriteRenderer* spriteRenderer = (SpriteRenderer*)(component.get());
+		m_RenderObjects.push_back(spriteRenderer);
+
+		std::sort(m_RenderObjects.begin(), m_RenderObjects.end(),
+			[](SpriteRenderer* a, SpriteRenderer* b)
+			{
+				return a->orderInLayer < b->orderInLayer;
+			});
 	}
 }
 
 template<typename T>
 void Scene::OnComponentRemoved(std::unique_ptr<T>& component)
 {
-
+	if (typeid(T) == typeid(SpriteRenderer))
+	{
+		
+	}
 }
 
 //---------------------------------------------
@@ -188,6 +196,7 @@ void GameObject::RemoveComponent()
 		if (component != nullptr)
 		{
 			m_Components.erase(it);
+			m_Scene->OnComponentRemoved<T>(it);
 			return;
 		}
 	}
@@ -230,9 +239,10 @@ T* GameObject::GetComponent() const
 {
 	for (auto& it : m_Components)
 	{
-		T* component = dynamic_cast<T*>(it.get());
-		if (component != nullptr)
-			return component;
+		if (typeid(T) == typeid(*it))
+		{
+			return dynamic_cast<T*>(it.get());
+		}
 	}
 
 	return nullptr;

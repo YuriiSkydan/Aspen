@@ -268,4 +268,3 @@ inline bool operator!=(const Vector2<T>& v1, const Vector2<T>& v2)
 using Vector2ui = Vector2<unsigned int>;
 using Vector2f = Vector2<float>;
 using Vector2i = Vector2<int>;
-

@@ -18,13 +18,18 @@ private:
 
 	bool m_FixedRotation = false;
 
-	friend class Scene;
+	friend class Collider;
+	friend class BoxCollider;
+	friend class CircleCollider;
+	friend class PolygonCollider;
 private:
 	void SetBody(b2Body* body);
+	b2Body* GetBody() const { return m_Body; }
 
 public:
 	Rigidbody(GameObject* gameObject, Transform* transform);
 
+	void Awake() override;
 	void Update() override;
 	void FixedUpdate() override;
 

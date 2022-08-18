@@ -77,13 +77,13 @@ void Editor::Update()
 		BoxCollider* boxCollider = m_SelectedObject->GetComponent<BoxCollider>();
 		if (boxCollider != nullptr && boxCollider->IsEnabled())
 		{
-			Renderer::DrawBoxCollider(m_SelectedObject->transform, boxCollider);
+			//Renderer::DrawBoxCollider(m_SelectedObject->transform, boxCollider);
 		}
 
 		CircleCollider* circleCollider = m_SelectedObject->GetComponent<CircleCollider>();
 		if (circleCollider != nullptr && circleCollider->IsEnabled())
 		{
-			Renderer::DrawCirlceCollider(m_SelectedObject->transform, circleCollider);
+			//Renderer::DrawCirlceCollider(m_SelectedObject->transform, circleCollider);
 		}
 	}
 
@@ -104,7 +104,7 @@ void Editor::Update()
 	m_ActiveScene->Render();
 	m_GameFramebuffer.Unbind();
 #pragma endregion
-
+	                                                        
 	switch (m_SceneState)
 	{
 	case SceneState::PLAY:

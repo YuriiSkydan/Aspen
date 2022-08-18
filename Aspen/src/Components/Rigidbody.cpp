@@ -1,9 +1,26 @@
 #include "Rigidbody.h"
 #include "../Math/Math.h"
+#include "../Physics/Physics.h"
+#include "SpriteRenderer.h"
 
 Rigidbody::Rigidbody(GameObject* gameObject, Transform* transform)
 	:Component(gameObject, transform)
 { }
+
+void Rigidbody::Awake()
+{
+	b2BodyDef bodyDef;
+	bodyDef.position = { transform->position.x, transform->position.y };
+	bodyDef.angle = ToRads(-transform->angle);
+
+	bodyDef.type = b2BodyType(m_Type);
+	bodyDef.gravityScale = m_GravityScale;
+	bodyDef.fixedRotation = m_FixedRotation;
+	bodyDef.linearDamping = m_LinearDrag;
+	bodyDef.angularDamping = m_AngularDrag;
+
+	m_Body = Physics::CreateBody(bodyDef);
+}
 
 void Rigidbody::Update()
 {
