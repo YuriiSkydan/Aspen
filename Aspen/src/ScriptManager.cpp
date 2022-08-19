@@ -47,7 +47,7 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				compileCommand += " /I ..\\Aspen\\vendor\\spdlog-1.x\\include";
 
 				//Compile properties
-				compileCommand += " /EHsc /MDd /LD " + filePath;
+				compileCommand += " /EHsc /MD /LD " + filePath;
 
 				//Link properties
 				//compileCommand += " /link glfw3.lib";

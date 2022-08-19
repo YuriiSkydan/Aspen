@@ -31,7 +31,6 @@ private:
 public:
 	static void Init();
 	static void BeginScene(const Matrix3x3f& cameraMatrix);
-	static void BeginScene(const Camera* camera);
 	static void Draw(const SpriteRenderer* spriteRenderer);
 	static void EndScene();
 

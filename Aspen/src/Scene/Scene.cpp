@@ -209,7 +209,7 @@ void Scene::Render()
 				return a->orderInLayer < b->orderInLayer;
 			});
 
-		Renderer::BeginScene(mainCamera);
+		Renderer::BeginScene(mainCamera->GetCameraMatrix());
 
 		for (auto& it : renderObjects)
 		{

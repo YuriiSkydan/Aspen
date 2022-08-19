@@ -38,37 +38,32 @@ public:
 	int currentYPos = 25;
 	void Update() override
 	{
-		//{
-		//	if (Input::IsKeyPressed(Key::Space))
-		//	{
-		//		auto created = CreateGameObject();
-		//		SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-		//		//created->AddComponent<Rigidbody>();
-		//		created->transform->position.x = currentXPos;
-		//		created->transform->position.y = currentYPos;
-
-		//		currentXPos++;
-		//		if (currentXPos >= 25)
-		//		{
-		//			currentYPos--;
-		//			currentXPos = -25;
-		//		}
-
-		//		Color color;
-		//		color.r = (rand() % 255) / 255.0f;
-		//		color.g = (rand() % 255) / 255.0f;
-		//		color.b = (rand() % 255) / 255.0f;
-		//		color.a = 1.0f;
-
-		//		renderer->SetColor(color);
-		//	}
-		//}
-
-		if (Input::IsKeyPressed(Key::Space))
 		{
-			GameObject* newGameObject = gameObject->GetScene()->CreateGameObject();
-			newGameObject->AddComponent<SpriteRenderer>();
+			if (Input::IsKeyPressed(Key::Space))
+			{
+				auto created = CreateGameObject();
+				SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+				//created->AddComponent<Rigidbody>();
+				created->transform->position.x = currentXPos;
+				created->transform->position.y = currentYPos;
+
+				currentXPos++;
+				if (currentXPos >= 25)
+				{
+					currentYPos--;
+					currentXPos = -25;
+				}
+
+				Color color;
+				color.r = (rand() % 255) / 255.0f;
+				color.g = (rand() % 255) / 255.0f;
+				color.b = (rand() % 255) / 255.0f;
+				color.a = 1.0f;
+
+				renderer->SetColor(color);
+			}
 		}
+
 		//m_MovingDirection = 0.0f;
 
 		//currentAnimation = "Idle";
