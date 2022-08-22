@@ -27,6 +27,9 @@ void EditorCamera::Update()
 		startPosition = Vector2f(0, 0);
 	}
 
+	if (m_Scale <= 0.0f)
+		m_Scale = 0.01f;
+
 	m_Scale += ImGui::GetIO().MouseWheel * 0.01f;
 }
 

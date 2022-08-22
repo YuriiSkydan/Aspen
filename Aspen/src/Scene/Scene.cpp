@@ -47,6 +47,11 @@ GameObject* Scene::CreateGameObject(const std::string& name)
 	return m_GameObjects.back().get();
 }
 
+void Scene::Reserve(unsigned int objects)
+{
+	m_GameObjects.reserve(objects);
+}
+
 GameObject* Scene::GetObjectWithID(int ID)
 {
 	for (auto& object : m_GameObjects)
@@ -180,17 +185,13 @@ void Scene::Resize(unsigned int width, unsigned int height)
 void Scene::Render()
 {
 	Camera* mainCamera = nullptr;
-	for (auto& object : m_GameObjects)
+	for (auto& camera : m_Cameras)
 	{
-		if (object->IsActive())
+		if (camera->gameObject->IsActive())
 		{
-			if (object->HasComponent<Camera>())
+			if (camera->IsEnabled())
 			{
-				Camera* camera = object->GetComponent<Camera>();
-				if (camera->IsEnabled())
-				{
-					mainCamera = object->GetComponent<Camera>();
-				}
+				mainCamera = camera;
 			}
 		}
 	}
@@ -201,17 +202,17 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		auto renderObjects = GetComponentsOfType<SpriteRenderer>();
+	/*	auto renderObjects = GetComponentsOfType<SpriteRenderer>();
 
 		std::sort(renderObjects.begin(), renderObjects.end(),
 			[](SpriteRenderer* a, SpriteRenderer* b)
 			{
 				return a->orderInLayer < b->orderInLayer;
-			});
+			});*/
 
 		Renderer::BeginScene(mainCamera->GetCameraMatrix());
 
-		for (auto& it : renderObjects)
+		for (auto& it : m_RenderObjects)
 		{
 			if (it != nullptr)
 			{

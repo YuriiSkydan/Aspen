@@ -32,6 +32,9 @@ public:
 	static void Init();
 	static void BeginScene(const Matrix3x3f& cameraMatrix);
 	static void Draw(const SpriteRenderer* spriteRenderer);
+	static void Batch();
+	static void StartBatch();
+	static void Flush();
 	static void EndScene();
 
 	//Debug

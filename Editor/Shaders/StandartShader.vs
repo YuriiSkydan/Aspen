@@ -43,7 +43,7 @@ out int f_GameObjectID;
 uniform mat3 camera;
 
 void main()
-{
+{ 
 	vec3 pos = vec3(v_Pos, 1.0f) * camera;
 	gl_Position = vec4(pos, 1.0f);
 

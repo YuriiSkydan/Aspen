@@ -17,6 +17,7 @@ private:
 
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
 	std::vector<SpriteRenderer*>             m_RenderObjects;
+	std::vector<Camera*>                     m_Cameras;
 
 	std::unique_ptr<ContactListener> m_ContactListener;
 
@@ -45,6 +46,7 @@ public:
 
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const std::string& name);
+	void Reserve(unsigned int objects);
 	void DestroyGameObject(GameObject* gameObject);
 
 	//------------------------------------------------------------
@@ -55,7 +57,7 @@ public:
 	std::string GetName() const { return m_Name; }
 	unsigned int GetWidth() const { return m_Width; }
 	unsigned int GetHeight() const { return m_Height; }
-	
+
 	//------------------------------------------------------------
 	//Component operations
 	template<typename T>
@@ -87,10 +89,10 @@ public:
 	}
 
 	template<typename T>
-	void OnComponentAdded(std::unique_ptr<T>& component);
+	void OnComponentAdded(T* component);
 
 	template<typename T>
-	void OnComponentRemoved(std::unique_ptr<T>& component);
+	void OnComponentRemoved(T* component);
 
 	//------------------------------------------------------------
 	//Serialization
@@ -103,16 +105,18 @@ public:
 //---------------------------------------------
 //Scene Component Operations
 template<typename T>
-void Scene::OnComponentAdded(std::unique_ptr<T>& component)
+void Scene::OnComponentAdded(T* component)
 {
 	if (typeid(T) == typeid(Camera))
 	{
-		Camera* camera = (Camera*)(component.get());
+		Camera* camera = (Camera*)(component);
 		camera->SetRatio(float(m_Height) / float(m_Width));
+
+		m_Cameras.push_back(camera);
 	}
 	else if (typeid(T) == typeid(SpriteRenderer))
 	{
-		SpriteRenderer* spriteRenderer = (SpriteRenderer*)(component.get());
+		SpriteRenderer* spriteRenderer = (SpriteRenderer*)(component);
 		m_RenderObjects.push_back(spriteRenderer);
 
 		std::sort(m_RenderObjects.begin(), m_RenderObjects.end(),
@@ -124,11 +128,29 @@ void Scene::OnComponentAdded(std::unique_ptr<T>& component)
 }
 
 template<typename T>
-void Scene::OnComponentRemoved(std::unique_ptr<T>& component)
+void Scene::OnComponentRemoved(T* component)
 {
-	if (typeid(T) == typeid(SpriteRenderer))
+	if (Camera* camera = dynamic_cast<Camera*>(component))
 	{
-		
+		for (auto it = m_Cameras.begin(); it != m_Cameras.end(); ++it)
+		{
+			if (*it == camera)
+			{
+				it = m_Cameras.erase(it);
+				break;
+			}
+		}
+	}
+	else if (SpriteRenderer* spriteRenderer = dynamic_cast<SpriteRenderer*>(component))
+	{
+		for (auto it = m_RenderObjects.begin(); it != m_RenderObjects.end(); ++it)
+		{
+			if (*it == spriteRenderer)
+			{
+				it = m_RenderObjects.erase(it);
+				break;
+			}
+		}
 	}
 }
 
@@ -152,10 +174,10 @@ T* GameObject::AddComponent()
 		auto newComponent = std::make_unique<T>(this, transform);
 		T* returnComponent = newComponent.get();
 
-		m_Scene->OnComponentAdded<T>(newComponent);
+		m_Scene->OnComponentAdded<T>(newComponent.get());
 		m_NewComponents.push_back(newComponent.get());
 		m_Components.push_back(std::move(newComponent));
-		
+
 		return returnComponent;
 	}
 
@@ -195,8 +217,8 @@ void GameObject::RemoveComponent()
 		T* component = dynamic_cast<T*>(it->get());
 		if (component != nullptr)
 		{
-			m_Components.erase(it);
 			m_Scene->OnComponentRemoved<T>(it);
+			m_Components.erase(it);
 			return;
 		}
 	}
@@ -254,7 +276,7 @@ T* GameObject::GetComponentInParent() const
 	Transform* parent = transform->GetParent();
 	if (parent != nullptr)
 		return parent->gameObject->GetComponent<T>();
-	
+
 	return nullptr;
 }
 

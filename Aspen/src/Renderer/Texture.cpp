@@ -71,8 +71,6 @@ Texture::~Texture()
 	if (TextureLibrary::Get() != nullptr)
 		TextureLibrary::Get()->Erase(m_Path);
 
-	std::cout << "Texture destroying!!!\n";
-
 	glDeleteTextures(1, &m_ID);
 }
 

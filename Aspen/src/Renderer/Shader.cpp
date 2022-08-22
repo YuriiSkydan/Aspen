@@ -149,6 +149,11 @@ void Shader::SetVec4f(std::string_view name, float v0, float v1, float v2, float
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 
+void Shader::SetArray1iv(std::string_view name, unsigned int count, int* arr)
+{
+	glUniform1iv(GetUniformLocation(name), count, arr);
+}
+
 Shader::~Shader()
 {
 	glDeleteProgram(m_ID);

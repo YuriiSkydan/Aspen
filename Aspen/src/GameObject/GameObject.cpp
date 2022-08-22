@@ -8,10 +8,8 @@ void GameObject::RemoveComponent(Component* component)
 	{
 		if (it->get() == component)
 		{
+			m_Scene->OnComponentRemoved(component);
 			m_Components.erase(it);
-
-			//Maybe call this function 
-			//m_Scene->OnComponentRemoved();
 			break;
 		}
 	}
@@ -253,4 +251,7 @@ GameObject::~GameObject()
 {
 	//s_Objects--;
 	std::cout << "GameObject destructor!!!\n";
+
+	for (auto& component : m_Components)
+		m_Scene->OnComponentRemoved(component.get());
 }

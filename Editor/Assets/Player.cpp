@@ -34,33 +34,39 @@ public:
 		//m_Camera = objects[0];
 	}
 
-	int currentXPos = -25;
-	int currentYPos = 25;
+	int currentXPos = -100;
+	int currentYPos = 100;
 	void Update() override
 	{
 		{
 			if (Input::IsKeyPressed(Key::Space))
 			{
-				auto created = CreateGameObject();
-				SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-				//created->AddComponent<Rigidbody>();
-				created->transform->position.x = currentXPos;
-				created->transform->position.y = currentYPos;
-
-				currentXPos++;
-				if (currentXPos >= 25)
+				gameObject->GetScene()->Reserve(100000);
+				for (size_t i = 0; i < 100000; i++)
 				{
-					currentYPos--;
-					currentXPos = -25;
+					auto created = CreateGameObject();
+					//created->AddComponent<Rigidbody>();
+					//created->AddComponent<BoxCollider>()->material.restitution = 0.5f;
+					SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
+					//created->AddComponent<Rigidbody>();
+					created->transform->position.x = currentXPos;
+					created->transform->position.y = currentYPos;
+
+					currentXPos++;
+					if (currentXPos >= 100)
+					{
+						currentYPos--;
+						currentXPos = -100;
+					}
+
+					Color color;
+					color.r = (rand() % 255) / 255.0f;
+					color.g = (rand() % 255) / 255.0f;
+					color.b = (rand() % 255) / 255.0f;
+					color.a = 1.0f;
+
+					renderer->SetColor(color);
 				}
-
-				Color color;
-				color.r = (rand() % 255) / 255.0f;
-				color.g = (rand() % 255) / 255.0f;
-				color.b = (rand() % 255) / 255.0f;
-				color.a = 1.0f;
-
-				renderer->SetColor(color);
 			}
 		}
 

@@ -53,3 +53,8 @@ void SpriteRenderer::Deserialize(json& in)
 	SetSprite(in["Texture"]);
 	orderInLayer = in["OrderInLayer"];
 }
+
+SpriteRenderer::~SpriteRenderer()
+{
+	std::cout << "SpriteRenderer Destructor!!!\n";
+}
