@@ -17,16 +17,8 @@ void ASPEN ErrorCallback(int error, const char* message);
 class ASPEN Renderer 
 {
 private:
-	//inline static VertexBuffer s_VertexBuffer;
-	//inline static IndexBuffer s_IndexBuffer;
-	//inline static unsigned int s_VAO;
 	inline static std::shared_ptr<Shader> s_StandartShader;
 	inline static std::shared_ptr<Shader> s_BoxColliderShader;
-
-
-	inline static unsigned int s_MaxQuads = 1;
-private:
-	static void DrawQuad(Transform* transform);
 
 public:
 	static void Init();
@@ -36,8 +28,9 @@ public:
 	static void StartBatch();
 	static void Flush();
 	static void EndScene();
+	static void ShutDown();
 
 	//Debug
-	static void DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider);
+	static void DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix);
 	static void DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider);
 };

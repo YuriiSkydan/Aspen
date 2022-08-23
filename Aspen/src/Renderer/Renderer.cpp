@@ -171,6 +171,9 @@ void Renderer::EndScene()
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(QuadVertex) * s_RenderData.vertexCount, s_RenderData.vertices.data());
 	glDrawElements(GL_TRIANGLES, s_RenderData.quads * 6, GL_UNSIGNED_INT, nullptr);
 }
+void Renderer::ShutDown()
+{
+}
 #endif
 
 //Expertimental Batch Rendering
@@ -281,6 +284,7 @@ void Renderer::Init()
 	glEnableVertexAttribArray(7);
 
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/FastStandartShader");
+	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
 
 	s_RenderData.vertices.resize(s_RenderData.MaxVertices);
 	s_RenderData.textures.reserve(s_RenderData.MaxTextureSlots);
@@ -377,5 +381,40 @@ void Renderer::Flush()
 void Renderer::EndScene()
 {
 	Flush();
+}
+
+void Renderer::ShutDown()
+{
+	s_StandartShader.reset();
+	s_BoxColliderShader.reset();
+}
+
+void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix)
+{
+	Vector2f scale(transform->scale);
+	scale.x = boxCollider->size.x * 2;
+	scale.y = boxCollider->size.y * 2;
+
+	Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
+
+	transformMatrix = MatrixTransform::Translate(transformMatrix, transform->position);
+	transformMatrix = MatrixTransform::Scale(transformMatrix, scale);
+	transformMatrix = MatrixTransform::Scale(transformMatrix, transform->scale);
+	transformMatrix = MatrixTransform::Rotate(transformMatrix, transform->angle);
+
+	Matrix3x3f position = MatrixTransform::Rotate(Matrix3x3f(1.0f), transform->angle);
+	position = MatrixTransform::Translate(position, boxCollider->offset);
+
+	transformMatrix[0][2] += position[0][2];
+	transformMatrix[1][2] += position[1][2];
+
+	s_BoxColliderShader->Bind();
+	s_BoxColliderShader->SetMat3("transform", transformMatrix);
+	s_BoxColliderShader->SetMat3("camera", cameraMatrix);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(5);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 #endif

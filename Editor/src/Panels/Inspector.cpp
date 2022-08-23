@@ -358,6 +358,32 @@ void Inspector::RenderComponent(Rigidbody* rigidbody)
 	}
 }
 
+void Inspector::RenderComponent(Collider* collider)
+{
+	ImGui::Columns(2, 0, false);
+	ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
+	
+	ImGui::Spacing();
+	ImGui::Text("Offset");
+	ImGui::Spacing();
+	ImGui::Text("Is Trigger");
+	ImGui::Spacing();
+
+	RenderMaterial(0);
+
+	ImGui::NextColumn();
+	ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+
+	ImGui::SetNextItemWidth(m_ItemWidth);
+	ImGui::DragFloat2("##Offset", (float*)&collider->offset, 0.01f);
+	ImGui::Checkbox("##IsTrigger", &collider->isTrigger);
+	ImGui::NewLine();
+
+	RenderMaterial(1, &collider->material);
+
+	ImGui::Columns(1);
+}
+
 void Inspector::RenderComponent(BoxCollider* boxCollider)
 {
 	bool isOpen = RenderComponentHeader("BoxCollider", boxCollider, true);
@@ -369,27 +395,16 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 
 		ImGui::Spacing();
 		ImGui::Text("Size");
-		ImGui::Spacing();
-		ImGui::Text("Offset");
-		ImGui::Spacing();
-		ImGui::Text("Is Trigger");
-		ImGui::Spacing();
-
-		RenderMaterial(0);
-
+		
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat2("##Size", (float*)&boxCollider->size, 0.01f, 0.0f, FLT_MAX, "%.3f");
-		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat2("##Offset", (float*)&boxCollider->offset, 0.01f);
-		ImGui::Checkbox("##IsTrigger", &boxCollider->isTrigger);
-		ImGui::NewLine();
-
-		RenderMaterial(1, &boxCollider->material);
 
 		ImGui::Columns(1);
+
+		RenderComponent((Collider*)boxCollider);
 	}
 }
 
@@ -404,27 +419,16 @@ void Inspector::RenderComponent(CircleCollider* circleCollider)
 
 		ImGui::Spacing();
 		ImGui::Text("Radius");
-		ImGui::Spacing();
-		ImGui::Text("Offset");
-		ImGui::Spacing();
-		ImGui::Text("Is Trigger");
-		ImGui::Spacing();
-
-		RenderMaterial(0);
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat("##Radius", &circleCollider->radius, 0.001f, 0.0f);
-		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat2("##Offset", (float*)&circleCollider->offset, 0.01f);
-		ImGui::Checkbox("##IsTrigger", &circleCollider->isTrigger);
-		ImGui::NewLine();
-
-		RenderMaterial(1, &circleCollider->material);
 
 		ImGui::Columns(1);
+
+		RenderComponent((Collider *)circleCollider);
 	}
 }
 
@@ -434,7 +438,18 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 
 	if (isOpen)
 	{
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
+		ImGui::Text("Vertices");
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+		
+		//if(ImGui::Button("+"))
+			//polygonCollider->
+		
+		ImGui::Columns(1);
 	}
 }
 

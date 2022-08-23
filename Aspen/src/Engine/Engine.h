@@ -99,9 +99,5 @@ public:
 	ImGuiContext* GetImGuiContext() const { return m_Context; }
 	static Engine& Get() { return *s_Instance; }
 
-	~Engine()
-	{
-		DestroyImGui();
-		std::cout << "Engine destructor!!!\n";
-	}
+	~Engine();
 };

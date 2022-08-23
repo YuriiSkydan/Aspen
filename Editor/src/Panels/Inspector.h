@@ -70,6 +70,7 @@ private:
 	void RenderComponent(SpriteRenderer* spriteRenderer);
 	void RenderComponent(Camera* camera);
 	void RenderComponent(Rigidbody* rigidbody);
+	void RenderComponent(Collider* collider);
 	void RenderComponent(BoxCollider* boxCollider);
 	void RenderComponent(CircleCollider* circleCollider);
 	void RenderComponent(PolygonCollider* polygonCollider);

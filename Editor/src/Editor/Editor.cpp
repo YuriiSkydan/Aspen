@@ -77,7 +77,7 @@ void Editor::Update()
 		BoxCollider* boxCollider = m_SelectedObject->GetComponent<BoxCollider>();
 		if (boxCollider != nullptr && boxCollider->IsEnabled())
 		{
-			//Renderer::DrawBoxCollider(m_SelectedObject->transform, boxCollider);
+			Renderer::DrawBoxCollider(m_SelectedObject->transform, boxCollider, m_EditorCamera.GetCameraMatrix());
 		}
 
 		CircleCollider* circleCollider = m_SelectedObject->GetComponent<CircleCollider>();

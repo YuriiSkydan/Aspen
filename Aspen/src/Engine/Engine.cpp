@@ -36,7 +36,7 @@ void Engine::Run()
 
 		//change latter
 		m_Running = !glfwWindowShouldClose(m_Window->GetNativeWindow());
-		
+
 		std::string title = "Aspen " + std::to_string(1.0f / Time::DeltaTime());
 		glfwSetWindowTitle(m_Window->GetNativeWindow(), title.c_str());
 	}
@@ -45,4 +45,11 @@ void Engine::Run()
 void Engine::Close()
 {
 	m_Running = false;
+}
+
+Engine::~Engine()
+{
+	Renderer::ShutDown();
+	DestroyImGui();
+	std::cout << "Engine destructor!!!\n";
 }
