@@ -3,10 +3,6 @@
 #include <memory>
 #include <string>
 #include <string_view>
-
-
-#include <iostream>
-
 #include "../Core/Core.h"
 
 class ASPEN Texture

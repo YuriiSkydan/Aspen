@@ -34,15 +34,15 @@ public:
 		//m_Camera = objects[0];
 	}
 
-	int currentXPos = -100;
-	int currentYPos = 100;
+	int currentXPos = -50;
+	int currentYPos = 50;
 	void Update() override
 	{
 		{
 			if (Input::IsKeyPressed(Key::Space))
 			{
-				gameObject->GetScene()->Reserve(100000);
-				for (size_t i = 0; i < 100000; i++)
+				//gameObject->GetScene()->Reserve(100);
+				for (size_t i = 0; i < 100; i++)
 				{
 					auto created = CreateGameObject();
 					//created->AddComponent<Rigidbody>();
@@ -53,10 +53,10 @@ public:
 					created->transform->position.y = currentYPos;
 
 					currentXPos++;
-					if (currentXPos >= 100)
+					if (currentXPos >= 50)
 					{
 						currentYPos--;
-						currentXPos = -100;
+						currentXPos = -50;
 					}
 
 					Color color;

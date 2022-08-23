@@ -1,6 +1,7 @@
 #pragma once
 #include "src/Renderer/Texture.h"
 #include <filesystem>
+#include <unordered_map>
 #include <map>
 #include <variant>
 #include <cassert>
@@ -10,7 +11,7 @@ class ProjectPanel
 private:
 	std::filesystem::path m_CurrentDirectory;
 
-	std::map<std::filesystem::directory_entry, std::variant<std::shared_ptr<Texture>, Texture*>> m_DirectoryFiles;
+	std::vector<std::pair<std::filesystem::directory_entry, std::variant<std::shared_ptr<Texture>, Texture*>>> m_DirectoryFiles;
 
 	bool m_IsNewDirectory = true;
 

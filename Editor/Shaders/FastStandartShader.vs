@@ -11,7 +11,7 @@ layout(location = 7) in float v_GameObjectID;
 
 out vec4 f_Color;
 out vec2 f_TexCoords;
-out float f_TexIndex;
+flat out int f_TexIndex;
 out int f_GameObjectID;
 
 uniform mat3 camera;
@@ -38,6 +38,6 @@ void main()
 
 	f_Color = v_Color;
 	f_TexCoords = v_TexCoords;
-	f_TexIndex = v_TexIndex;
+	f_TexIndex = int(v_TexIndex);
 	f_GameObjectID = int(v_GameObjectID);
 }

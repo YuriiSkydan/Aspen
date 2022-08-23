@@ -54,30 +54,46 @@ void ProjectPanel::ImGuiRender()
 				{
 					std::shared_ptr<Texture> image;
 					TextureLibrary::Get()->GetTexture(entry.path().string(), image);
-					m_DirectoryFiles.insert({ entry, image });
+					m_DirectoryFiles.push_back({ entry, image });
 				}
 				else if (entry.path().extension() == ".cpp"s)
 				{
-					m_DirectoryFiles.insert({ entry, &m_CppFileIcon });
+					m_DirectoryFiles.push_back({ entry, &m_CppFileIcon });
 				}
-				else if(entry.path().extension() == ".scene")
+				else if (entry.path().extension() == ".scene")
 				{
-					m_DirectoryFiles.insert({ entry, &m_SceneFileIcon });
+					m_DirectoryFiles.push_back({ entry, &m_SceneFileIcon });
 				}
-				else if(entry.path().extension() == ".mp3")
+				else if (entry.path().extension() == ".mp3")
 				{
-					m_DirectoryFiles.insert({ entry, &m_AudioFileIcon });
+					m_DirectoryFiles.push_back({ entry, &m_AudioFileIcon });
 				}
 				else
 				{
-					m_DirectoryFiles.insert({ entry, &m_FileIcon });
+					m_DirectoryFiles.push_back({ entry, &m_FileIcon });
 				}
 			}
 			else
 			{
-				m_DirectoryFiles.insert({ entry, &m_FolderIcon });
+				m_DirectoryFiles.push_back({ entry, &m_FolderIcon });
 			}
 		}
+
+		std::sort(m_DirectoryFiles.rbegin(), m_DirectoryFiles.rend(),
+			[](auto& entry1, auto& entry2)
+			{
+				if (entry1.first.is_directory())
+				{
+					if (entry2.first.is_directory())
+						return true;
+
+					return false;
+				}
+				if (entry2.first.is_directory())
+					return false;
+
+				return true;
+			});
 	}
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });

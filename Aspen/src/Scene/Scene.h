@@ -118,12 +118,6 @@ void Scene::OnComponentAdded(T* component)
 	{
 		SpriteRenderer* spriteRenderer = (SpriteRenderer*)(component);
 		m_RenderObjects.push_back(spriteRenderer);
-
-		std::sort(m_RenderObjects.begin(), m_RenderObjects.end(),
-			[](SpriteRenderer* a, SpriteRenderer* b)
-			{
-				return a->orderInLayer < b->orderInLayer;
-			});
 	}
 }
 

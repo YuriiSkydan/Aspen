@@ -93,6 +93,12 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	std::sort(m_RenderObjects.begin(), m_RenderObjects.end(),
+		[](SpriteRenderer* a, SpriteRenderer* b)
+		{
+			return a->orderInLayer < b->orderInLayer;
+		});
+
 	Renderer::BeginScene(camera.GetCameraMatrix());
 	//Render objects
 	for (auto& renderObj : m_RenderObjects)

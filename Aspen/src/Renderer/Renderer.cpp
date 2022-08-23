@@ -284,12 +284,19 @@ void Renderer::Init()
 
 	s_RenderData.vertices.resize(s_RenderData.MaxVertices);
 	s_RenderData.textures.reserve(s_RenderData.MaxTextureSlots);
+
 }
 
 void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
 {
 	s_StandartShader->Bind();
 	s_StandartShader->SetMat3("camera", cameraMatrix);
+
+	int indexes[RenderData::MaxTextureSlots];
+	for (size_t i = 0; i < RenderData::MaxTextureSlots; i++)
+		indexes[i] = i;
+
+	s_StandartShader->SetArray1iv("u_Textures", RenderData::MaxTextureSlots, indexes);
 
 	StartBatch();
 }
@@ -358,12 +365,6 @@ void Renderer::Flush()
 	auto& textures = s_RenderData.textures;
 	for (auto it = textures.begin(); it != textures.end(); ++it)
 		it->first->Bind(it->second);
-
-	std::vector<int> indexes(s_RenderData.textureCount);
-	for (size_t i = 0; i < s_RenderData.textureCount; i++)
-		indexes[i] = i;
-
-	s_StandartShader->SetArray1iv("u_Textures", s_RenderData.textureCount, indexes.data());
 
 	s_RenderData.vertexBuffer.Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(QuadVertex) * s_RenderData.vertexCount, s_RenderData.vertices.data());
