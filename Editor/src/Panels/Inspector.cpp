@@ -178,13 +178,13 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 
 		ImGui::EndPopup();
 	}
-	ImGui::PopID();
 
 	if (!(flags & NoDisable))
 	{
-		Checkbox("##Enabling", component, component->IsEnabled(),
+		Checkbox("##IsEnabled", component, component->IsEnabled(),
 			&(Component::SetEnabled));
 	}
+	ImGui::PopID();
 
 	ImGui::SameLine();
 	ImGui::Text(componentName.c_str());
@@ -201,7 +201,7 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 void Inspector::RenderComponent(Transform* transform)
 {
 	bool isOpen = RenderComponentHeader("Transform", transform, NoDisable | NoRemove);
-	
+
 	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
@@ -213,7 +213,7 @@ void Inspector::RenderComponent(Transform* transform)
 		ImGui::Text("Rotation");
 		ImGui::Spacing();
 		ImGui::Text("Scale");
-		
+
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
@@ -467,15 +467,25 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
+		ImGui::Spacing();
 		ImGui::Text("Vertices");
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
-		//if(ImGui::Button("+"))
-			//polygonCollider->
+		if (ImGui::Button("+"))
+			polygonCollider->AddVertex({ 0.0f, 0.0f });
 
 		ImGui::Columns(1);
+
+		auto& vertices = polygonCollider->GetVertices();
+		for (size_t i = 0; i < vertices.size(); i++)
+		{
+			ImGui::PushID(i);
+			ImGui::SetNextItemWidth(m_ItemWidth);
+			ImGui::DragFloat2("##Vertex", (float*)(&vertices[i]));
+			ImGui::PopID(); 
+		}
 	}
 }
 

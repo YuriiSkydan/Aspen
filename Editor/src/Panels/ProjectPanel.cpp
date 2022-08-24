@@ -78,20 +78,20 @@ void ProjectPanel::ImGuiRender()
 			}
 		}
 
-		std::sort(m_DirectoryFiles.rbegin(), m_DirectoryFiles.rend(),
+		std::sort(m_DirectoryFiles.begin(), m_DirectoryFiles.end(),
 			[](auto& entry1, auto& entry2)
 			{
 				if (entry1.first.is_directory())
 				{
 					if (entry2.first.is_directory())
-						return true;
+						return false;
 
-					return false;
+					return true;
 				}
 				if (entry2.first.is_directory())
 					return false;
-
-				return true;
+	
+				return entry1.first > entry2.first;
 			});
 	}
 

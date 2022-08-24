@@ -7,6 +7,14 @@ Collider::Collider(GameObject* gameObject, Transform* transform)
 	, Component(gameObject, transform)
 { }
 
+void Collider::Reset() 
+{
+	offset = { 0.0f, 0.0f };
+	material.dencity = 1.0f;
+	material.friction = 0.4f;
+	material.restitution = 0.0f;
+}
+
 void Collider::SetFixtureDef()
 {
 	m_FixtureDef.density = material.dencity;

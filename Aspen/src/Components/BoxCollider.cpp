@@ -43,6 +43,12 @@ void BoxCollider::Start()
 	std::cout << "Mass: " << body->GetMass() << std::endl;
 }
 
+void BoxCollider::Reset()
+{
+	Collider::Reset();
+	size = { 0.5f, 0.5f };
+}
+
 void BoxCollider::Serialize(json& out) const
 {
 	Component::Serialize(out["BoxCollider"]);

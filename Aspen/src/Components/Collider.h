@@ -17,6 +17,8 @@ public:
 protected:
 	Collider(GameObject* gameObject, Transform* transform);
 
+	void Reset() override;
+
 	void SetFixtureDef();
 
 	void Serialize(json& out) const override;

@@ -15,6 +15,8 @@ class AudioSource;
 class AudioListener;
 class Scene;
 
+#include "../Components/AllComponents.h"
+
 #define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
 
 class ASPEN GameObject
@@ -120,6 +122,16 @@ public:
 
 	//------------------------------------------------------------
 	//Serialization
+	template<typename T>
+	void DeserializeComponent(json& in, const char* componentName)
+	{
+		if (in.find(componentName) != in.end())
+		{
+			T* component = AddComponent<T>();
+			component->Deserialize(in[componentName]);
+		}
+	}
+
 	void Serialize(json& out) const;
 	void Deserialize(json& in);
 

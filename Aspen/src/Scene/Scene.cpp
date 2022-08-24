@@ -10,6 +10,8 @@
 #include "../Physics/Physics.h"
 #include "EditorCamera.h"
 
+using namespace std::string_literals;
+
 void Scene::Copy(const Scene& other)
 {
 	m_Name = other.m_Name;
@@ -240,7 +242,7 @@ void Scene::Render()
 
 void Scene::Serialize() const
 {
-	std::ofstream fileStream(m_Name + ".scene", std::ofstream::binary);
+	std::ofstream fileStream("Assets/"s + m_Name + ".scene", std::ofstream::binary);
 
 	if (!fileStream.is_open())
 	{
@@ -276,6 +278,9 @@ void Scene::Deserialize(json& in)
 		auto newGameObject = std::make_unique<GameObject>(this);
 		newGameObject->Deserialize(in[std::to_string(i)]);
 		m_GameObjects[i] = std::move(newGameObject);
+		
+		//move it somewhere else, temporarily solution to fix bug
+		m_GameObjects[i]->m_ID = i;
 	};
 }
 

@@ -198,53 +198,15 @@ void GameObject::Deserialize(json& in)
 
 	transform->Deserialize(in["Transform"]);
 	
-	if (in.find("SpriteRenderer") != in.end())
-	{
-		SpriteRenderer* spriteRenderer = AddComponent<SpriteRenderer>();
-		spriteRenderer->Deserialize(in["SpriteRenderer"]);
-	}
-
-	if (in.find("BoxCollider") != in.end())
-	{
-		BoxCollider* collider = AddComponent<BoxCollider>();
-		collider->Deserialize(in["BoxCollider"]);
-	}
-
-	if (in.find("CircleCollider") != in.end())
-	{
-		CircleCollider* collider = AddComponent<CircleCollider>();
-		collider->Deserialize(in["CircleCollider"]);
-	}
-
-	if (in.find("Rigidbody") != in.end())
-	{
-		Rigidbody* rigidbody = AddComponent<Rigidbody>();
-		rigidbody->Deserialize(in["Rigidbody"]);
-	}
-
-	if (in.find("Camera") != in.end())
-	{
-		Camera* camera = AddComponent<Camera>();
-		camera->Deserialize(in["Camera"]);
-	}
-
-	if (in.find("AudioSource") != in.end())
-	{
-		AudioSource* audioSource = AddComponent<AudioSource>();
-		audioSource->Deserialize(in["AudioSource"]);
-	}
-
-	if (in.find("AudioListener") != in.end())
-	{
-		AudioListener* audioListener = AddComponent<AudioListener>();
-		audioListener->Deserialize(in["AudioListener"]);
-	}
-
-	if (in.find("Animator") != in.end())
-	{
-		Animator* animator = AddComponent<Animator>();
-		animator->Deserialize(in["Animator"]);
-	}
+	DeserializeComponent<SpriteRenderer> (in, "SpriteRenderer");
+	DeserializeComponent<BoxCollider>    (in, "BoxCollider");
+	DeserializeComponent<CircleCollider> (in, "CircleCollider");
+	DeserializeComponent<PolygonCollider>(in, "PolygonCollider");
+	DeserializeComponent<Rigidbody>      (in, "Rigidbody");
+	DeserializeComponent<Camera>         (in, "Camera");
+	DeserializeComponent<AudioSource>    (in, "AudioSource");
+	DeserializeComponent<AudioListener>  (in, "AudioListener");
+	DeserializeComponent<Animator>       (in, "Animator");
 }
 
 GameObject::~GameObject()
