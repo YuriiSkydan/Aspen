@@ -30,6 +30,8 @@ public:
 public:
 	SpriteRenderer(GameObject* gameObject, Transform* transform);
 
+	void Reset() override;
+
 	void SetColor(const Color& color);
 	void SetSprite(const std::string_view path);
 	void SetSprite(const std::shared_ptr<Texture>& sprite);

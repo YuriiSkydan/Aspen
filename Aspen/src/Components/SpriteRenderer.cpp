@@ -7,6 +7,14 @@ SpriteRenderer::SpriteRenderer(GameObject* gameObject, Transform* transform)
 	m_Shader = ShaderLibrary::Get()->GetShader("Shaders/StandartShader");
 }
 
+void SpriteRenderer::Reset()
+{
+	m_Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	flipX = false;
+	flipY = false;
+	orderInLayer = 0;
+}
+
 void SpriteRenderer::SetColor(const Color& color)
 {
 	m_Color = color;

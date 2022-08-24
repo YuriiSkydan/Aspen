@@ -52,6 +52,16 @@ void Rigidbody::FixedUpdate()
 	}
 }
 
+void Rigidbody::Reset()
+{
+	m_Type = BodyType::Dynamic;
+	m_Mass = 1.0f;
+	m_LinearDrag = 0.0f;
+	m_AngularDrag = 0.05f;
+	m_GravityScale = 1.0f;
+	m_FixedRotation = false;
+}
+
 void Rigidbody::AddForce(const Vector2f& force, const ForceMode& mode)
 {
 	if (m_Body != nullptr)

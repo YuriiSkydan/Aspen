@@ -45,10 +45,9 @@ public:
 				for (size_t i = 0; i < 100; i++)
 				{
 					auto created = CreateGameObject();
-					//created->AddComponent<Rigidbody>();
-					//created->AddComponent<BoxCollider>()->material.restitution = 0.5f;
+					created->AddComponent<Rigidbody>();
+					created->AddComponent<BoxCollider>()->material.restitution = 0.5f;
 					SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-					//created->AddComponent<Rigidbody>();
 					created->transform->position.x = currentXPos;
 					created->transform->position.y = currentYPos;
 

@@ -20,12 +20,6 @@ void CircleCollider::Start()
 	b2CircleShape circleShape;
 	circleShape.m_radius = radius;
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &circleShape;
-	fixtureDef.density = material.dencity;
-	fixtureDef.restitution = material.friction;
-	fixtureDef.isSensor = isTrigger;
-
 	if (body == nullptr)
 	{
 		b2BodyDef bodyDef;
@@ -33,7 +27,9 @@ void CircleCollider::Start()
 		body = Physics::CreateBody(bodyDef);
 	}
 	
-	body->CreateFixture(&fixtureDef);
+	SetFixtureDef();
+	m_FixtureDef.shape = &circleShape;
+	body->CreateFixture(&m_FixtureDef);
 }
 
 void CircleCollider::Serialize(json& out) const

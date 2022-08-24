@@ -83,7 +83,7 @@ void Editor::Update()
 		CircleCollider* circleCollider = m_SelectedObject->GetComponent<CircleCollider>();
 		if (circleCollider != nullptr && circleCollider->IsEnabled())
 		{
-			//Renderer::DrawCirlceCollider(m_SelectedObject->transform, circleCollider);
+			Renderer::DrawCirlceCollider(m_SelectedObject->transform, circleCollider, m_EditorCamera.GetCameraMatrix());
 		}
 	}
 

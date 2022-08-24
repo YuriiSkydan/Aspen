@@ -26,6 +26,8 @@ public:
 	Transform(GameObject* gameObject);
 	Transform(GameObject* gameObject, Transform* transform);
 
+	void Reset() override;
+
 	void Translate(const Vector2f& translation, Space relativeTo = Space::Self);
 	void Rotate(float angle, Space relativeTo = Space::Self);
 	//void LookAt();

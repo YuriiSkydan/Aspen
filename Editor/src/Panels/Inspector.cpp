@@ -7,6 +7,28 @@
 
 using namespace std::string_literals;
 
+ComponentPropertyFlags operator|(ComponentPropertyFlags a, ComponentPropertyFlags b)
+{
+	return static_cast<ComponentPropertyFlags>(static_cast<int8_t>(a) | static_cast<int8_t>(b));
+}
+
+ComponentPropertyFlags operator&(ComponentPropertyFlags a, ComponentPropertyFlags b)
+{
+	return static_cast<ComponentPropertyFlags>(static_cast<int8_t>(a) & static_cast<int8_t>(b));
+}
+
+ComponentPropertyFlags operator|=(ComponentPropertyFlags& a, ComponentPropertyFlags b)
+{
+	a |= b;
+	return a;
+}
+
+ComponentPropertyFlags operator&=(ComponentPropertyFlags& a, ComponentPropertyFlags b)
+{
+	a &= b;
+	return a;
+}
+
 Inspector::Inspector(Ptr<GameObject>& gameObjectRef)
 	:m_SelectedGameObject(gameObjectRef)
 { }
@@ -136,7 +158,7 @@ void Inspector::RenderComponents()
 	ImGui::NewLine();
 }
 
-bool Inspector::RenderComponentHeader(const std::string& componentName, Component* component, bool isEditable)
+bool Inspector::RenderComponentHeader(const std::string& componentName, Component* component, ComponentPropertyFlags flags)
 {
 	bool isOpen = ImGui::CollapsingHeader(("##"s + componentName).c_str(), ImGuiTreeNodeFlags_AllowItemOverlap);
 	bool removeComponent = false;
@@ -148,18 +170,20 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 
 	if (ImGui::BeginPopup("Component properties"))
 	{
-		if (ImGui::MenuItem("Remove component"))
+		if (!(flags & NoRemove) && ImGui::MenuItem("Remove component"))
 			removeComponent = true;
+
+		if (!(flags & NoReset) && ImGui::MenuItem("Reset"))
+			component->Reset();
 
 		ImGui::EndPopup();
 	}
 	ImGui::PopID();
 
-	if (isEditable)
+	if (!(flags & NoDisable))
 	{
-		bool isEnabled = component->IsEnabled();
-		ImGui::Checkbox(("##Is Enabled"s + componentName).c_str(), &isEnabled);
-		component->SetEnabled(isEnabled);
+		Checkbox("##Enabling", component, component->IsEnabled(),
+			&(Component::SetEnabled));
 	}
 
 	ImGui::SameLine();
@@ -176,7 +200,9 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 
 void Inspector::RenderComponent(Transform* transform)
 {
-	if (ImGui::CollapsingHeader("Transform"))
+	bool isOpen = RenderComponentHeader("Transform", transform, NoDisable | NoRemove);
+	
+	if (isOpen)
 	{
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
@@ -187,7 +213,7 @@ void Inspector::RenderComponent(Transform* transform)
 		ImGui::Text("Rotation");
 		ImGui::Spacing();
 		ImGui::Text("Scale");
-
+		
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
@@ -204,7 +230,7 @@ void Inspector::RenderComponent(Transform* transform)
 
 void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 {
-	bool isOpen = RenderComponentHeader("SpriteRenderer", spriteRenderer, true);
+	bool isOpen = RenderComponentHeader("SpriteRenderer", spriteRenderer);
 
 	if (isOpen)
 	{
@@ -259,7 +285,7 @@ void Inspector::RenderComponent(SpriteRenderer* spriteRenderer)
 
 void Inspector::RenderComponent(Camera* camera)
 {
-	bool isOpen = RenderComponentHeader("Camera", camera, true);
+	bool isOpen = RenderComponentHeader("Camera", camera);
 
 	if (isOpen)
 	{
@@ -285,7 +311,7 @@ void Inspector::RenderComponent(Camera* camera)
 
 void Inspector::RenderComponent(Rigidbody* rigidbody)
 {
-	bool isOpen = RenderComponentHeader("Rigidbody", rigidbody, false);
+	bool isOpen = RenderComponentHeader("Rigidbody", rigidbody, NoDisable);
 
 	if (isOpen)
 	{
@@ -362,7 +388,7 @@ void Inspector::RenderComponent(Collider* collider)
 {
 	ImGui::Columns(2, 0, false);
 	ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
-	
+
 	ImGui::Spacing();
 	ImGui::Text("Offset");
 	ImGui::Spacing();
@@ -386,7 +412,7 @@ void Inspector::RenderComponent(Collider* collider)
 
 void Inspector::RenderComponent(BoxCollider* boxCollider)
 {
-	bool isOpen = RenderComponentHeader("BoxCollider", boxCollider, true);
+	bool isOpen = RenderComponentHeader("BoxCollider", boxCollider);
 
 	if (isOpen)
 	{
@@ -395,7 +421,7 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 
 		ImGui::Spacing();
 		ImGui::Text("Size");
-		
+
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
@@ -410,7 +436,7 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 
 void Inspector::RenderComponent(CircleCollider* circleCollider)
 {
-	bool isOpen = RenderComponentHeader("CircleCollider", circleCollider, true);
+	bool isOpen = RenderComponentHeader("CircleCollider", circleCollider);
 
 	if (isOpen)
 	{
@@ -428,13 +454,13 @@ void Inspector::RenderComponent(CircleCollider* circleCollider)
 
 		ImGui::Columns(1);
 
-		RenderComponent((Collider *)circleCollider);
+		RenderComponent((Collider*)circleCollider);
 	}
 }
 
 void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 {
-	bool isOpen = RenderComponentHeader("PolygonCollider", polygonCollider, true);
+	bool isOpen = RenderComponentHeader("PolygonCollider", polygonCollider);
 
 	if (isOpen)
 	{
@@ -445,17 +471,17 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
-		
+
 		//if(ImGui::Button("+"))
 			//polygonCollider->
-		
+
 		ImGui::Columns(1);
 	}
 }
 
 void Inspector::RenderComponent(Animator* animator)
 {
-	bool isOpen = RenderComponentHeader("Animator", animator, true);
+	bool isOpen = RenderComponentHeader("Animator", animator);
 
 	if (isOpen)
 	{
@@ -557,7 +583,7 @@ void Inspector::RenderComponent(Animator* animator)
 
 void Inspector::RenderComponent(AudioSource* audioSource)
 {
-	bool isOpen = RenderComponentHeader("Audio Source", audioSource, true);
+	bool isOpen = RenderComponentHeader("Audio Source", audioSource);
 
 	if (isOpen)
 	{
@@ -614,7 +640,7 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 
 void Inspector::RenderComponent(AudioListener* audioListener)
 {
-	bool isOpen = RenderComponentHeader("Audio Listener", audioListener, true);
+	bool isOpen = RenderComponentHeader("Audio Listener", audioListener);
 
 	if (isOpen)
 	{
@@ -764,3 +790,4 @@ void Inspector::RenderTagsAndLayersManager()
 	}
 #pragma endregion
 }
+

@@ -30,6 +30,7 @@ public:
 	virtual void OnEnable() {}
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}
+	virtual void Reset() {}
 
 	GameObject* CreateGameObject();
 

@@ -1,5 +1,4 @@
 #include <algorithm>
-
 #include "ProjectPanel.h"
 #include "imgui/imgui.h"
 using namespace std::string_literals;

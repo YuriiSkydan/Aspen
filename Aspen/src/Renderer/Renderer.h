@@ -14,11 +14,12 @@ void ASPEN GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id
 
 void ASPEN ErrorCallback(int error, const char* message);
 
-class ASPEN Renderer 
+class ASPEN Renderer
 {
 private:
 	inline static std::shared_ptr<Shader> s_StandartShader;
 	inline static std::shared_ptr<Shader> s_BoxColliderShader;
+	inline static std::shared_ptr<Shader> s_CircleColliderShader;
 
 public:
 	static void Init();
@@ -32,5 +33,5 @@ public:
 
 	//Debug
 	static void DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix);
-	static void DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider);
+	static void DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix);
 };

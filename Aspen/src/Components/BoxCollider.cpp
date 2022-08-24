@@ -21,6 +21,13 @@ void BoxCollider::Start()
 		body = rigidbody->GetBody();
 		mass = rigidbody->GetMass();
 	}
+	else
+	{
+		b2BodyDef bodyDef;
+		bodyDef.position = { transform->position.x, transform->position.y };
+		bodyDef.angle = ToRads(-transform->angle);
+		body = Physics::CreateBody(bodyDef);
+	}
 
 	float sizeX = size.x * transform->scale.x;
 	float sizeY = size.y * transform->scale.y;
@@ -29,24 +36,10 @@ void BoxCollider::Start()
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &boxShape;
-	fixtureDef.density = material.dencity * (1.0f / ((sizeX * 2) * (sizeY * 2))) * mass;
-	fixtureDef.restitution = material.restitution;
-	fixtureDef.friction = material.friction;
-	fixtureDef.isSensor = isTrigger;
-	fixtureDef.userData.pointer = gameObject->GetID();
+	SetFixtureDef();
+	m_FixtureDef.shape = &boxShape;
+	body->CreateFixture(&m_FixtureDef);
 
-	if (body == nullptr)
-	{
-		b2BodyDef bodyDef;
-		bodyDef.position = { transform->position.x, transform->position.y };
-		bodyDef.angle = ToRads(-transform->angle);
-		body = Physics::CreateBody(bodyDef);
-	}
-
-	body->CreateFixture(&fixtureDef);
-	
 	std::cout << "Mass: " << body->GetMass() << std::endl;
 }
 

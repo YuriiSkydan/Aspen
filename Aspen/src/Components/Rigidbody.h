@@ -32,6 +32,7 @@ public:
 	void Awake() override;
 	void Update() override;
 	void FixedUpdate() override;
+	void Reset() override;
 
 	void AddForce(const Vector2f& force, const ForceMode& mode = ForceMode::Force);
 	void AddAngularImpulse(float impulse);

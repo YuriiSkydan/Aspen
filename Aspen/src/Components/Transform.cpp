@@ -12,6 +12,13 @@ Transform::Transform(GameObject* gameObject, Transform* transform)
 	: Transform(gameObject)
 { }
 
+void Transform::Reset()
+{
+	position = { 0.0f, 0.0f };
+	scale    = { 1.0f, 1.0f };
+	angle    = 0.0f;
+}
+
 Matrix3x3f Transform::GetTransformMatrix() const
 {
 	Matrix3x3f transform = Matrix3x3f(1.0f);

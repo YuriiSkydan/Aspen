@@ -12,6 +12,20 @@
 class AnimationClip;
 class Material;
 
+enum ComponentPropertyFlags : int8_t
+{
+	None      = 0,
+	NoDisable = 1 << 0,
+	NoRemove  = 1 << 2,
+	NoReset   = 1 << 3
+};
+
+ComponentPropertyFlags operator|(ComponentPropertyFlags a, ComponentPropertyFlags b);
+ComponentPropertyFlags operator&(ComponentPropertyFlags a, ComponentPropertyFlags b);
+
+ComponentPropertyFlags operator|=(ComponentPropertyFlags& a, ComponentPropertyFlags b);
+ComponentPropertyFlags operator&=(ComponentPropertyFlags& a, ComponentPropertyFlags b);
+
 class Inspector
 {
 private:
@@ -26,7 +40,7 @@ private:
 	bool m_TagsAndLayersManager = false;
 private:
 	template<typename ComponentType>
-	void DragFloat(std::string_view id, ComponentType* component, float previewValue, void(ComponentType::*function)(float), float speed = 1.0f, float min = FLT_MIN, float max = FLT_MAX)
+	void DragFloat(std::string_view id, ComponentType* component, float previewValue, void(ComponentType::* function)(float), float speed = 1.0f, float min = FLT_MIN, float max = FLT_MAX)
 	{
 		if (ImGui::DragFloat(id.data(), &previewValue, speed, min, max))
 			(component->*function)(previewValue);
@@ -65,7 +79,8 @@ private:
 			}(), ...);
 	}
 
-	bool RenderComponentHeader(const std::string& componentName, Component* component, bool isEditable);
+	bool RenderComponentHeader(const std::string& componentName, Component* component, ComponentPropertyFlags flags = None);
+	//void RenderComponentProperties()
 	void RenderComponent(Transform* transform);
 	void RenderComponent(SpriteRenderer* spriteRenderer);
 	void RenderComponent(Camera* camera);

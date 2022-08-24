@@ -285,10 +285,10 @@ void Renderer::Init()
 
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/FastStandartShader");
 	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
+	s_CircleColliderShader = ShaderLibrary::Get()->GetShader("Shaders/CircleColliderShader");
 
 	s_RenderData.vertices.resize(s_RenderData.MaxVertices);
 	s_RenderData.textures.reserve(s_RenderData.MaxTextureSlots);
-
 }
 
 void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
@@ -387,6 +387,7 @@ void Renderer::ShutDown()
 {
 	s_StandartShader.reset();
 	s_BoxColliderShader.reset();
+	s_CircleColliderShader.reset();
 }
 
 void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix)
@@ -416,5 +417,11 @@ void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* bo
 	glLineWidth(5);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Renderer::DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix)
+{
+	s_CircleColliderShader->Bind();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }
 #endif
