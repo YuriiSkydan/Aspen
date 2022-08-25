@@ -4,6 +4,7 @@
 #include "../Components/Transform.h"
 #include "../Components/BoxCollider.h"
 #include "../Components/CircleCollider.h"
+#include "../Components/PolygonCollider.h"
 #include "../Components/Camera.h"
 
 void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam)
@@ -286,6 +287,7 @@ void Renderer::Init()
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/FastStandartShader");
 	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
 	s_CircleColliderShader = ShaderLibrary::Get()->GetShader("Shaders/CircleColliderShader");
+	s_LineShader = ShaderLibrary::Get()->GetShader("Shaders/LineShader");
 
 	s_RenderData.vertices.resize(s_RenderData.MaxVertices);
 	s_RenderData.textures.reserve(s_RenderData.MaxTextureSlots);
@@ -300,7 +302,7 @@ void Renderer::BeginScene(const Matrix3x3f& cameraMatrix)
 	for (size_t i = 0; i < RenderData::MaxTextureSlots; i++)
 		indexes[i] = i;
 
-	s_StandartShader->SetArray1iv("u_Textures", RenderData::MaxTextureSlots, indexes);
+	s_StandartShader->SetIntArray("u_Textures", RenderData::MaxTextureSlots, indexes);
 
 	StartBatch();
 }
@@ -317,7 +319,7 @@ void Renderer::Draw(const SpriteRenderer* spriteRenderer)
 	{
 		unsigned int textureCount = s_RenderData.textureCount;
 		textures.insert({ spriteRenderer->GetTexture().get(), textureCount });
-		
+
 		s_RenderData.textureCount++;
 	}
 
@@ -388,10 +390,13 @@ void Renderer::ShutDown()
 	s_StandartShader.reset();
 	s_BoxColliderShader.reset();
 	s_CircleColliderShader.reset();
+	s_LineShader.reset();
 }
 
-void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix)
+void Renderer::DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix)
 {
+	Transform* transform = boxCollider->transform;
+
 	Vector2f scale(transform->scale);
 	scale.x = boxCollider->size.x * 2;
 	scale.y = boxCollider->size.y * 2;
@@ -419,9 +424,40 @@ void Renderer::DrawBoxCollider(const Transform* transform, const BoxCollider* bo
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void Renderer::DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix)
+void Renderer::DrawCirlceCollider(const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix)
 {
 	s_CircleColliderShader->Bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+}
+
+void Renderer::DrawPolygonCollider(const PolygonCollider* polygonCollider, const Matrix3x3f& cameraMatrix)
+{
+	Transform* transform = polygonCollider->transform;
+
+	s_LineShader->Bind();
+
+	s_LineShader->SetMat3("camera", cameraMatrix);
+	s_LineShader->SetMat3("transform", transform->GetTransformMatrix());
+
+	auto& vertices = polygonCollider->GetVerticies();
+	size_t size = vertices.size();
+	
+	Vector2f arr[2];
+	for (size_t i = 0; i < size - 1; i++)
+	{
+		arr[0] = { vertices[i].x, vertices[i].y };
+		arr[1] = { vertices[i + 1].x, vertices[i + 1].y };
+
+		s_LineShader->SetVec2fArray("positions", 2, arr);
+		glLineWidth(5);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
+	arr[0] = { vertices[size - 1].x, vertices[size - 1].y };
+	arr[1] = { vertices[0].x, vertices[0].y };
+
+	s_LineShader->SetVec2fArray("positions", 2, arr);
+	glLineWidth(5);
+	glDrawArrays(GL_LINES, 0, 2);
 }
 #endif

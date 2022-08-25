@@ -482,9 +482,9 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
 			ImGui::PushID(i);
-			ImGui::SetNextItemWidth(m_ItemWidth);
-			ImGui::DragFloat2("##Vertex", (float*)(&vertices[i]));
-			ImGui::PopID(); 
+			ImGui::SetNextItemWidth(m_FirstCollumnWidth + m_SecondCollumnWidth);
+			ImGui::DragFloat2("##VertexX", (float*)(&vertices[i]), 0.001f);
+			ImGui::PopID();
 		}
 	}
 }

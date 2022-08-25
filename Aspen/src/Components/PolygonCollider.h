@@ -16,6 +16,7 @@ public:
 	void AddVertex(const Vector2f& vertexPos);
 
 	std::vector<b2Vec2>& GetVertices() { return m_Vertices; }
+	const std::vector<b2Vec2>& GetVerticies() const { return m_Vertices; }
 
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;

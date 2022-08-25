@@ -129,9 +129,19 @@ void Shader::SetMat3(std::string_view name, const Matrix3x3f& matrix, bool trans
 	glUniformMatrix3fv(GetUniformLocation(name), 1, transpose, (float*)(&matrix));
 }
 
+void Shader::SetVec2i(std::string_view name, int v0, int v1)
+{
+	glUniform2i(GetUniformLocation(name), v0, v1);
+}
+
 void Shader::SetVec3i(std::string_view name, int v0, int v1, int v2)
 {
 	glUniform3i(GetUniformLocation(name), v0, v1, v2);
+}
+
+void Shader::SetVec2f(std::string_view name, float v0, float v1)
+{
+	glUniform2f(GetUniformLocation(name), v0, v1);
 }
 
 void Shader::SetVec3f(std::string_view name, float v0, float v1, float v2)
@@ -149,9 +159,19 @@ void Shader::SetVec4f(std::string_view name, float v0, float v1, float v2, float
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 
-void Shader::SetArray1iv(std::string_view name, unsigned int count, int* arr)
+void Shader::SetIntArray(std::string_view name, unsigned int count, int* arr)
 {
 	glUniform1iv(GetUniformLocation(name), count, arr);
+}
+
+void Shader::SetFloatArray(std::string_view name, unsigned int count, float* arr)
+{
+	glUniform1fv(GetUniformLocation(name), count, arr);
+}
+
+void Shader::SetVec2fArray(std::string_view name, unsigned int count, Vector2f* arr)
+{
+	glUniform2fv(GetUniformLocation(name), count, (float*)arr);
 }
 
 Shader::~Shader()

@@ -9,6 +9,7 @@ class Transform;
 class Camera;
 class CircleCollider;
 class BoxCollider;
+class PolygonCollider;
 
 void ASPEN GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -20,6 +21,7 @@ private:
 	inline static std::shared_ptr<Shader> s_StandartShader;
 	inline static std::shared_ptr<Shader> s_BoxColliderShader;
 	inline static std::shared_ptr<Shader> s_CircleColliderShader;
+	inline static std::shared_ptr<Shader> s_LineShader;
 
 public:
 	static void Init();
@@ -32,6 +34,7 @@ public:
 	static void ShutDown();
 
 	//Debug
-	static void DrawBoxCollider(const Transform* transform, const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix);
-	static void DrawCirlceCollider(const Transform* transform, const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix);
+	static void DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix);
+	static void DrawCirlceCollider(const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix);
+	static void DrawPolygonCollider(const PolygonCollider* polygonCollider, const Matrix3x3f& cameraMatrix);
 };

@@ -33,17 +33,23 @@ public:
 	void UnBind() const;
 
 	void SetInt(std::string_view name, int value);
-	void SetFloat(std::string_view name, float value);
 	void SetBool(std::string_view name, int value);
+	void SetFloat(std::string_view name, float value);
+
+	void SetVec2i(std::string_view name, int v0, int v1);
+	void SetVec3i(std::string_view name, int v0, int v1, int v2);
+	void SetVec4i(std::string_view name, int v0, int v1, int v2, int v3);
+
+	void SetVec2f(std::string_view name, float v0, float v1);
+	void SetVec3f(std::string_view name, float v0, float v1, float v2);
+	void SetVec4f(std::string_view name, float v0, float v1, float v2, float v3);
 
 	void SetMat3(std::string_view name, const Matrix3x3f& matrix, bool transpose = false);
 
-	void SetVec3i(std::string_view name, int v0, int v1, int v2);
-	void SetVec3f(std::string_view name, float v0, float v1, float v2);
-	void SetVec4i(std::string_view name, int v0, int v1, int v2, int v3);
-	void SetVec4f(std::string_view name, float v0, float v1, float v2, float v3);
+	void SetIntArray(std::string_view name, unsigned int count, int* arr);
+	void SetFloatArray(std::string_view name, unsigned int count, float* arr);
 
-	void SetArray1iv(std::string_view name, unsigned int count, int* arr);
+	void SetVec2fArray(std::string_view name, unsigned int count, Vector2f* arr);
 
 	unsigned int GetID() { return m_ID; }
 
