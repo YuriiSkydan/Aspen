@@ -6,6 +6,7 @@
 #include "../Components/CircleCollider.h"
 #include "../Components/PolygonCollider.h"
 #include "../Components/Camera.h"
+#include "../Math/Math.h"
 
 void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum serverity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -393,6 +394,14 @@ void Renderer::ShutDown()
 	s_LineShader.reset();
 }
 
+void Renderer::DrawLine(const Vector2f from, const Vector2f to)
+{
+	Vector2f arr[2] = { from, to};
+	s_LineShader->SetVec2fArray("positions", 2, arr);
+	glLineWidth(5);
+	glDrawArrays(GL_LINES, 0, 2);
+}
+
 void Renderer::DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix)
 {
 	Transform* transform = boxCollider->transform;
@@ -426,8 +435,21 @@ void Renderer::DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f&
 
 void Renderer::DrawCirlceCollider(const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix)
 {
-	s_CircleColliderShader->Bind();
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+	Transform* transform = circleCollider->transform;
+
+	s_LineShader->Bind();
+
+	s_LineShader->SetMat3("camera", cameraMatrix);
+	s_LineShader->SetVec2f("position", transform->position);
+	s_LineShader->SetFloat("angle", transform->angle);
+
+	float radius = circleCollider->radius;
+	for (float angle = 0.0f; angle <= std::numbers::pi * 2; angle += 0.01f)
+	{
+		Vector2f from = { cos(angle) * radius, sin(angle) * radius };
+		Vector2f to = { cos(angle + 0.01f) * radius, sin(angle + 0.01f) * radius };
+		DrawLine(from, to);
+	}
 }
 
 void Renderer::DrawPolygonCollider(const PolygonCollider* polygonCollider, const Matrix3x3f& cameraMatrix)
@@ -437,27 +459,33 @@ void Renderer::DrawPolygonCollider(const PolygonCollider* polygonCollider, const
 	s_LineShader->Bind();
 
 	s_LineShader->SetMat3("camera", cameraMatrix);
-	s_LineShader->SetMat3("transform", transform->GetTransformMatrix());
+	s_LineShader->SetVec2f("position", transform->position);
+	s_LineShader->SetFloat("angle", transform->angle);
 
 	auto& vertices = polygonCollider->GetVerticies();
 	size_t size = vertices.size();
 	
-	Vector2f arr[2];
-	for (size_t i = 0; i < size - 1; i++)
+	auto DrawLine = [&](b2Vec2 vertices[2])
 	{
-		arr[0] = { vertices[i].x, vertices[i].y };
-		arr[1] = { vertices[i + 1].x, vertices[i + 1].y };
+		Vector2f arr[2];
+		arr[0] = { vertices[0].x, vertices[0].y };
+		arr[1] = { vertices[1].x, vertices[1].y };
 
 		s_LineShader->SetVec2fArray("positions", 2, arr);
 		glLineWidth(5);
 		glDrawArrays(GL_LINES, 0, 2);
+	};
+
+	b2Vec2 arr[2];
+	for (size_t i = 0; i < size - 1; i++)
+	{
+		arr[0] = vertices[i];
+		arr[1] = vertices[i + 1];
+		DrawLine(arr);
 	}
 
-	arr[0] = { vertices[size - 1].x, vertices[size - 1].y };
-	arr[1] = { vertices[0].x, vertices[0].y };
-
-	s_LineShader->SetVec2fArray("positions", 2, arr);
-	glLineWidth(5);
-	glDrawArrays(GL_LINES, 0, 2);
+	arr[0] = vertices[size - 1];
+	arr[1] = vertices[0];
+	DrawLine(arr);
 }
 #endif

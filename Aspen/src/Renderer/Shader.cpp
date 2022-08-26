@@ -129,6 +129,11 @@ void Shader::SetMat3(std::string_view name, const Matrix3x3f& matrix, bool trans
 	glUniformMatrix3fv(GetUniformLocation(name), 1, transpose, (float*)(&matrix));
 }
 
+void Shader::SetVec2i(std::string_view name, Vector2i v)
+{
+	glUniform2i(GetUniformLocation(name), v.x, v.y);
+}
+
 void Shader::SetVec2i(std::string_view name, int v0, int v1)
 {
 	glUniform2i(GetUniformLocation(name), v0, v1);
@@ -137,6 +142,11 @@ void Shader::SetVec2i(std::string_view name, int v0, int v1)
 void Shader::SetVec3i(std::string_view name, int v0, int v1, int v2)
 {
 	glUniform3i(GetUniformLocation(name), v0, v1, v2);
+}
+
+void Shader::SetVec2f(std::string_view name, Vector2f v)
+{
+	glUniform2f(GetUniformLocation(name), v.x, v.y);
 }
 
 void Shader::SetVec2f(std::string_view name, float v0, float v1)

@@ -34,6 +34,7 @@ public:
 	static void ShutDown();
 
 	//Debug
+	static void DrawLine(const Vector2f from, const Vector2f to);
 	static void DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f& cameraMatrix);
 	static void DrawCirlceCollider(const CircleCollider* circleCollider, const Matrix3x3f& cameraMatrix);
 	static void DrawPolygonCollider(const PolygonCollider* polygonCollider, const Matrix3x3f& cameraMatrix);

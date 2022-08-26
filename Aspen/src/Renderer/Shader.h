@@ -36,10 +36,12 @@ public:
 	void SetBool(std::string_view name, int value);
 	void SetFloat(std::string_view name, float value);
 
+	void SetVec2i(std::string_view name, Vector2i v);
 	void SetVec2i(std::string_view name, int v0, int v1);
 	void SetVec3i(std::string_view name, int v0, int v1, int v2);
 	void SetVec4i(std::string_view name, int v0, int v1, int v2, int v3);
 
+	void SetVec2f(std::string_view name, Vector2f v);
 	void SetVec2f(std::string_view name, float v0, float v1);
 	void SetVec3f(std::string_view name, float v0, float v1, float v2);
 	void SetVec4f(std::string_view name, float v0, float v1, float v2, float v3);

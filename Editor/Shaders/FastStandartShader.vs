@@ -28,8 +28,6 @@ void main()
 	mat2 rotation = mat2( cosValue, sinValue,
 	                     -sinValue, cosValue);
 
-	mat2 result = scaling * rotation;
-
 	vec2 newPos = v_VertexPos * scaling * rotation;
 	newPos += v_QuadPos;
 
