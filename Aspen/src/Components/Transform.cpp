@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "../Math/Math.h"
 #include "../GameObject/GameObject.h"
 
 Transform::Transform(GameObject* gameObject)
@@ -70,6 +71,16 @@ void Transform::Rotate(float angle, Space relativeTo)
 	{
 		this->angle += angle;
 	}
+}
+
+void Transform::LookAt(const Vector2f& to)
+{
+	Vector2f direction = to - position;
+	direction.Normalize();
+
+	float dot = Dot(direction, Vector2f(1.0f, 0.0f));
+	float det = Det(direction, Vector2f(1.0f, 0.0f));
+	transform->angle = ToDegrees(atan2(det, dot));
 }
 
 void Transform::AddChild(GameObject* child)

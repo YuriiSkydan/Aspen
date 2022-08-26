@@ -158,6 +158,12 @@ T Dot(const Vector2<T>& v1, const Vector2<T>& v2)
 }
 
 template<typename T>
+T Det(const Vector2<T>& v1, const Vector2<T>& v2)
+{
+	return ((v1.x * v2.y) - (v1.y * v2.x));
+}
+
+template<typename T>
 T Cross(const Vector2<T>& v1, const Vector2<T>& v2)
 {
 	return ((v1.x * v2.y) - (v1.y * v2.x));

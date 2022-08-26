@@ -11,7 +11,6 @@ Texture::Texture(std::string_view path)
 
 	unsigned char* data = stbi_load(path.data(), &m_Width, &m_Height, &m_Channels, 0);
 
-	std::cout << "Texture channels: " << m_Channels << std::endl;
 	if (data != nullptr)
 	{
 		GLenum internalFormat = 0, dataFormat = 0;
@@ -35,17 +34,6 @@ Texture::Texture(std::string_view path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-
-		/*	glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
-			glTextureStorage2D(m_ID, 1, internalFormat, m_Width, m_Height);
-
-			glTextureParameteri(m_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(m_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			glTextureParameteri(m_ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTextureParameteri(m_ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-			glTextureSubImage2D(m_ID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);*/
 
 		stbi_image_free(data);
 	}

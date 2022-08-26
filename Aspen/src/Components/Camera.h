@@ -25,4 +25,3 @@ public:
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;
 };
-

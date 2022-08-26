@@ -487,6 +487,7 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 				vertices.erase(vertices.begin() + i);
 				break;
 			}
+
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(m_FirstCollumnWidth + m_SecondCollumnWidth - 15);
 			ImGui::DragFloat2("##VertexX", (float*)(&vertices[i]), 0.001f);
@@ -657,11 +658,6 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 void Inspector::RenderComponent(AudioListener* audioListener)
 {
 	bool isOpen = RenderComponentHeader("Audio Listener", audioListener);
-
-	if (isOpen)
-	{
-
-	}
 }
 
 void Inspector::RenderAddComponentButton()
@@ -806,4 +802,3 @@ void Inspector::RenderTagsAndLayersManager()
 	}
 #pragma endregion
 }
-

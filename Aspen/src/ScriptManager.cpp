@@ -47,8 +47,12 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				compileCommand += " /I ..\\Aspen\\vendor\\spdlog-1.x\\include";
 
 				//Compile properties
+#ifdef _DEBUG
+				compileCommand += " /EHsc /MDd /LD " + filePath;
+#endif
+#ifdef NDEBUG
 				compileCommand += " /EHsc /MD /LD " + filePath;
-
+#endif
 				//Link properties
 				//compileCommand += " /link glfw3.lib";
 				//compileCommand += " box2d.lib";
@@ -79,13 +83,13 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 					//newElement = std::make_pair(filePath, std::make_unique<ScriptDLL>(dll));
 					//m_Scripts.insert(std::move(newElement));
 
-					
+
 
 					//newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename));
 
 					//std::cout << "Trying to create script!!!\n";
 					//auto CreateFunction = ScriptCreatePtr(GetProcAddress(dll, "Create"));
-				
+
 					//if (CreateFunction)
 					//{
 					//	Script* test = CreateFunction();

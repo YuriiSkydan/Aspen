@@ -210,13 +210,11 @@ void Scene::Render()
 		glClearColor(color.r, color.g, color.b, color.a);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-	/*	auto renderObjects = GetComponentsOfType<SpriteRenderer>();
-
-		std::sort(renderObjects.begin(), renderObjects.end(),
+		std::sort(m_RenderObjects.begin(), m_RenderObjects.end(),
 			[](SpriteRenderer* a, SpriteRenderer* b)
 			{
 				return a->orderInLayer < b->orderInLayer;
-			});*/
+			});
 
 		Renderer::BeginScene(mainCamera->GetCameraMatrix());
 

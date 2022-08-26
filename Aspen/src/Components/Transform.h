@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-
 #include "Component.h"
 #include "../Math/MatrixTransform.h"
 
@@ -30,7 +29,7 @@ public:
 
 	void Translate(const Vector2f& translation, Space relativeTo = Space::Self);
 	void Rotate(float angle, Space relativeTo = Space::Self);
-	//void LookAt();
+	void LookAt(const Vector2f& to);
 
 	void AddChild(GameObject* child);
 	void AddChild(Transform* child);

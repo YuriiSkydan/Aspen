@@ -20,6 +20,8 @@ private:
 
 	GameObject* m_Camera;
 	std::string currentAnimation;
+
+	GameObject* lookAtObject = nullptr;
 public:
 
 	void Start() override
@@ -32,6 +34,8 @@ public:
 		//auto objects = gameObject->GetScene()->GetObjectsWithComponent<Camera>();
 
 		//m_Camera = objects[0];
+
+		lookAtObject = CreateGameObject();
 	}
 
 	int currentXPos = -50;
@@ -68,7 +72,25 @@ public:
 				}
 			}
 		}
+		//if (Input::IsMouseButtonPressed(Mouse::Button0))
+		//{
+		//	auto created = CreateGameObject();
+		//	created->AddComponent<Rigidbody>();
+		//	created->AddComponent<CircleCollider>();
 
+		//	auto renderer =	created->AddComponent<SpriteRenderer>();
+		//	renderer->SetSprite("Assets/Sprites/circle.png")
+
+		//	Color color;
+		//	color.r = (rand() % 255) / 255.0f;
+		//	color.g = (rand() % 255) / 255.0f;
+		//	color.b = (rand() % 255) / 255.0f;
+		//	color.a = 1.0f;
+
+		//	renderer->SetColor(color);
+		//}
+
+		transform->LookAt(lookAtObject->transform->position);
 		//m_MovingDirection = 0.0f;
 
 		//currentAnimation = "Idle";
