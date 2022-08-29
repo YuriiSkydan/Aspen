@@ -23,7 +23,7 @@ private:
 	SceneState m_SceneState = SceneState::EDIT;
 	
 	std::shared_ptr<Scene> m_EditorScene;
-	std::shared_ptr<Scene> m_ActiveScene;
+	//std::shared_ptr<Scene> m_ActiveScene;
 
 	Texture m_PlayButtonIcon;
 	Texture m_PauseButtonIcon;

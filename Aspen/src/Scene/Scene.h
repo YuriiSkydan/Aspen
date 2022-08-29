@@ -98,6 +98,7 @@ public:
 	//Serialization
 	void Serialize() const;
 	void Deserialize(json& in);
+	void Deserialize(std::string_view filepath);
 
 	~Scene();
 };

@@ -3,6 +3,7 @@
 
 #include "Window.h"
 #include "../Layer.h"
+#include "../Scene/SceneManager.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "ImGuizmo/ImGuizmo.h"
@@ -12,6 +13,7 @@ class ASPEN Engine
 private:
 	std::unique_ptr<Window> m_Window;
 	std::unique_ptr<Layer> m_Editor;
+	std::unique_ptr<SceneManager> m_SceneManager;
 
 	bool m_Running = true;
 	bool m_Minimized = false;

@@ -84,7 +84,7 @@ void Inspector::RenderGameObjectProperties()
 	m_SelectedGameObject->SetActive(active);
 
 	ImGui::SameLine();
-	ImGui::InputText("##", m_SelectedGameObject->m_Name, 20);
+	ImGui::InputText("##", m_SelectedGameObject->m_Name, 40);
 
 	ImGui::Columns(2, "##Tags and Layers", false);
 	ImGui::SetColumnWidth(0, ImGui::GetWindowSize().x / 2.0f);

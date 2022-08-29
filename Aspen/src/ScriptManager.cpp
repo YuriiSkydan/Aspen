@@ -57,9 +57,14 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				//compileCommand += " /link glfw3.lib";
 				//compileCommand += " box2d.lib";
 				compileCommand += " /link Aspen.lib";
-				compileCommand += " /LIBPATH:..\\x64\\Debug";
 
-				//compileCommand += " opengl32.lib";
+#ifdef _DEBUG
+				compileCommand += " /LIBPATH:..\\x64\\Debug";
+#endif
+#ifdef NDEBUG
+			    compileCommand += " /LIBPATH:..\\x64\\Release";
+#endif
+		        //compileCommand += " opengl32.lib";
 				//compileCommand += " Gdi32.lib";
 				//compileCommand += " User32.lib";
 				//compileCommand += " Shell32.lib";

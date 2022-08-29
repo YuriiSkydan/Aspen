@@ -19,8 +19,6 @@ void Scene::Copy(const Scene& other)
 	m_Width = other.m_Width;
 	m_Height = other.m_Height;
 
-	std::cout << "Scene coping!!!\n" << m_Name << std::endl;
-
 	m_GameObjects.resize(other.m_GameObjects.size());
 
 	for (size_t i = 0; i < other.m_GameObjects.size(); i++)
@@ -280,6 +278,24 @@ void Scene::Deserialize(json& in)
 		//move it somewhere else, temporarily solution to fix bug
 		m_GameObjects[i]->m_ID = i;
 	};
+}
+
+void Scene::Deserialize(std::string_view filepath)
+{
+	std::ifstream fileStream(filepath.data(), std::ifstream::binary);
+	
+	if (!fileStream.is_open())
+	{
+		ERROR("Failed to open the file!!!");
+		return;
+	}
+
+	json in;
+	fileStream >> in;
+
+	Deserialize(in);
+
+	fileStream.close();
 }
 
 Scene::~Scene()

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "ProjectPanel.h"
+#include "Scene/SceneManager.h"
 #include "imgui/imgui.h"
 using namespace std::string_literals;
 
@@ -125,8 +126,10 @@ void ProjectPanel::ImGuiRender()
 				m_CurrentDirectory /= path.filename();
 				m_IsNewDirectory = true;
 			}
-			//else if(file.path().extension() == ".scene")
-
+			else if (file.first.path().extension() == ".scene")
+			{
+				SceneManager::LoadScene(file.first.path().string());
+			}
 		}
 
 		ImGui::TextWrapped(filenameString.c_str());

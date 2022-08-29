@@ -15,12 +15,13 @@
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
 #include "Components/CircleCollider.h"
+#include "Components/PolygonCollider.h"
 
 #include "../Utils/File.h"
 
 Editor::Editor()
 	: Layer("Editor")
-	, m_HierarchyPanel(m_ActiveScene, m_SelectedObject)
+	, m_HierarchyPanel(m_SelectedObject)
 	, m_InspectorPanel(m_SelectedObject)
 	, m_EditorCamera(1080.0f / 1920.0f)
 	, m_PlayButtonIcon("Resources/PlayIcon.png")
@@ -34,7 +35,8 @@ Editor::Editor()
 	ImGui::SetCurrentContext(Engine::Get().GetImGuiContext());
 
 	m_EditorScene = std::make_shared<Scene>();
-	m_ActiveScene = m_EditorScene;
+	SceneManager::SetActiveScene(m_EditorScene);
+	//m_ActiveScene = m_EditorScene;
 
 	//m_HierarchyPanel.SetScene(m_ActiveScene);
 
@@ -69,7 +71,8 @@ void Editor::Update()
 
 	m_SceneFramebuffer.Bind();
 
-	m_ActiveScene->UpdateOnEditor(m_EditorCamera);
+	SceneManager::GetActiveScene()->UpdateOnEditor(m_EditorCamera);
+	//m_ActiveScene->UpdateOnEditor(m_EditorCamera);
 
 	//Render Colliders
 	if (m_SelectedObject != nullptr && m_SelectedObject->IsActive())
@@ -99,22 +102,25 @@ void Editor::Update()
 #pragma region RenderGame
 	if (m_GameWindowSize.x != m_GameFramebuffer.GetWidth() ||
 		m_GameWindowSize.y != m_GameFramebuffer.GetHeight() ||
-		m_GameWindowSize.x != m_ActiveScene->GetWidth() ||
-		m_GameWindowSize.y != m_ActiveScene->GetHeight())
+		m_GameWindowSize.x != SceneManager::GetActiveScene()->GetWidth() ||
+		m_GameWindowSize.y != SceneManager::GetActiveScene()->GetHeight())
 	{
 		m_GameFramebuffer.Resize(m_GameWindowSize.x, m_GameWindowSize.y);
-		m_ActiveScene->Resize(m_GameWindowSize.x, m_GameWindowSize.y);
+		//m_ActiveScene->Resize(m_GameWindowSize.x, m_GameWindowSize.y);
+		SceneManager::GetActiveScene()->Resize(m_GameWindowSize.x, m_GameWindowSize.y);
 	}
 
 	m_GameFramebuffer.Bind();
-	m_ActiveScene->Render();
+	SceneManager::GetActiveScene()->Render();
+	//SceneManager::GetActiveScene()->Render();
 	m_GameFramebuffer.Unbind();
 #pragma endregion
-	                                                        
+
 	switch (m_SceneState)
 	{
 	case SceneState::PLAY:
-		m_ActiveScene->Update();
+		SceneManager::GetActiveScene()->Update();
+		//m_ActiveScene->Update();
 		break;
 	case SceneState::EDIT:
 		ScriptManager::Get().Update();
@@ -182,7 +188,8 @@ void Editor::SceneWindow()
 
 				std::string objectName = path.substr(startPos, endPos);
 
-				GameObject* gameObject = m_ActiveScene->CreateGameObject(objectName);
+				auto activeScene = SceneManager::GetActiveScene();
+				GameObject* gameObject = activeScene->CreateGameObject(objectName);
 				SpriteRenderer* spriteRenderer = gameObject->AddComponent<SpriteRenderer>();
 				spriteRenderer->SetSprite(path);
 
@@ -265,7 +272,7 @@ void Editor::SceneWindow()
 			int pData = m_SceneFramebuffer.ReadPixel(1, mousePos.x, mousePos.y);
 			m_SceneFramebuffer.Unbind();
 
-			m_SelectedObject = m_ActiveScene->GetObjectWithID(pData);
+			m_SelectedObject = SceneManager::GetActiveScene()->GetObjectWithID(pData);
 		}
 	}
 
@@ -301,7 +308,8 @@ void Editor::OpenScene()
 		if (newScene != nullptr)
 		{
 			m_EditorScene = newScene;
-			m_ActiveScene = m_EditorScene;
+			//m_ActiveScene = m_EditorScene;
+			SceneManager::SetActiveScene(m_EditorScene);
 			m_SelectedObject = nullptr;
 
 			//m_HierarchyPanel.SetScene(m_ActiveScene);
@@ -319,26 +327,13 @@ void Editor::OpenScene(std::string_view path)
 	{
 		auto newScene = std::make_shared<Scene>();
 
-		using namespace nlohmann;
-		std::ifstream fileStream(path.data(), std::ofstream::binary);
-
-		if (!fileStream.is_open())
-		{
-			ERROR("Failed to open the file!!!");
-			return;
-		}
-
-		json in;
-		fileStream >> in;
-
-		newScene->Deserialize(in);
-
-		fileStream.close();
+		newScene->Deserialize(path);
 
 		if (newScene != nullptr)
 		{
 			m_EditorScene = newScene;
-			m_ActiveScene = m_EditorScene;
+			SceneManager::SetActiveScene(m_EditorScene);
+			//m_ActiveScene = m_EditorScene;
 			m_SelectedObject = nullptr;
 
 			//m_HierarchyPanel.SetScene(m_ActiveScene);
@@ -354,7 +349,7 @@ void Editor::SaveScene()
 {
 	if (m_SceneState != SceneState::PLAY)
 	{
-		m_ActiveScene->Serialize();
+		SceneManager::GetActiveScene()->Serialize();
 	}
 	else
 	{
@@ -481,9 +476,10 @@ void Editor::Toolbar()
 			auto m_RuntimeScene = std::make_shared<Scene>();
 			m_RuntimeScene->Copy(*m_EditorScene);
 
-			m_ActiveScene = m_RuntimeScene;
-			m_ActiveScene->Start();
-
+			//m_ActiveScene = m_RuntimeScene;
+			SceneManager::SetActiveScene(m_RuntimeScene);
+			SceneManager::GetActiveScene()->Start();
+			
 			m_SelectedObject = nullptr;
 		}
 	}
@@ -493,8 +489,9 @@ void Editor::Toolbar()
 		{
 			m_SceneState = SceneState::EDIT;
 
-			m_ActiveScene->Stop();
-			m_ActiveScene = m_EditorScene;
+			SceneManager::GetActiveScene()->Stop();
+			SceneManager::SetActiveScene(m_EditorScene);
+			//m_ActiveScene = m_EditorScene;
 
 			m_SelectedObject = nullptr;
 		}
@@ -504,10 +501,13 @@ void Editor::Toolbar()
 
 	if (ImGui::ImageButton((ImTextureID)m_PauseButtonIcon.GetID(), ImVec2(18, 18)))
 	{
-		if (m_SceneState == SceneState::PAUSE)
-			m_SceneState = SceneState::PLAY;
-		else
-			m_SceneState = SceneState::PAUSE;
+		if (m_SceneState != SceneState::EDIT)
+		{
+			if (m_SceneState == SceneState::PAUSE)
+				m_SceneState = SceneState::PLAY;
+			else
+				m_SceneState = SceneState::PAUSE;
+		}
 	}
 
 	ImGui::End();

@@ -67,7 +67,7 @@ void GameObject::SetLayer(const LayerMask& layer)
 
 void GameObject::SetName(const std::string& name)
 {
-	strcpy_s(m_Name, 20, name.data());
+	strcpy_s(m_Name, 40, name.data());
 }
 
 void GameObject::SetActive(bool active)

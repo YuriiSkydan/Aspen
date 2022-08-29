@@ -1,19 +1,20 @@
 #include "HierarchyPanel.h"
 #include "src/GameObject/GameObject.h"
+#include "src/Scene/SceneManager.h"
 #include "Components/Transform.h"
 #include "imgui/imgui.h"
 
 using namespace std::string_literals;
 
-HierarchyPanel::HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef)
-	:m_Scene(scene), m_SelectedGameObject(gameObjectRef)
+HierarchyPanel::HierarchyPanel(Ptr<GameObject>& gameObjectRef)
+	: m_SelectedGameObject(gameObjectRef)
 { }
 
 void HierarchyPanel::GameObjectPropertiesPopup()
 {
 	if (ImGui::MenuItem("Delete"))
 	{
-		m_Scene->DestroyGameObject(m_SelectedGameObject);
+		SceneManager::GetActiveScene()->DestroyGameObject(m_SelectedGameObject);
 		m_SelectedGameObject = nullptr;
 	}
 }
@@ -93,7 +94,7 @@ void HierarchyPanel::RenderGameObjectTreeNode(GameObject* gameObject)
 
 void HierarchyPanel::RenderSceneHeader()
 {
-	auto& objects = m_Scene->m_GameObjects;
+	auto& objects = SceneManager::GetActiveScene()->m_GameObjects;
 
 	if (strlen(m_FindInput) != 0)
 	{
@@ -130,24 +131,24 @@ void HierarchyPanel::AddGameObjectPopup()
 {
 	if (ImGui::MenuItem("Create Empty"))
 	{
-		m_Scene->CreateGameObject();
+		SceneManager::GetActiveScene()->CreateGameObject();
 	}
 	if (ImGui::MenuItem("Create Sprite"))
 	{
-		GameObject* gameObject = m_Scene->CreateGameObject();
+		GameObject* gameObject = SceneManager::GetActiveScene()->CreateGameObject();
 		gameObject->AddComponent<SpriteRenderer>();
 		gameObject->SetName("Sprite");
 	}
 	if (ImGui::MenuItem("Create Camera"))
 	{
-		GameObject* gameObject = m_Scene->CreateGameObject();
+		GameObject* gameObject = SceneManager::GetActiveScene()->CreateGameObject();
 		gameObject->AddComponent<Camera>();
 		gameObject->AddComponent<AudioListener>();
 		gameObject->SetName("Camera");
 	}
 	if (ImGui::MenuItem("Rigidbody Square"))
 	{
-		GameObject* gameObject = m_Scene->CreateGameObject();
+		GameObject* gameObject = SceneManager::GetActiveScene()->CreateGameObject();
 		gameObject->AddComponent<SpriteRenderer>();
 		gameObject->AddComponent<Rigidbody>();
 		gameObject->AddComponent<BoxCollider>();
@@ -171,7 +172,7 @@ void HierarchyPanel::ImGuiRender()
 	ImGui::InputText("##", m_FindInput, 20);
 
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::CollapsingHeader(m_Scene->GetName().c_str(), flags))
+	if (ImGui::CollapsingHeader(SceneManager::GetActiveScene()->GetName().c_str(), flags))
 		RenderSceneHeader();
 	
 	ImGui::End();

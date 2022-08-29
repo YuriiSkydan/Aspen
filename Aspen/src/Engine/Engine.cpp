@@ -13,6 +13,7 @@ Engine::Engine()
 
 	s_Instance = this;
 	m_Window = std::make_unique<Window>();
+	m_SceneManager = std::make_unique<SceneManager>();
 
 	Renderer::Init();
 	InitImGui();

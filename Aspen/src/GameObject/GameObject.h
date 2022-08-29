@@ -15,8 +15,6 @@ class AudioSource;
 class AudioListener;
 class Scene;
 
-#include "../Components/AllComponents.h"
-
 #define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
 
 class ASPEN GameObject
@@ -26,7 +24,7 @@ private:
 
 	unsigned int m_ID;
 	bool m_IsActive = true;
-	char m_Name[20];
+	char m_Name[40];
 	
 	LayerMask m_Layer;
 	Scene* m_Scene = nullptr;

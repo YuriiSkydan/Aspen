@@ -335,6 +335,12 @@ void Renderer::Draw(const SpriteRenderer* spriteRenderer)
 		vertex.angle = transform->angle;
 		vertex.color = color;
 		vertex.texCoords = s_RenderData.texturePositions[i];
+
+		if (spriteRenderer->flipX)
+			vertex.texCoords.x *= -1.0f;
+		if (spriteRenderer->flipY)
+			vertex.texCoords.y *= -1.0f;
+
 		vertex.texIndex = texIndex;
 		vertex.gameObjectID = ID;
 
@@ -396,7 +402,7 @@ void Renderer::ShutDown()
 
 void Renderer::DrawLine(const Vector2f from, const Vector2f to)
 {
-	Vector2f arr[2] = { from, to};
+	Vector2f arr[2] = { from, to };
 	s_LineShader->SetVec2fArray("positions", 2, arr);
 	glLineWidth(5);
 	glDrawArrays(GL_LINES, 0, 2);
@@ -464,7 +470,7 @@ void Renderer::DrawPolygonCollider(const PolygonCollider* polygonCollider, const
 
 	auto& vertices = polygonCollider->GetVerticies();
 	size_t size = vertices.size();
-	
+
 	auto DrawLine = [&](b2Vec2 vertices[2])
 	{
 		Vector2f arr[2];

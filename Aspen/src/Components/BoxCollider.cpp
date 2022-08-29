@@ -1,10 +1,11 @@
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"
+#include "BoxCollider.h"
+#include "Rigidbody.h"
 #include "../GameObject/GameObject.h"
 #include "../Physics/Physics.h"
 #include "../Math/Math.h"
-#include "BoxCollider.h"
-#include "Rigidbody.h"
+
 
 BoxCollider::BoxCollider(GameObject* gameObject, Transform* transform)
 	: Collider(gameObject, transform)
@@ -39,8 +40,6 @@ void BoxCollider::Start()
 	SetFixtureDef();
 	m_FixtureDef.shape = &boxShape;
 	body->CreateFixture(&m_FixtureDef);
-
-	std::cout << "Mass: " << body->GetMass() << std::endl;
 }
 
 void BoxCollider::Reset()

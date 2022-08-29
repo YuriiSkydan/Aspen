@@ -5,7 +5,6 @@
 class HierarchyPanel
 {
 private:
-	std::shared_ptr<Scene>& m_Scene;
 	Ptr<GameObject>& m_SelectedGameObject;
 
 	char m_FindInput[20];
@@ -18,7 +17,7 @@ private:
 	void AddGameObjectPopup();
 
 public:
-	HierarchyPanel(std::shared_ptr<Scene>& scene, Ptr<GameObject>& gameObjectRef);
+	HierarchyPanel(Ptr<GameObject>& gameObjectRef);
 
 	void ImGuiRender();
 
