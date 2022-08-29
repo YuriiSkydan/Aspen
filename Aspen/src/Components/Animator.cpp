@@ -120,6 +120,7 @@ void Animator::AddIntegerParameter(const std::string& name)
 	m_IntParameters.insert({ name, 0 });
 }
 
+
 Animator::Animator(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
 { }

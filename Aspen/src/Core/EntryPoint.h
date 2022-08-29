@@ -6,8 +6,6 @@ extern void AddEditor();
 int main()
 {
 	Engine* engine = CreateEngine();
-	//Engine* engine = new Engine;
-	//AddEditor();
 
 	engine->Run();
 

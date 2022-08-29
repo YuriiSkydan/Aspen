@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream> // delete later
 #include "JSON/json.hpp"
 #include "../Core/Core.h"
 
@@ -55,8 +54,5 @@ public:
 	virtual void Serialize(json& out) const;
 	virtual void Deserialize(json& in);
 
-	virtual ~Component()
-	{
-		std::cout << "Component destructor!!!\n";
-	}
+	virtual ~Component() = default;
 };

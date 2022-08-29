@@ -1,10 +1,11 @@
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"
+#include "PolygonCollider.h"
+#include "Rigidbody.h"
 #include "../GameObject/GameObject.h"
 #include "../Math/Math.h"
 #include "../Physics/Physics.h"
-#include "PolygonCollider.h"
-#include "Rigidbody.h"
+
 
 PolygonCollider::PolygonCollider(GameObject* gameObject, Transform* transform)
 	: Collider(gameObject, transform)

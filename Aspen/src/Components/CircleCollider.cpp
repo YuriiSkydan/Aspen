@@ -1,9 +1,9 @@
+#include "box2d/b2_circle_shape.h"
+#include "box2d/b2_fixture.h"
 #include "CircleCollider.h"
 #include "Rigidbody.h"
 #include "../Physics/Physics.h"
 #include "../GameObject/GameObject.h"
-#include "box2d/b2_circle_shape.h"
-#include "box2d/b2_fixture.h"
 
 CircleCollider::CircleCollider(GameObject* gameObject, Transform* transform)
 	: Collider(gameObject, transform)

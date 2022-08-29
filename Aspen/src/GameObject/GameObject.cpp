@@ -212,8 +212,6 @@ void GameObject::Deserialize(json& in)
 GameObject::~GameObject()
 {
 	//s_Objects--;
-	std::cout << "GameObject destructor!!!\n";
-
 	for (auto& component : m_Components)
 		m_Scene->OnComponentRemoved(component.get());
 }

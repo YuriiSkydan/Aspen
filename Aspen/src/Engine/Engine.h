@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-
 #include "Window.h"
 #include "../Layer.h"
 #include "../Scene/SceneManager.h"

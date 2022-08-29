@@ -8,7 +8,7 @@
 
 Engine::Engine()
 {
-	Log::Init(); // maybe move it somewhere else
+	Log::Init(); 
 	INFO("Engine Start");
 
 	s_Instance = this;
@@ -52,5 +52,4 @@ Engine::~Engine()
 {
 	Renderer::ShutDown();
 	DestroyImGui();
-	std::cout << "Engine destructor!!!\n";
 }

@@ -1,8 +1,8 @@
 #pragma once
-#include "../Log/Log.h"
-#include "../Components/Script.h"
 #include "Tag.h"
 #include "LayerMask.h"
+#include "../Log/Log.h"
+#include "../Components/Script.h"
 
 class SpriteRenderer;
 class Camera;

@@ -54,9 +54,9 @@ public:
 	Vector2f GetLinearVelocity() const;
 
 	float GetAngularVelocity() const { return m_Body->GetAngularVelocity(); };
+	float GetGravityScale() const { return m_GravityScale; }
 	float GetAngularDrag() const { return m_AngularDrag; }
 	float GetLinearDrag() const { return m_LinearDrag; }
-	float GetGravityScale() const { return m_GravityScale; }
 	float GetMass() const { return m_Mass; }
 
 	bool GetFixedRotation() const { return m_FixedRotation; }
