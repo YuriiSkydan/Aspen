@@ -9,7 +9,7 @@
 #include "../vendor/glm/gtc/type_ptr.hpp"
 
 #include "src/Input/Input.h"
-#include "src/Renderer/Renderer.h" // delete later
+#include "src/Renderer/Renderer.h"
 #include "src/Engine/Engine.h"
 #include "src/ScriptManager.h"
 #include "Components/Transform.h"
@@ -72,7 +72,6 @@ void Editor::Update()
 	m_SceneFramebuffer.Bind();
 
 	SceneManager::GetActiveScene()->UpdateOnEditor(m_EditorCamera);
-	//m_ActiveScene->UpdateOnEditor(m_EditorCamera);
 
 	//Render Colliders
 	if (m_SelectedObject != nullptr && m_SelectedObject->IsActive())
@@ -106,13 +105,11 @@ void Editor::Update()
 		m_GameWindowSize.y != SceneManager::GetActiveScene()->GetHeight())
 	{
 		m_GameFramebuffer.Resize(m_GameWindowSize.x, m_GameWindowSize.y);
-		//m_ActiveScene->Resize(m_GameWindowSize.x, m_GameWindowSize.y);
 		SceneManager::GetActiveScene()->Resize(m_GameWindowSize.x, m_GameWindowSize.y);
 	}
 
 	m_GameFramebuffer.Bind();
 	SceneManager::GetActiveScene()->Render();
-	//SceneManager::GetActiveScene()->Render();
 	m_GameFramebuffer.Unbind();
 #pragma endregion
 
@@ -147,7 +144,6 @@ void Editor::ImGuiRender()
 void Editor::GameWindow()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
 	ImGui::Begin("Game");
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -458,7 +454,8 @@ void Editor::Toolbar()
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
 		| ImGuiWindowFlags_NoScrollbar
-		| ImGuiWindowFlags_NoSavedSettings;
+		| ImGuiWindowFlags_NoSavedSettings
+		| ImGuiWindowFlags_NoScrollWithMouse;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 	ImGui::Begin("TOOLBAR", NULL, window_flags);
@@ -520,6 +517,7 @@ void Editor::DockSpace()
 	ImGui::SetNextWindowPos({ viewport->WorkPos.x, viewport->Pos.y + m_ToolbarHeight });
 	ImGui::SetNextWindowSize({ viewport->Size.x, viewport->Size.y - m_ToolbarHeight });
 	ImGui::SetNextWindowViewport(viewport->ID);
+
 	windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
 	windowFlags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
@@ -530,9 +528,7 @@ void Editor::DockSpace()
 
 	ImGui::Begin("DockSpace", NULL, windowFlags);
 
-
 	ImGui::PopStyleVar(3);
-
 
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -542,8 +538,6 @@ void Editor::DockSpace()
 	}
 
 	ImGui::End();
-
-	//ImGui::GetWindow
 }
 
 void Editor::MainMenuBar()

@@ -16,6 +16,7 @@ class AudioListener;
 class Scene;
 
 #define AllComponents Transform, SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
+#define NoTransformAllComponents SpriteRenderer, Camera, Rigidbody, BoxCollider, CircleCollider, PolygonCollider, Animator, AudioSource, AudioListener
 
 class ASPEN GameObject
 {
@@ -58,7 +59,10 @@ private:
 			{
 				if (gameObject.HasComponent<Components>())
 				{
-					Components* component = AddComponent<Components>();
+					Components* component = GetComponent<Components>();
+					if (component == nullptr)
+						component = AddComponent<Components>();
+
 					*component = *(gameObject.GetComponent<Components>());
 				}
 			}(), ...);
@@ -129,6 +133,7 @@ public:
 			component->Deserialize(in[componentName]);
 		}
 	}
+	void DeserializeComponent(json& in);
 
 	void Serialize(json& out) const;
 	void Deserialize(json& in);

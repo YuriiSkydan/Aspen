@@ -10,7 +10,7 @@ class Player : public Script
 {
 private:
 	SerializedField float m_Speed = 2.0f;
-	float m_JumpForce = 4.0f;
+	SerializedField float m_JumpForce = 4.0f;
 
 	float m_MovingDirection = 0.0f;
 
@@ -21,7 +21,10 @@ private:
 	GameObject* m_Camera;
 	std::string currentAnimation;
 public:
+	Player()
+	{
 
+	}
 	void Start() override
 	{
 		std::cout << "Player start!!!\n";
@@ -34,58 +37,8 @@ public:
 		m_Camera = objects[0];
 	}
 
-	int currentXPos = -50;
-	int currentYPos = 50;
 	void Update() override
 	{
-		//{
-		//	if (Input::IsKeyPressed(Key::Space))
-		//	{
-		//		//gameObject->GetScene()->Reserve(100);
-		//		for (size_t i = 0; i < 100; i++)
-		//		{
-		//			auto created = CreateGameObject();
-		//			created->AddComponent<Rigidbody>();
-		//			created->AddComponent<BoxCollider>()->material.restitution = 0.5f;
-		//			SpriteRenderer* renderer = created->AddComponent<SpriteRenderer>();
-		//			created->transform->position.x = currentXPos;
-		//			created->transform->position.y = currentYPos;
-
-		//			currentXPos++;
-		//			if (currentXPos >= 50)
-		//			{
-		//				currentYPos--;
-		//				currentXPos = -50;
-		//			}
-
-		//			Color color;
-		//			color.r = (rand() % 255) / 255.0f;
-		//			color.g = (rand() % 255) / 255.0f;
-		//			color.b = (rand() % 255) / 255.0f;
-		//			color.a = 1.0f;
-
-		//			renderer->SetColor(color);
-		//		}
-		//	}
-		//}
-		//if (Input::IsMouseButtonPressed(Mouse::Button0))
-		//{
-		//	auto created = CreateGameObject();
-		//	created->AddComponent<Rigidbody>();
-		//	created->AddComponent<CircleCollider>();
-
-		//	auto renderer =	created->AddComponent<SpriteRenderer>();
-		//	renderer->SetSprite("Assets/Sprites/circle.png")
-
-		//	Color color;
-		//	color.r = (rand() % 255) / 255.0f;
-		//	color.g = (rand() % 255) / 255.0f;
-		//	color.b = (rand() % 255) / 255.0f;
-		//	color.a = 1.0f;
-
-		//	renderer->SetColor(color);
-		//}
-
 		m_MovingDirection = 0.0f;
 
 		currentAnimation = "Idle";

@@ -28,12 +28,6 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				}
 
 
-				//system(("g++ -shared -MD -MP -MF -o "s + filePathDLL + " " + filePath + " -D DLL_BUILD").c_str());
-
-				//system("g++ -c src/Components/Component.cpp src/Components/Component.h");
-				//system(("g++ -std=c++17 -shared -o "s + filePathDLL + " " + filePath + " -D DLL_BUILD").c_str());
-				std::cout << "Compiling file Version 1.5!!!\n";
-
 				std::string compileCommand = "call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
 				compileCommand += " cl /std:c++20";
 

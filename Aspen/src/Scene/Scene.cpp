@@ -300,5 +300,5 @@ void Scene::Deserialize(std::string_view filepath)
 
 Scene::~Scene()
 {
-	std::cout << "Scene Destructor!!!\n";
+
 }

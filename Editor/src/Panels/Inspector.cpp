@@ -150,10 +150,10 @@ void Inspector::RenderComponents()
 
 	for (auto& script : m_SelectedGameObject->GetScripts())
 	{
-		ImGui::CollapsingHeader(script->GetName().c_str());
+		RenderComponent(script);
 		ImGui::Separator();
 	}
-
+	 
 	ImGui::NewLine();
 	ImGui::NewLine();
 }
@@ -658,6 +658,16 @@ void Inspector::RenderComponent(AudioSource* audioSource)
 void Inspector::RenderComponent(AudioListener* audioListener)
 {
 	bool isOpen = RenderComponentHeader("Audio Listener", audioListener);
+}
+
+void Inspector::RenderComponent(Script* script)
+{
+	bool isOpen = RenderComponentHeader(script->GetName(), script);
+
+	if (isOpen)
+	{
+
+	}
 }
 
 void Inspector::RenderAddComponentButton()

@@ -80,7 +80,6 @@ private:
 	}
 
 	bool RenderComponentHeader(const std::string& componentName, Component* component, ComponentPropertyFlags flags = None);
-	//void RenderComponentProperties()
 	void RenderComponent(Transform* transform);
 	void RenderComponent(SpriteRenderer* spriteRenderer);
 	void RenderComponent(Camera* camera);
@@ -92,6 +91,7 @@ private:
 	void RenderComponent(Animator* animator);
 	void RenderComponent(AudioSource* audioSource);
 	void RenderComponent(AudioListener* audioListener);
+	void RenderComponent(Script* script);
 
 	void RenderAddComponentButton();
 	void RenderTagsAndLayersManager();

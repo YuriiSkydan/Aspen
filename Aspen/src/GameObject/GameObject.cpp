@@ -8,6 +8,18 @@ void GameObject::RemoveComponent(Component* component)
 	{
 		if (it->get() == component)
 		{
+			if(Script* script = dynamic_cast<Script*>(component))
+			{
+				for(auto it = m_Scripts.begin(); it != m_Scripts.end(); ++it)
+				{
+					if (*it == script)
+					{
+						it = m_Scripts.erase(it);
+						break;
+					}
+				}
+			}
+
 			m_Scene->OnComponentRemoved(component);
 			m_Components.erase(it);
 			break;
@@ -177,17 +189,41 @@ void GameObject::AddScript(Script* script)
 	m_Scripts.push_back(script);
 }
 
+void GameObject::DeserializeComponent(json& in)
+{
+	DeserializeComponent<SpriteRenderer>(in, "SpriteRenderer");
+	DeserializeComponent<BoxCollider>(in, "BoxCollider");
+	DeserializeComponent<CircleCollider>(in, "CircleCollider");
+	DeserializeComponent<PolygonCollider>(in, "PolygonCollider");
+	DeserializeComponent<Rigidbody>(in, "Rigidbody");
+	DeserializeComponent<Camera>(in, "Camera");
+	DeserializeComponent<AudioSource>(in, "AudioSource");
+	DeserializeComponent<AudioListener>(in, "AudioListener");
+	DeserializeComponent<Animator>(in, "Animator");
+
+	if (in.find("Script") != in.end())
+	{
+		std::string scriptName = in["Script"]["Name"];
+		auto& scripts = ScriptManager::Get().GetScripts();
+		auto script = scripts.find(scriptName);
+		Script* newComponent = script->second->Create();
+		newComponent->SetName(scriptName);
+		AddScript(newComponent);
+	}
+}
+
 void GameObject::Serialize(json& out) const
 {
 	out =
 	{
 		{ "Name",  m_Name },
 		{ "ID", m_ID },
-		{ "IsActive", m_IsActive }
+		{ "IsActive", m_IsActive },
+		{ "Components", m_Components.size() }
 	};
 
-	for (auto& component : m_Components)
-		component->Serialize(out);
+	for (size_t i = 0; i < m_Components.size(); i++)
+		m_Components[i]->Serialize(out[std::to_string(i)]);
 }
 
 void GameObject::Deserialize(json& in)
@@ -196,17 +232,13 @@ void GameObject::Deserialize(json& in)
 	m_ID = in["ID"];
 	m_IsActive = in["IsActive"];
 
-	transform->Deserialize(in["Transform"]);
-	
-	DeserializeComponent<SpriteRenderer> (in, "SpriteRenderer");
-	DeserializeComponent<BoxCollider>    (in, "BoxCollider");
-	DeserializeComponent<CircleCollider> (in, "CircleCollider");
-	DeserializeComponent<PolygonCollider>(in, "PolygonCollider");
-	DeserializeComponent<Rigidbody>      (in, "Rigidbody");
-	DeserializeComponent<Camera>         (in, "Camera");
-	DeserializeComponent<AudioSource>    (in, "AudioSource");
-	DeserializeComponent<AudioListener>  (in, "AudioListener");
-	DeserializeComponent<Animator>       (in, "Animator");
+	size_t components = in["Components"];
+	m_Components.reserve(components);
+
+	transform->Deserialize(in[std::to_string(0)]["Transform"]);
+
+	for (size_t i = 1; i < components; i++)
+		DeserializeComponent(in[std::to_string(i)]);
 }
 
 GameObject::~GameObject()

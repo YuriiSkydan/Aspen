@@ -24,5 +24,9 @@ public:
 	ProjectPanel();
 
 	void ImGuiRender();
+	void UpdateDirectoryData();
+	void RenderDirectory();
+	void SetEntryIcon(const std::filesystem::directory_entry& entry);
+	Texture* GetIconPtr(std::variant<std::shared_ptr<Texture>, Texture*>& icon);
 };
 

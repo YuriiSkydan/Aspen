@@ -5,11 +5,19 @@
 #define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create() { return new className(); }}
 #define SerializedField
 
+enum class VariableTypes { INT = 0, BOOL, FLOAT, DOUBLE };
+
+struct Variable
+{
+	VariableTypes type;
+	std::string name;
+};
+
 class ASPEN Script : public Component
 {
 private:
 	std::string m_Name;
-
+	
 	friend class GameObject;
 	friend class Inspector;
 private:
@@ -27,4 +35,7 @@ public:
 	virtual void OnTriggerEnter(Trigger* trigger) {}
 	virtual void OnTriggerStay(Trigger* trigger) {}
 	virtual void OnTriggerExit(Trigger* trigger) {}
+
+	void Serialize(json& out) const override;
+	void Deserialize(json& in) override;
 };

@@ -1,5 +1,4 @@
 #include "HierarchyPanel.h"
-#include "src/GameObject/GameObject.h"
 #include "src/Scene/SceneManager.h"
 #include "Components/Transform.h"
 #include "imgui/imgui.h"
