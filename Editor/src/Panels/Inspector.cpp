@@ -148,9 +148,12 @@ void Inspector::RenderComponents()
 	for (auto& it : components)
 		RenderComponents<AllComponents>(it.get());
 
-	for (auto& script : m_SelectedGameObject->GetScripts())
+	auto& scripts = m_SelectedGameObject->GetScripts();
+	for (size_t i = 0; i < scripts.size(); i++) 
 	{
-		RenderComponent(script);
+		ImGui::PushID(i);
+		RenderComponent(scripts[i]);
+		ImGui::PopID();
 		ImGui::Separator();
 	}
 	 

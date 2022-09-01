@@ -138,8 +138,12 @@ void Transform::Serialize(json& out) const
 		{ "Angle", angle },
 		{ "Scale",
 			{{"X", scale.x},
-			 {"Y", scale.y }}}
+			 {"Y", scale.y }}},
+		{ "Childs", m_Childs.size() } 
 	};
+
+	for (size_t i = 0; i < m_Childs.size(); i++)
+		m_Childs[i]->gameObject->Serialize(out["Childs"][std::to_string(i)]);
 }
 
 void Transform::Deserialize(json& in)

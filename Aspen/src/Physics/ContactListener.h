@@ -9,9 +9,6 @@ class GameObject;
 class ContactListener : public b2ContactListener
 {
 private:
-	Scene* m_ScenePtr;
-
-private:
 	void OnTriggerEnter(GameObject* gameObject);
 	void OnTriggerStay(GameObject* gameObject);
 	void OnTriggerExit(GameObject* gameObject);
@@ -21,7 +18,7 @@ private:
 	void OnCollisionExit(GameObject* gameObject);
 
 public:
-	ContactListener(Scene* scene);
+	ContactListener() = default;
 	void BeginContact(b2Contact* contact) override;
 	void EndContact(b2Contact* contact) override;
 };

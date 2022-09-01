@@ -12,14 +12,12 @@ class ASPEN Scene
 {
 private:
 	std::string m_Name = "Sample Scene";
-	unsigned int m_Width;
-	unsigned int m_Height;
+	unsigned int m_Width = 0;
+	unsigned int m_Height = 0;
 
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
 	std::vector<SpriteRenderer*>             m_RenderObjects;
 	std::vector<Camera*>                     m_Cameras;
-
-	std::unique_ptr<ContactListener> m_ContactListener;
 
 	friend class HierarchyPanel;
 private:
@@ -154,7 +152,16 @@ void Scene::OnComponentRemoved(T* component)
 template<typename T>
 T* GameObject::AddComponent()
 {
-	if (std::is_base_of<Component, T>::value)
+	T* returnComponent = nullptr;
+
+	if (std::is_base_of<Script, T>::value)
+	{
+		auto newScript = std::make_unique<T>(this, transform);
+		returnComponent = newScript.get();
+		m_NewComponents.push_back(newScript.get());
+		m_Components.push_back(std::move(newScript));
+	}
+	else if (std::is_base_of<Component, T>::value)
 	{
 		for (auto& it : m_Components)
 		{
@@ -167,16 +174,17 @@ T* GameObject::AddComponent()
 		}
 
 		auto newComponent = std::make_unique<T>(this, transform);
-		T* returnComponent = newComponent.get();
-
-		m_Scene->OnComponentAdded<T>(newComponent.get());
+		returnComponent = newComponent.get();
 		m_NewComponents.push_back(newComponent.get());
 		m_Components.push_back(std::move(newComponent));
-
-		return returnComponent;
 	}
 
-	return nullptr;
+	if (returnComponent != nullptr)
+	{
+		m_Scene->OnComponentAdded<T>(returnComponent);
+	}
+
+	return returnComponent;
 }
 
 template<typename T>

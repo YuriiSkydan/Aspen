@@ -16,7 +16,7 @@ struct Variable
 class ASPEN Script : public Component
 {
 private:
-	std::string m_Name;
+	std::string m_Name = "None";
 	
 	friend class GameObject;
 	friend class Inspector;

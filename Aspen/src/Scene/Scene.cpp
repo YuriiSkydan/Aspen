@@ -14,6 +14,7 @@ using namespace std::string_literals;
 
 void Scene::Copy(const Scene& other)
 {
+	std::cout << "Copy!!!\n";
 	m_Name = other.m_Name;
 
 	m_Width = other.m_Width;
@@ -117,27 +118,25 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 
 void Scene::Start()
 {
-	m_ContactListener = std::make_unique<ContactListener>(this);
+	std::cout << "Starting scene!!!\n";
 	Physics::CreateWorld();
-	Physics::SetContactListener(m_ContactListener.get());
 
-	for (size_t i = 0; i < m_GameObjects.size(); i++)
-	{
-		if (m_GameObjects[i]->IsActive())
-			m_GameObjects[i]->ComponentsAwake();
-	}
+	//for (size_t i = 0; i < m_GameObjects.size(); i++)
+	//{
+	//	if (m_GameObjects[i]->IsActive())
+	//		m_GameObjects[i]->ComponentsAwake();
+	//}
 
-	for (size_t i = 0; i < m_GameObjects.size(); i++)
-	{
-		if (m_GameObjects[i]->IsActive())
-			m_GameObjects[i]->ComponentsStart();
-	}
+	//for (size_t i = 0; i < m_GameObjects.size(); i++)
+	//{
+	//	if (m_GameObjects[i]->IsActive())
+	//		m_GameObjects[i]->ComponentsStart();
+	//}
 }
 
 void Scene::Stop()
 {
 	Physics::DestoryWorld();
-	m_ContactListener.reset();
 }
 
 void Scene::Update()
@@ -274,7 +273,7 @@ void Scene::Deserialize(json& in)
 		auto newGameObject = std::make_unique<GameObject>(this);
 		newGameObject->Deserialize(in[std::to_string(i)]);
 		m_GameObjects[i] = std::move(newGameObject);
-		
+
 		//move it somewhere else, temporarily solution to fix bug
 		m_GameObjects[i]->m_ID = i;
 	};
@@ -283,7 +282,7 @@ void Scene::Deserialize(json& in)
 void Scene::Deserialize(std::string_view filepath)
 {
 	std::ifstream fileStream(filepath.data(), std::ifstream::binary);
-	
+
 	if (!fileStream.is_open())
 	{
 		ERROR("Failed to open the file!!!");

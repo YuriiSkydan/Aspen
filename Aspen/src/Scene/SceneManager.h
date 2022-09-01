@@ -15,5 +15,5 @@ private:
 
 public:
 	SceneManager();
-	static std::shared_ptr<Scene> GetActiveScene() { return s_Instance->m_ActiveScene; }
+	static Scene* GetActiveScene() { return s_Instance->m_ActiveScene.get(); }
 };

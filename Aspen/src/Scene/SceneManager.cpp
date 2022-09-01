@@ -7,6 +7,8 @@ SceneManager::SceneManager()
 
 void SceneManager::LoadScene(std::string_view filename)
 {
+	s_Instance->m_ActiveScene.reset();
+	s_Instance->m_ActiveScene = std::make_shared<Scene>();
 	s_Instance->m_ActiveScene->Deserialize(filename);
 }
 

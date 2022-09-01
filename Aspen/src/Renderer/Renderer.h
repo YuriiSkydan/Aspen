@@ -20,7 +20,6 @@ class ASPEN Renderer
 private:
 	inline static std::shared_ptr<Shader> s_StandartShader;
 	inline static std::shared_ptr<Shader> s_BoxColliderShader;
-	inline static std::shared_ptr<Shader> s_CircleColliderShader;
 	inline static std::shared_ptr<Shader> s_LineShader;
 
 public:

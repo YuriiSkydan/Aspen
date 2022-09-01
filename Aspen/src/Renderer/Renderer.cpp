@@ -287,7 +287,6 @@ void Renderer::Init()
 
 	s_StandartShader = ShaderLibrary::Get()->GetShader("Shaders/FastStandartShader");
 	s_BoxColliderShader = ShaderLibrary::Get()->GetShader("Shaders/BoxColliderShader");
-	s_CircleColliderShader = ShaderLibrary::Get()->GetShader("Shaders/CircleColliderShader");
 	s_LineShader = ShaderLibrary::Get()->GetShader("Shaders/LineShader");
 
 	s_RenderData.vertices.resize(s_RenderData.MaxVertices);
@@ -396,7 +395,6 @@ void Renderer::ShutDown()
 {
 	s_StandartShader.reset();
 	s_BoxColliderShader.reset();
-	s_CircleColliderShader.reset();
 	s_LineShader.reset();
 }
 

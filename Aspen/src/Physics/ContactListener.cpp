@@ -1,5 +1,5 @@
 #include "ContactListener.h"
-#include "../Scene/Scene.h"
+#include "../Scene/SceneManager.h"
 
 //Contact Listener
 void ContactListener::OnTriggerEnter(GameObject* gameObject)
@@ -50,16 +50,12 @@ void ContactListener::OnCollisionExit(GameObject* gameObject)
 	}
 }
 
-ContactListener::ContactListener(Scene* scene)
-	: m_ScenePtr(scene)
-{ }
-
 void ContactListener::BeginContact(b2Contact* contact)
 {
 	int objectAID = contact->GetFixtureA()->GetUserData().pointer;
 	int objectBID = contact->GetFixtureB()->GetUserData().pointer;
-	GameObject* objectA = m_ScenePtr->GetObjectWithID(objectAID);
-	GameObject* objectB = m_ScenePtr->GetObjectWithID(objectBID);
+	GameObject* objectA = SceneManager::GetActiveScene()->GetObjectWithID(objectAID);
+	GameObject* objectB = SceneManager::GetActiveScene()->GetObjectWithID(objectBID);
 
 	if (!contact->GetFixtureA()->IsSensor() || !contact->GetFixtureB()->IsSensor())
 	{
@@ -83,8 +79,8 @@ void ContactListener::EndContact(b2Contact* contact)
 {
 	int objectAID = contact->GetFixtureA()->GetUserData().pointer;
 	int objectBID = contact->GetFixtureB()->GetUserData().pointer;
-	GameObject* objectA = m_ScenePtr->GetObjectWithID(objectAID);
-	GameObject* objectB = m_ScenePtr->GetObjectWithID(objectBID);
+	GameObject* objectA = SceneManager::GetActiveScene()->GetObjectWithID(objectAID);
+	GameObject* objectB = SceneManager::GetActiveScene()->GetObjectWithID(objectBID);
 
 	if (!contact->GetFixtureA()->IsSensor() || !contact->GetFixtureB()->IsSensor())
 	{

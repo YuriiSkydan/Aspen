@@ -67,9 +67,6 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 		m_Components.push_back(std::unique_ptr<Component>(newScript));
 		m_Scripts.push_back(newScript);
 	}
-
-	//I don't like this, maybe change it
-	m_NewComponents.clear();
 }
 
 void GameObject::SetLayer(const LayerMask& layer)
@@ -191,15 +188,15 @@ void GameObject::AddScript(Script* script)
 
 void GameObject::DeserializeComponent(json& in)
 {
-	DeserializeComponent<SpriteRenderer>(in, "SpriteRenderer");
-	DeserializeComponent<BoxCollider>(in, "BoxCollider");
-	DeserializeComponent<CircleCollider>(in, "CircleCollider");
 	DeserializeComponent<PolygonCollider>(in, "PolygonCollider");
-	DeserializeComponent<Rigidbody>(in, "Rigidbody");
-	DeserializeComponent<Camera>(in, "Camera");
-	DeserializeComponent<AudioSource>(in, "AudioSource");
+	DeserializeComponent<SpriteRenderer>(in, "SpriteRenderer");
+	DeserializeComponent<CircleCollider>(in, "CircleCollider");
 	DeserializeComponent<AudioListener>(in, "AudioListener");
+	DeserializeComponent<AudioSource>(in, "AudioSource");
+	DeserializeComponent<BoxCollider>(in, "BoxCollider");
+	DeserializeComponent<Rigidbody>(in, "Rigidbody");
 	DeserializeComponent<Animator>(in, "Animator");
+	DeserializeComponent<Camera>(in, "Camera");
 
 	if (in.find("Script") != in.end())
 	{

@@ -21,13 +21,15 @@ private:
 	GameObject* m_Camera;
 	std::string currentAnimation;
 public:
-	Player()
+	Player() = default;
+	Player(GameObject* gameObject, Transform* transform)
+		: Script(gameObject, transform)
 	{
 
 	}
 	void Start() override
 	{
-		std::cout << "Player start!!!\n";
+
 		m_Rigidbody = GetComponent<Rigidbody>();
 		m_SpriteRenderer = GetComponent<SpriteRenderer>();
 		m_Animator = GetComponent<Animator>();
@@ -96,6 +98,16 @@ public:
 };
 
 //RegisterScript(Player);
+
+
+//extern "C"
+//{
+//	__declspec(dllexport) Script* Create()
+//	{
+//		std::cout << "Create Function!!!\n";
+//		return new Player();
+//	}
+//}
 
 extern "C"
 {

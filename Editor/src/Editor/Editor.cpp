@@ -470,11 +470,10 @@ void Editor::Toolbar()
 		{
 			m_SceneState = SceneState::PLAY;
 
-			auto m_RuntimeScene = std::make_shared<Scene>();
-			m_RuntimeScene->Copy(*m_EditorScene);
+			m_EditorScene = std::make_shared<Scene>();
+			m_EditorScene->Copy(*SceneManager::GetActiveScene());
 
 			//m_ActiveScene = m_RuntimeScene;
-			SceneManager::SetActiveScene(m_RuntimeScene);
 			SceneManager::GetActiveScene()->Start();
 			
 			m_SelectedObject = nullptr;
