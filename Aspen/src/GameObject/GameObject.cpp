@@ -111,6 +111,8 @@ void GameObject::ProcessNewComponents()
 
 void GameObject::ComponentsAwake()
 {
+	m_NewComponents.clear();
+
 	for (auto& it : m_Components)
 	{
 		if (it->IsEnabled())
@@ -243,4 +245,6 @@ GameObject::~GameObject()
 	//s_Objects--;
 	for (auto& component : m_Components)
 		m_Scene->OnComponentRemoved(component.get());
+
+	INFO("GameObject Destructor");
 }

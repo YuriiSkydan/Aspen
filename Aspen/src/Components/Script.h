@@ -9,6 +9,7 @@ enum class VariableTypes { INT = 0, BOOL, FLOAT, DOUBLE };
 
 struct Variable
 {
+	void* variable;
 	VariableTypes type;
 	std::string name;
 };
@@ -23,6 +24,8 @@ private:
 private:
 	void SetName(const std::string& name);
 	const std::string GetName() const { return m_Name; }
+public:
+	std::vector<Variable> variables;
 
 public:
 	Script();

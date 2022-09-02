@@ -21,7 +21,14 @@ private:
 	GameObject* m_Camera;
 	std::string currentAnimation;
 public:
-	Player() = default;
+	Player()
+	{
+		Variable variable;
+		variable.variable = &m_Speed;
+		variable.name = "Speed";
+		variable.type = VariableTypes::FLOAT;
+		variables.push_back(variable);
+	}
 	Player(GameObject* gameObject, Transform* transform)
 		: Script(gameObject, transform)
 	{

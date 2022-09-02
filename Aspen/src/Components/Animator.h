@@ -56,7 +56,7 @@ class ASPEN Animator : public Component
 {
 private:
 	std::vector<AnimationClip> m_AnimationClips;
-	std::vector<AnimationClip>::iterator m_CurrentClip;
+	size_t m_CurrentClip = 0;
 
 	std::unordered_map<std::string, bool> m_BoolParameters;
 	std::unordered_map<std::string, float> m_FloatParameters;
@@ -86,7 +86,7 @@ public:
 	void SetTrigger(const std::string& name);
 
     AnimationClip& GetAnimation(const std::string& name);
-	AnimationClip& GetCurrentAnimation() const { return *m_CurrentClip; }
+	//AnimationClip& GetCurrentAnimation() const { return &m_AnimationClips.at(m_CurrentClip); }
 
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;

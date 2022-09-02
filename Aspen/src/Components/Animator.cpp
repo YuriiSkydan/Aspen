@@ -102,7 +102,7 @@ void Animator::AddAnimation(const std::string& name)
 	m_AnimationClips.push_back(AnimationClip(name));
 	m_AnimationClips.back().SetSpriteRenderer(spriteRenderer);
 	//temporarily
-	m_CurrentClip = m_AnimationClips.begin();
+	m_CurrentClip = 0;
 }
 
 void Animator::AddBoolParameter(const std::string& name)
@@ -129,8 +129,8 @@ void Animator::Start()
 {
 	if (m_AnimationClips.size() != 0)
 	{
-		m_CurrentClip->SetSpriteRenderer(gameObject->GetComponent<SpriteRenderer>());
-		m_CurrentClip->Start();
+		m_AnimationClips[m_CurrentClip].SetSpriteRenderer(gameObject->GetComponent<SpriteRenderer>());
+		m_AnimationClips[m_CurrentClip].Start();
 	}
 }
 
@@ -138,7 +138,7 @@ void Animator::Update()
 {
 	if (m_AnimationClips.size() != 0)
 	{
-		m_CurrentClip->Update();
+		m_AnimationClips[m_CurrentClip].Update();
 	}
 }
 
@@ -155,19 +155,17 @@ void Animator::SetBool(const std::string& name, bool value)
 
 void Animator::PlayAnimation(const std::string& name)
 {
-	if (m_CurrentClip->GetName() != name)
+	if (m_AnimationClips[m_CurrentClip].GetName() != name)
 	{
-		auto animation = std::find_if(m_AnimationClips.begin(), m_AnimationClips.end(),
-			[&](const AnimationClip& clip)
-			{
-				return clip.GetName() == name;
-			});
-
-		if (animation != m_AnimationClips.end())
+		for (size_t i = 0; i < m_AnimationClips.size(); i++)
 		{
-			animation->SetSpriteRenderer(GetComponent<SpriteRenderer>());
-			animation->Start();
-			m_CurrentClip = animation;
+			if (m_AnimationClips[i].GetName() == name)
+			{
+				m_CurrentClip = i;
+				m_AnimationClips[m_CurrentClip].SetSpriteRenderer(GetComponent<SpriteRenderer>());
+				m_AnimationClips[m_CurrentClip].Start();
+				break;
+			}
 		}
 	}
 }
@@ -232,6 +230,4 @@ void Animator::Deserialize(json& in)
 		m_AnimationClips.push_back(newClip);
 		m_AnimationClips.back().Start();
 	}
-
-	m_CurrentClip = m_AnimationClips.begin();
 }

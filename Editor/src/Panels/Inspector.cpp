@@ -669,7 +669,28 @@ void Inspector::RenderComponent(Script* script)
 
 	if (isOpen)
 	{
+		ImGui::Columns(2, 0, false);
+		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
+		for (auto& variable : script->variables)
+		{
+			ImGui::Text(variable.name.c_str());
+		}
+
+		ImGui::NextColumn();
+		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
+
+		for (auto& variable : script->variables)
+		{
+			if (variable.type == VariableTypes::FLOAT)
+			{
+				float* var = static_cast<float*>(variable.variable);
+				ImGui::SetNextItemWidth(m_ItemWidth);
+				ImGui::DragFloat(("##"s + variable.name).c_str(), var, 0.01f);
+			}
+		}
+
+		ImGui::Columns(1);
 	}
 }
 

@@ -118,20 +118,19 @@ void Scene::UpdateOnEditor(EditorCamera& camera)
 
 void Scene::Start()
 {
-	std::cout << "Starting scene!!!\n";
 	Physics::CreateWorld();
 
-	//for (size_t i = 0; i < m_GameObjects.size(); i++)
-	//{
-	//	if (m_GameObjects[i]->IsActive())
-	//		m_GameObjects[i]->ComponentsAwake();
-	//}
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsAwake();
+	}
 
-	//for (size_t i = 0; i < m_GameObjects.size(); i++)
-	//{
-	//	if (m_GameObjects[i]->IsActive())
-	//		m_GameObjects[i]->ComponentsStart();
-	//}
+	for (size_t i = 0; i < m_GameObjects.size(); i++)
+	{
+		if (m_GameObjects[i]->IsActive())
+			m_GameObjects[i]->ComponentsStart();
+	}
 }
 
 void Scene::Stop()
