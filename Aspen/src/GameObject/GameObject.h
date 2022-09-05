@@ -37,6 +37,8 @@ private:
 
 	friend class Inspector;
 	friend class Scene;
+	friend class Script;
+	friend class ScriptManager;
 public:
 	Transform* transform;
 

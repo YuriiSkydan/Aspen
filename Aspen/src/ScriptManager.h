@@ -67,5 +67,6 @@ public:
 
 	const auto& GetScripts() { return m_Scripts; }
 
+
 	static ScriptManager& Get();
 };

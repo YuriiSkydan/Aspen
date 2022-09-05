@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "../GameObject/GameObject.h"
 
 Script::Script() 
 	: Component(nullptr, nullptr)
@@ -11,6 +12,11 @@ Script::Script(GameObject* gameObject, Transform* transform)
 void Script::SetName(const std::string& name)
 {
 	m_Name = name;
+}
+
+void Script::Remove()
+{
+	gameObject->RemoveComponent(this);
 }
 
 void Script::Serialize(json& out) const

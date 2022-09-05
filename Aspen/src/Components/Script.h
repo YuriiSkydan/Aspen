@@ -20,6 +20,7 @@ private:
 	std::string m_Name = "None";
 	
 	friend class GameObject;
+	friend class ScriptManager;
 	friend class Inspector;
 private:
 	void SetName(const std::string& name);
@@ -38,6 +39,8 @@ public:
 	virtual void OnTriggerEnter(Trigger* trigger) {}
 	virtual void OnTriggerStay(Trigger* trigger) {}
 	virtual void OnTriggerExit(Trigger* trigger) {}
+
+	void Remove();
 
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;

@@ -20,6 +20,7 @@ private:
 
 	GameObject* m_Camera;
 	std::string currentAnimation;
+
 public:
 	Player()
 	{
@@ -78,9 +79,6 @@ public:
 			if (m_Rigidbody->GetLinearVelocity().x < 1.0f)
 				m_Rigidbody->AddForce(Vector2f(2.0f, 0.0f));
 		}
-
-		if (Input::GetKeyDown(Key::Space))
-			std::cout << "Key is down!!!\n";
 
 		m_Animator->PlayAnimation(currentAnimation);
 	}

@@ -242,7 +242,9 @@ bool GameObject::HasComponent() const
 {
 	for (auto& component : m_Components)
 	{
-		if (typeid(T) == typeid(*component))
+	/*	if (typeid(T) == typeid(*component))
+			return true;*/
+		if (dynamic_cast<T*>(component.get()))
 			return true;
 	}
 
