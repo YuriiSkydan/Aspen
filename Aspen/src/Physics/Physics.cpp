@@ -1,10 +1,8 @@
 #include "Physics.h"
 #include "../Core/Time.h"
 
-#include <iostream>
 void Physics::CreateWorld()
 {
-	std::cout << "Creating Physics World!!!\n";
 	s_World = std::make_unique<b2World>(s_Gravity);
 	s_ContactListener = std::make_unique<ContactListener>();
 	s_World->SetContactListener(s_ContactListener.get());

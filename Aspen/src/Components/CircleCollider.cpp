@@ -16,7 +16,7 @@ void CircleCollider::Start()
 	if (gameObject->HasComponent<Rigidbody>())
 		body = gameObject->GetComponent<Rigidbody>()->GetBody();
 
-	b2Vec2 center = b2Vec2(offset.x, offset.y);
+	b2Vec2 center = b2Vec2(m_Offset.x, m_Offset.y);
 	b2CircleShape circleShape;
 	circleShape.m_radius = radius;
 

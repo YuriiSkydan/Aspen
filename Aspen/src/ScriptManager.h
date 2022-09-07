@@ -20,12 +20,13 @@ private:
 	class ScriptDLL
 	{
 	private:
+		std::filesystem::file_time_type m_AddedTime;
 		std::string m_ScriptName;
 		ScriptCreatePtr m_CreateFunction;
 		HINSTANCE m_DLL;
 
 	public:
-		ScriptDLL(HINSTANCE dll, const std::string& scriptName)
+		ScriptDLL(HINSTANCE dll, const std::string& scriptName, std::filesystem::file_time_type addedTime)
 			: m_DLL(dll), m_ScriptName(scriptName)
 		{
 			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
@@ -35,12 +36,11 @@ private:
 				WARN("Failed to load create function!!!\n");
 			}
 		}
-
 		Script* Create() const
 		{
 			return m_CreateFunction();
 		}
-
+		std::filesystem::file_time_type GetAddedTime() const { return m_AddedTime; }
 		~ScriptDLL()
 		{
 			std::cout << "Free DLL!!!\n";
@@ -56,17 +56,19 @@ private:
 
 private:
 	void FindScriptsInDirectory(const std::filesystem::path& directory);
+	bool FindDLL(const std::string& filename, std::filesystem::directory_entry& dllEntry);
+	bool LoadDLL(const std::filesystem::directory_entry& entry);
+	void CompileCpp(const std::filesystem::path& filepath);
+	std::string GetFilename(const std::filesystem::path& path);
 
 public:
 	ScriptManager() = default;
-
 	ScriptManager(const ScriptManager& other) = delete;
 	const ScriptManager& operator=(const ScriptManager& other) = delete;
 
 	void Update();
 
 	const auto& GetScripts() { return m_Scripts; }
-
 
 	static ScriptManager& Get();
 };

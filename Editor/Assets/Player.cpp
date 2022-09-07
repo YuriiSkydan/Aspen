@@ -95,6 +95,16 @@ public:
 		currentVelocity.x = m_MovingDirection * m_Speed;
 		m_Rigidbody->SetLinearVelocity(currentVelocity);
 	}
+	
+	void OnCollisionEnter(Collision* collision) override
+	{
+		GameObject* other = collision->gameObject;
+		if ((other->GetLayer() & LayerMask::GetMask("Enemy")))
+		{
+			auto component = collision->gameObject->GetComponent<SpriteRenderer>();
+			component->SetColor(Color(0.3f, 0.2f, 0.5f, 1.0f));
+		}
+	}
 
 	~Player()
 	{

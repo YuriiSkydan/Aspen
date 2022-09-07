@@ -22,21 +22,21 @@ public:
 	static LayerMask GetMask(std::string_view name);
 	static const std::string& LayerToName(std::uint8_t value);
 
-	friend LayerMask operator|(const LayerMask& a, const LayerMask& b);
-	friend LayerMask operator&(const LayerMask& a, const LayerMask& b);
-	
-	friend LayerMask operator|(const LayerMask& layer, std::uint8_t value);
-	friend LayerMask operator&(const LayerMask& layer, std::uint8_t value);
-	
-	friend LayerMask operator|(std::uint8_t value, const LayerMask& layer);
-	friend LayerMask operator&(std::uint8_t value, const LayerMask& layer);
+	friend uint8_t ASPEN operator|(const LayerMask& a, const LayerMask& b);
+	friend uint8_t ASPEN operator&(const LayerMask& a, const LayerMask& b);
+
+	friend uint8_t ASPEN operator|(const LayerMask& layer, uint8_t value);
+	friend uint8_t ASPEN operator&(const LayerMask& layer, uint8_t value);
+
+	friend uint8_t ASPEN operator|(uint8_t value, const LayerMask& layer);
+	friend uint8_t ASPEN operator&(uint8_t value, const LayerMask& layer);
 };
 
-LayerMask operator|(const LayerMask& a, const LayerMask& b);
-LayerMask operator&(const LayerMask& a, const LayerMask& b);
+uint8_t ASPEN operator|(const LayerMask& a, const LayerMask& b);
+uint8_t ASPEN operator&(const LayerMask& a, const LayerMask& b);
 
-LayerMask operator|(const LayerMask& layer, std::uint8_t value);
-LayerMask operator&(const LayerMask& layer, std::uint8_t value);
+uint8_t ASPEN operator|(const LayerMask& layer, uint8_t value);
+uint8_t ASPEN operator&(const LayerMask& layer, uint8_t value);
 
-LayerMask operator|(std::uint8_t value, const LayerMask& layer);
-LayerMask operator&(std::uint8_t value, const LayerMask& layer);
+uint8_t ASPEN operator|(uint8_t value, const LayerMask& layer);
+uint8_t ASPEN operator&(uint8_t value, const LayerMask& layer);

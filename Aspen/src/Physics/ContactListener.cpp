@@ -1,7 +1,6 @@
 #include "ContactListener.h"
 #include "../Scene/SceneManager.h"
 
-//Contact Listener
 void ContactListener::OnTriggerEnter(GameObject* gameObject)
 {
 	auto& scripts = gameObject->GetScripts();

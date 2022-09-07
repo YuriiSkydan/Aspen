@@ -44,32 +44,32 @@ const std::string& LayerMask::LayerToName(std::uint8_t value)
 	return " ";
 }
 
-LayerMask operator|(const LayerMask& a, const LayerMask& b)
+uint8_t operator|(const LayerMask& a, const LayerMask& b)
 {
-	return LayerMask(a.m_Value | b.m_Value);
+	return (a.m_Value | b.m_Value);
 }
 
-LayerMask operator&(const LayerMask& a, const LayerMask& b)
+uint8_t operator&(const LayerMask& a, const LayerMask& b)
 {
-	return LayerMask(a.m_Value & b.m_Value);
+	return (a.m_Value & b.m_Value);
 }
 
-LayerMask operator|(const LayerMask& layer, std::uint8_t value)
+uint8_t operator|(const LayerMask& layer, uint8_t value)
 {
-	return LayerMask(layer.m_Value | value);
+	return (layer.m_Value | value);
 }
 
-LayerMask operator&(const LayerMask& layer, std::uint8_t value)
+uint8_t operator&(const LayerMask& layer, uint8_t value)
 {
-	return LayerMask(layer.m_Value & value);
+	return (layer.m_Value & value);
 }
 
-LayerMask operator|(std::uint8_t value, const LayerMask& layer)
+uint8_t operator|(uint8_t value, const LayerMask& layer)
 {
-	return LayerMask(value | layer.m_Value);
+	return (value | layer.m_Value);
 }
 
-LayerMask operator&(std::uint8_t value, const LayerMask& layer)
+uint8_t operator&(uint8_t value, const LayerMask& layer)
 {
-	return LayerMask(value & layer.m_Value);
+	return (value & layer.m_Value);
 }

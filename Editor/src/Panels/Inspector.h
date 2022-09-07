@@ -47,6 +47,13 @@ private:
 	}
 
 	template<typename ComponentType>
+	void DragFloat2(std::string_view id, ComponentType* component, Vector2f previewValues, void(ComponentType::* function)(const Vector2f&), float speed = 1.0f, float min = FLT_MIN, float max = FLT_MAX)
+	{
+		if (ImGui::DragFloat2(id.data(), (float*)&previewValues, speed, min, max))
+			(component->*function)(previewValues);
+	}
+
+	template<typename ComponentType>
 	void Checkbox(std::string_view id, ComponentType* component, bool previewValue, void(ComponentType::* function)(bool value))
 	{
 		if (ImGui::Checkbox(id.data(), &previewValue))

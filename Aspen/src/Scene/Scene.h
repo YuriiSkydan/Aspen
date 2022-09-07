@@ -195,23 +195,6 @@ T* GameObject::AddComponentToParent()
 		return parent->gameObject->AddComponent<T>();
 }
 
-//template<typename T>
-//T* GameObject::AddComponent()
-//{
-//	if (std::is_base_of<Script, T>::value)
-//	{
-//		auto newScript = std::make_unique<T>(this, transform);
-//
-//		Script* script = newScript.get();
-//		m_Scripts.push_back(newScript.get());
-//
-//		auto returnScript = newScript.get();
-//		m_Components.push_back(std::move(newScript));
-//
-//		return returnScript;
-//	}
-//}
-
 template<typename T>
 void GameObject::RemoveComponent()
 {
@@ -266,9 +249,9 @@ T* GameObject::GetComponent() const
 {
 	for (auto& it : m_Components)
 	{
-		if (typeid(T) == typeid(*it))
+		if (T* component = dynamic_cast<T*>(it.get()))
 		{
-			return dynamic_cast<T*>(it.get());
+			return component;
 		}
 	}
 

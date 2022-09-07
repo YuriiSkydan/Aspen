@@ -25,21 +25,21 @@ public:
 	
 	static Tag GetTag(std::string_view name);
 
-	friend bool operator==(const Tag& a, const Tag& b);
-	friend bool operator!=(const Tag& a, const Tag& b);
+	friend bool ASPEN operator==(const Tag& a, const Tag& b);
+	friend bool ASPEN operator!=(const Tag& a, const Tag& b);
 
-	friend bool operator==(std::string_view name, const Tag& tag);
-	friend bool operator!=(std::string_view name, const Tag& tag);
+	friend bool ASPEN operator==(std::string_view name, const Tag& tag);
+	friend bool ASPEN operator!=(std::string_view name, const Tag& tag);
 
-	friend bool operator==(const Tag& tag, std::string_view name);
-	friend bool operator!=(const Tag& tag, std::string_view name);
+	friend bool ASPEN operator==(const Tag& tag, std::string_view name);
+	friend bool ASPEN operator!=(const Tag& tag, std::string_view name);
 };
 
-bool operator==(const Tag& a, const Tag& b);
-bool operator!=(const Tag& a, const Tag& b);
+bool ASPEN operator==(const Tag& a, const Tag& b);
+bool ASPEN operator!=(const Tag& a, const Tag& b);
 
-bool operator==(std::string_view name, const Tag& tag);
-bool operator!=(std::string_view name, const Tag& tag);
+bool ASPEN operator==(std::string_view name, const Tag& tag);
+bool ASPEN operator!=(std::string_view name, const Tag& tag);
 
-bool operator==(const Tag& tag, std::string_view name);
-bool operator!=(const Tag& tag, std::string_view name);
+bool ASPEN operator==(const Tag& tag, std::string_view name);
+bool ASPEN operator!=(const Tag& tag, std::string_view name);

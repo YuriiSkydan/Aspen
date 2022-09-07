@@ -422,7 +422,7 @@ void Renderer::DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f&
 	transformMatrix = MatrixTransform::Rotate(transformMatrix, transform->angle);
 
 	Matrix3x3f position = MatrixTransform::Rotate(Matrix3x3f(1.0f), transform->angle);
-	position = MatrixTransform::Translate(position, boxCollider->offset);
+	position = MatrixTransform::Translate(position, boxCollider->GetOffset());
 
 	transformMatrix[0][2] += position[0][2];
 	transformMatrix[1][2] += position[1][2];

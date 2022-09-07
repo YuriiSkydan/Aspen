@@ -187,6 +187,7 @@ bool Inspector::RenderComponentHeader(const std::string& componentName, Componen
 		Checkbox("##IsEnabled", component, component->IsEnabled(),
 			&(Component::SetEnabled));
 	}
+
 	ImGui::PopID();
 
 	ImGui::SameLine();
@@ -404,10 +405,10 @@ void Inspector::RenderComponent(Collider* collider)
 	ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 	ImGui::SetNextItemWidth(m_ItemWidth);
-	ImGui::DragFloat2("##Offset", (float*)&collider->offset, 0.01f);
-	ImGui::Checkbox("##IsTrigger", &collider->isTrigger);
-	ImGui::NewLine();
+	DragFloat2("##Offset", collider, collider->GetOffset(),
+		&Collider::SetOffset, 0.01f);
 
+	ImGui::NewLine();
 	RenderMaterial(1, &collider->material);
 
 	ImGui::Columns(1);
