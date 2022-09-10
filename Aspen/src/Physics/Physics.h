@@ -13,17 +13,14 @@ private:
 
 	friend class Scene;
 	friend class Rigidbody;
-	friend class BoxCollider;
-	friend class CircleCollider;
-	friend class PolygonCollider;
+	friend class Collider;
 private:
 	static void CreateWorld();
 	static void Update();
-	//temporarily
 	static void DestoryWorld();
 	static b2Body* CreateBody(const b2BodyDef& bodyDef);
-	static void SetContactListener(ContactListener* contactListener);
 	static b2World* GetWorld() { return s_World.get(); }
+	static void SetContactListener(ContactListener* contactListener);
 
 public:
 	static void SetGravity(const Vector2f& gravity);

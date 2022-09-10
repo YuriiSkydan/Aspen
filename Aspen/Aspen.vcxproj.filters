@@ -81,7 +81,7 @@
     <ClCompile Include="src\Renderer\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScriptManager.cpp">
+    <ClCompile Include="src\Scripting\ScriptManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Scene\EditorCamera.cpp">
@@ -272,7 +272,7 @@
     <ClInclude Include="src\Core\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ScriptManager.h">
+    <ClInclude Include="src\Scripting\ScriptManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\EditorCamera.h">

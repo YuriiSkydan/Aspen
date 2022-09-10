@@ -38,6 +38,7 @@ private:
 	unsigned int m_ItemWidth;
 
 	bool m_TagsAndLayersManager = false;
+
 private:
 	template<typename ComponentType>
 	void DragFloat(std::string_view id, ComponentType* component, float previewValue, void(ComponentType::* function)(float), float speed = 1.0f, float min = FLT_MIN, float max = FLT_MAX)

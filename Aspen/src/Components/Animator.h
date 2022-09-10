@@ -1,7 +1,4 @@
 #pragma once
-#include <unordered_map>
-#include <vector>
-
 #include "Component.h"
 #include "../Renderer/Texture.h"
 
@@ -11,12 +8,11 @@ class ASPEN AnimationClip
 {
 private:
 	std::string m_Name;
-	SpriteRenderer* m_SpriteRenderer = nullptr;
 	std::vector<std::shared_ptr<Texture>> m_Frames;
 	std::vector<std::shared_ptr<Texture>>::iterator m_CurrentFrame;
+	SpriteRenderer* m_SpriteRenderer = nullptr;
 
 	float m_Duration;
-
 	float m_FrameTime;
 	float m_ElapsedTime;
 	
@@ -36,20 +32,17 @@ public:
 	void SetDuration(float duration);
 	void SetName(const std::string& name);
 
+	//-------------------------------------------------
+	//Getters
 	std::shared_ptr<Texture> GetFrame() const { return *m_CurrentFrame; }
 	unsigned int GetFramesAmount() const { return m_Frames.size(); }
 	const std::string& GetName() const { return m_Name; }
 	float GetDuration() const { return m_Duration; }
 
+	//-------------------------------------------------
+	//Serialization
 	void Serialize(json& out) const;
 	void Deserialize(json& in);
-};
-
-class ASPEN AnimationState
-{
-private:
-	//std::unordered_map<std::pair<std::string, bool>, bool> m_BoolCondition;
-	AnimationClip m_AnimationClip;
 };
 
 class ASPEN Animator : public Component
@@ -65,7 +58,6 @@ private:
 
 	friend class Inspector;
 private:
-	void AddFrameToAnimation(const Texture& newFrame);
 	void AddAnimation(const std::string& name);
 
 	void AddBoolParameter(const std::string& name);
@@ -80,14 +72,20 @@ public:
 
 	void PlayAnimation(const std::string& name);
 
+	//----------------------------------------------------------
+	//Setters
 	void SetBool(const std::string& name, bool value);
 	void SetFloat(const std::string& name, float value);
 	void SetInteger(const std::string& name, int value);
 	void SetTrigger(const std::string& name);
-
+	
+	//----------------------------------------------------------
+	//Getters
     AnimationClip& GetAnimation(const std::string& name);
 	//AnimationClip& GetCurrentAnimation() const { return &m_AnimationClips.at(m_CurrentClip); }
 
+	//----------------------------------------------------------
+	//Serialization
 	void Serialize(json& out) const override;
 	void Deserialize(json& in) override;
 };

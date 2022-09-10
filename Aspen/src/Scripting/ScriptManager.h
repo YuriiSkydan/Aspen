@@ -3,12 +3,10 @@
 #include <unordered_map>
 #include <string_view>
 #include "windows.h"
-#include "Log/Log.h"
-#include "Scene/Scene.h"
-#include "Components/Script.h"
-
-#include <iostream>
-#include "Engine/Engine.h"
+#include "../Log/Log.h"
+#include "../Scene/Scene.h"
+#include "../Components/Script.h"
+#include "../Engine/Engine.h"
 
 using namespace std::string_literals;
 
@@ -29,7 +27,7 @@ private:
 		ScriptDLL(HINSTANCE dll, const std::string& scriptName, std::filesystem::file_time_type addedTime)
 			: m_DLL(dll), m_ScriptName(scriptName)
 		{
-			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, "Create"));
+			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, ("Create" + scriptName).c_str()));
 		
 			if (m_CreateFunction == nullptr)
 			{
@@ -43,7 +41,7 @@ private:
 		std::filesystem::file_time_type GetAddedTime() const { return m_AddedTime; }
 		~ScriptDLL()
 		{
-			std::cout << "Free DLL!!!\n";
+			INFO("Free DLL");
 			FreeLibrary(m_DLL);
 		}
 	};

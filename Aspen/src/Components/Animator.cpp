@@ -2,11 +2,6 @@
 #include "../Scene/Scene.h"
 #include "../Core/Time.h"
 
-void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
-{
-	m_SpriteRenderer = spriteRenderer;
-}
-
 AnimationClip::AnimationClip(const std::string& name)
 	: m_Name(name), m_Duration(0.0f), m_FrameTime(0.0f), m_ElapsedTime(0.0f)
 {
@@ -67,6 +62,11 @@ void AnimationClip::SetName(const std::string& name)
 	m_Name = name;
 }
 
+void AnimationClip::SetSpriteRenderer(SpriteRenderer* spriteRenderer)
+{
+	m_SpriteRenderer = spriteRenderer;
+}
+
 void AnimationClip::Serialize(json& out) const
 {
 	out =
@@ -101,8 +101,6 @@ void Animator::AddAnimation(const std::string& name)
 	SpriteRenderer* spriteRenderer = gameObject->GetComponent<SpriteRenderer>();
 	m_AnimationClips.push_back(AnimationClip(name));
 	m_AnimationClips.back().SetSpriteRenderer(spriteRenderer);
-	//temporarily
-	m_CurrentClip = 0;
 }
 
 void Animator::AddBoolParameter(const std::string& name)
@@ -119,7 +117,6 @@ void Animator::AddIntegerParameter(const std::string& name)
 {
 	m_IntParameters.insert({ name, 0 });
 }
-
 
 Animator::Animator(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
@@ -206,8 +203,6 @@ AnimationClip& Animator::GetAnimation(const std::string& name)
 
 void Animator::Serialize(json& out) const
 {
-	Component::Serialize(out["Animator"]);
-
 	out["Animator"] =
 	{
 		{ "ClipsAmount", m_AnimationClips.size() }
@@ -215,12 +210,12 @@ void Animator::Serialize(json& out) const
 
 	for (size_t i = 0; i < m_AnimationClips.size(); i++)
 		m_AnimationClips[i].Serialize(out["Animator"][std::to_string(i)]);
+
+	Component::Serialize(out["Animator"]);
 }
 
 void Animator::Deserialize(json& in)
 {
-	Component::Deserialize(in);
-
 	size_t clipsAmount = in["ClipsAmount"];
 	for (size_t i = 0; i < clipsAmount; i++)
 	{
@@ -230,4 +225,6 @@ void Animator::Deserialize(json& in)
 		m_AnimationClips.push_back(newClip);
 		m_AnimationClips.back().Start();
 	}
+
+	Component::Deserialize(in);
 }

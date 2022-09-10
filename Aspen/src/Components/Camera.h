@@ -1,6 +1,6 @@
 #pragma once
-#include "../Math/MatrixTransform.h"
-#include "../Components/SpriteRenderer.h"
+#include "Transform.h"
+#include "SpriteRenderer.h"
 
 class ASPEN Camera : public Component
 {

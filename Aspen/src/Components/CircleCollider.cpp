@@ -1,9 +1,11 @@
-#include "box2d/b2_circle_shape.h"
-#include "box2d/b2_fixture.h"
 #include "CircleCollider.h"
-#include "Rigidbody.h"
-#include "../Physics/Physics.h"
-#include "../GameObject/GameObject.h"
+
+void CircleCollider::SetShape()
+{
+	b2Vec2 center = b2Vec2(m_Offset.x, m_Offset.y);
+	m_Shape.m_radius = m_Radius;
+	m_Shape.m_p = center;
+}
 
 CircleCollider::CircleCollider(GameObject* gameObject, Transform* transform)
 	: Collider(gameObject, transform)
@@ -12,39 +14,28 @@ CircleCollider::CircleCollider(GameObject* gameObject, Transform* transform)
 
 void CircleCollider::Start()
 {
-	b2Body* body = nullptr;
-	if (gameObject->HasComponent<Rigidbody>())
-		body = gameObject->GetComponent<Rigidbody>()->GetBody();
+	m_FixtureDef.shape = &m_Shape;
+	Collider::Start();
+}
 
-	b2Vec2 center = b2Vec2(m_Offset.x, m_Offset.y);
-	b2CircleShape circleShape;
-	circleShape.m_radius = radius;
-
-	if (body == nullptr)
-	{
-		b2BodyDef bodyDef;
-		bodyDef.position = { transform->position.x, transform->position.y };
-		body = Physics::CreateBody(bodyDef);
-	}
-	
-	SetFixtureDef();
-	m_FixtureDef.shape = &circleShape;
-	body->CreateFixture(&m_FixtureDef);
+void CircleCollider::SetRadius(float radius)
+{
+	m_Radius = radius;
+	ResetShape();
 }
 
 void CircleCollider::Serialize(json& out) const
 {
-	Collider::Serialize(out["CircleCollider"]);
-
 	out["CircleCollider"] =
 	{
-		{ "Radius", radius }
+		{ "Radius", m_Radius }
 	};
+
+	Collider::Serialize(out["CircleCollider"]);
 }
 
 void CircleCollider::Deserialize(json& in)
 {
+	m_Radius = in["Radius"];
 	Collider::Deserialize(in);
-
-	radius = in["Radius"];
 }

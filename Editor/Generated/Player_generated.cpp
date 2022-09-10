@@ -8,7 +8,16 @@
 
 class Player : public Script
 {
-	GenerateBody()
+	GenerateBody()                      
+public:               
+void InitProperties() 
+{                     
+   m_Properties.push_back({ &m_Speed, VariableTypes::FLOAT, "m_Speed"});
+   m_Properties.push_back({ &m_JumpForce, VariableTypes::FLOAT, "m_JumpForce"});
+   m_Properties.push_back({ &m_TestBool, VariableTypes::BOOL, "m_TestBool"});
+   m_Properties.push_back({ &m_TestInt, VariableTypes::INT, "m_TestInt"});
+}                     
+
 private:
 	[[SerializedField]] float m_Speed = 2.0f;
 	[[SerializedField]] float m_JumpForce = 4.0f;
@@ -94,4 +103,13 @@ public:
 			component->SetColor(Color(0.3f, 0.2f, 0.5f, 1.0f));
 		}
 	}
-};
+};                                                          
+extern "C"                                              
+{                                                         
+   __declspec(dllexport) Script* CreatePlayer()
+   {                                                      
+       Player* script = new Player();
+        script->InitProperties();                         
+        return script;                                    
+   }                                                      
+}                                                         

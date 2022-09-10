@@ -411,8 +411,8 @@ void Renderer::DrawBoxCollider(const BoxCollider* boxCollider, const Matrix3x3f&
 	Transform* transform = boxCollider->transform;
 
 	Vector2f scale(transform->scale);
-	scale.x = boxCollider->size.x * 2;
-	scale.y = boxCollider->size.y * 2;
+	scale.x = boxCollider->GetSize().x * 2;
+	scale.y = boxCollider->GetSize().y * 2;
 
 	Matrix3x3f transformMatrix = Matrix3x3f(1.0f);
 
@@ -447,7 +447,7 @@ void Renderer::DrawCirlceCollider(const CircleCollider* circleCollider, const Ma
 	s_LineShader->SetVec2f("position", transform->position);
 	s_LineShader->SetFloat("angle", transform->angle);
 
-	float radius = circleCollider->radius;
+	float radius = circleCollider->GetRadius();
 	for (float angle = 0.0f; angle <= std::numbers::pi * 2; angle += 0.01f)
 	{
 		Vector2f from = { cos(angle) * radius, sin(angle) * radius };
@@ -466,7 +466,7 @@ void Renderer::DrawPolygonCollider(const PolygonCollider* polygonCollider, const
 	s_LineShader->SetVec2f("position", transform->position);
 	s_LineShader->SetFloat("angle", transform->angle);
 
-	auto& vertices = polygonCollider->GetVerticies();
+	const auto& vertices = polygonCollider->GetVertices();
 	size_t size = vertices.size();
 
 	auto DrawLine = [&](b2Vec2 vertices[2])

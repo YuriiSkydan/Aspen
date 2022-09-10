@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Transform.h"
 
 Camera::Camera(GameObject* gameObject, Transform* transform)
 	: Component(gameObject, transform)
@@ -23,8 +22,6 @@ Matrix3x3f Camera::GetCameraMatrix() const
 
 void Camera::Serialize(json& out) const
 {
-	Component::Serialize(out["Camera"]);
-
 	out["Camera"] =
 	{
 		{ "Size", size},
@@ -35,12 +32,12 @@ void Camera::Serialize(json& out) const
 		  { "B", backgroundColor.b},
 		  { "A", backgroundColor.a} }}
 	};
+
+	Component::Serialize(out["Camera"]);
 }
 
 void Camera::Deserialize(json& in)
 {
-	Component::Deserialize(in);
-
 	size = in["Size"];
 	SetRatio(in["Aspect ration"]);
 
@@ -50,4 +47,6 @@ void Camera::Deserialize(json& in)
 	color.b = in["Background color"]["B"];
 	color.a = in["Background color"]["A"];
 	backgroundColor = color;
+
+	Component::Deserialize(in);
 }

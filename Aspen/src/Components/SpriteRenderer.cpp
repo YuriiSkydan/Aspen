@@ -32,8 +32,6 @@ void SpriteRenderer::SetSprite(const std::shared_ptr<Texture>& sprite)
 
 void SpriteRenderer::Serialize(json& out) const
 {
-	Component::Serialize(out["SpriteRenderer"]);
-
 	const Color& color = GetColor();
 	out["SpriteRenderer"] =
 	{
@@ -45,12 +43,12 @@ void SpriteRenderer::Serialize(json& out) const
 		{ "Texture",  GetTexture()->GetPath() },
 		{ "OrderInLayer",  orderInLayer}
 	};
+
+	Component::Serialize(out["SpriteRenderer"]);
 }
 
 void SpriteRenderer::Deserialize(json& in)
 {
-	Component::Deserialize(in);
-
 	Color color;
 	color.r = in["Color"]["R"];
 	color.g = in["Color"]["G"];
@@ -60,4 +58,6 @@ void SpriteRenderer::Deserialize(json& in)
 	SetColor(color);
 	SetSprite(in["Texture"]);
 	orderInLayer = in["OrderInLayer"];
+
+	Component::Deserialize(in);
 }

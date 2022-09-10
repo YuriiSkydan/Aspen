@@ -1,5 +1,5 @@
+#include <any>
 #include "ScriptManager.h"
-
 
 void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& directory)
 {
@@ -20,14 +20,22 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				if (FindDLL(filename, dllEntry))
 				{
 					if (dllEntry.last_write_time() > it.last_write_time())
+					{
 						LoadDLL(it);
+					}
+					else
+					{
+						CompileCpp(it.path());
+						LoadDLL(it);
+					}
 				}
 				else
 				{
 					CompileCpp(it.path());
+					LoadDLL(it);
 				}
 
-				break;
+				continue;
 			}
 
 			if (!doesExist || isOutdated)
@@ -76,7 +84,7 @@ bool ScriptManager::FindDLL(const std::string& filename, std::filesystem::direct
 	for (auto& entry : std::filesystem::directory_iterator(directory))
 	{
 		std::string dllname = GetFilename(entry.path());
-		if (dllname == filename)
+		if (dllname == filename + "_generated")
 		{
 			dllEntry = entry;
 			return true;
@@ -89,7 +97,7 @@ bool ScriptManager::FindDLL(const std::string& filename, std::filesystem::direct
 bool ScriptManager::LoadDLL(const std::filesystem::directory_entry& entry)
 {
 	std::string filename = GetFilename(entry.path());
-	HINSTANCE dll = LoadLibraryA(("Binaries\\"s + filename + ".dll").c_str());
+	HINSTANCE dll = LoadLibraryA(("Binaries\\"s + filename + "_generated" + ".dll").c_str());
 
 	if (dll)
 	{
@@ -108,6 +116,101 @@ bool ScriptManager::LoadDLL(const std::filesystem::directory_entry& entry)
 void ScriptManager::CompileCpp(const std::filesystem::path& filepath)
 {
 	std::string filename = GetFilename(filepath);
+	std::string generatedFilename = filename + "_generated";
+
+	std::ifstream scriptFile(filepath.string());
+	std::ofstream generatedFile("Generated\\" + generatedFilename + ".cpp");
+
+	if (!scriptFile.is_open())
+	{
+		while (!scriptFile.is_open())
+		{
+			scriptFile.open(filepath.string());
+			ERROR("Failed to open script.");
+		}
+
+		INFO("Script Opened.");
+	}
+
+	if (!generatedFile.is_open())
+	{
+		ERROR("Failed to open generated script.");
+		return;
+	}
+
+	std::string scriptCode;
+	std::stringstream scriptStream;
+
+	scriptStream << scriptFile.rdbuf();
+	scriptFile.close();
+
+	scriptCode = scriptStream.str();
+
+	//Generating InitProperties Method
+	//<name, type>
+	std::unordered_map<std::string, std::string> properties;
+	size_t propertyStartPos = 0;
+	while (true)
+	{
+		propertyStartPos = scriptCode.find("[[SerializedField]]", propertyStartPos);
+		if (propertyStartPos == std::string::npos)
+			break;
+
+		size_t typeStartPos = scriptCode.find_first_not_of(" ",
+			propertyStartPos + "[[SerializedField]]"s.size() + 1);
+
+		size_t typeEndPos = scriptCode.find_first_of(" ", typeStartPos);
+
+		size_t nameStartPos = scriptCode.find_first_not_of(" ", typeEndPos + 1);
+		size_t nameEndPos = scriptCode.find_first_of(" ", nameStartPos);
+
+		std::string type = scriptCode.substr(typeStartPos, typeEndPos - typeStartPos);
+		std::string name = scriptCode.substr(nameStartPos, nameEndPos - nameStartPos);
+
+		propertyStartPos += "[[SerializedField]]"s.size() + 1;
+
+		std::transform(type.begin(), type.end(), type.begin(), ::toupper);
+		type = "VariableTypes::" + type;
+
+		properties.insert({ name, type });
+	}
+
+	size_t startPos = scriptCode.find("GenerateBody()");
+	startPos += "GenerateBody()"s.size();
+
+	std::string initProperties;
+	initProperties += "                      \n";
+	initProperties += "public:               \n";
+	initProperties += "void InitProperties() \n";
+	initProperties += "{                     \n";
+
+	for (auto& property : properties)
+	{
+		initProperties += "   m_Properties.push_back({ &" + property.first;
+		initProperties += ", " + property.second;
+		initProperties += ", \"" + property.first + "\"});\n";
+	}
+
+	initProperties += "}                     \n";
+
+	scriptCode.insert(startPos, initProperties);
+
+	//Generate Create Function
+	scriptCode += "                                                          \n";
+	scriptCode += "extern \"C\"                                              \n";
+	scriptCode += "{                                                         \n";
+	scriptCode += "   __declspec(dllexport) Script* Create"s + filename + "()\n";
+	scriptCode += "   {                                                      \n";
+	scriptCode += "       "s + filename + "* script = new " + filename + "();\n";
+	scriptCode += "        script->InitProperties();                         \n";
+	scriptCode += "        return script;                                    \n";
+	scriptCode += "   }                                                      \n";
+	scriptCode += "}                                                         \n";
+
+	generatedFile << scriptCode;
+	generatedFile.close();
+
+	//Compiling generated cpp file
 	std::string compileCommand = "call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
 	compileCommand += " cl /std:c++20";
 
@@ -122,7 +225,7 @@ void ScriptManager::CompileCpp(const std::filesystem::path& filepath)
 
 	//Compile properties
 #ifdef _DEBUG
-	compileCommand += " /EHsc /MDd /LD " + filepath.string();
+	compileCommand += " /EHsc /MDd /LD " + "Generated\\"s + generatedFilename + ".cpp";
 #endif
 #ifdef NDEBUG
 	compileCommand += " /EHsc /MD /LD " + filepath.string();
@@ -138,11 +241,10 @@ void ScriptManager::CompileCpp(const std::filesystem::path& filepath)
 #endif
 
 	system(compileCommand.c_str());
-	system(("move \""s + filename + ".dll\" \"\Binaries\"").c_str());
-	system(("move \""s + filename + ".lib\" \"\Binaries\"").c_str());
-	system(("move \""s + filename + ".obj\" \"\Binaries\"").c_str());
-	system(("move \""s + filename + ".exp\" \"\Binaries\"").c_str());
-
+	system(("move \""s + generatedFilename + ".dll\" \"\Binaries\"").c_str());
+	system(("move \""s + generatedFilename + ".lib\" \"\Binaries\"").c_str());
+	system(("move \""s + generatedFilename + ".obj\" \"\Binaries\"").c_str());
+	system(("move \""s + generatedFilename + ".exp\" \"\Binaries\"").c_str());
 }
 
 std::string ScriptManager::GetFilename(const std::filesystem::path& path)

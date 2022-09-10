@@ -3,8 +3,8 @@
 
 class Trigger : virtual public Component
 {
-public:
-	bool isTrigger = false;
+protected:
+	bool m_IsTrigger = false;
 
 protected:
 	Trigger(GameObject* gameObject, Transform* transform);

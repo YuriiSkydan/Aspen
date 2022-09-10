@@ -1,13 +1,11 @@
 #include "BoxCollider.h"
 #include "Rigidbody.h"
 #include "../GameObject/GameObject.h"
-#include "../Physics/Physics.h"
-#include "../Math/Math.h"
 
 void BoxCollider::SetShape()
 {
-	float sizeX = size.x * transform->scale.x;
-	float sizeY = size.y * transform->scale.y;
+	float sizeX = m_Size.x * transform->scale.x;
+	float sizeY = m_Size.y * transform->scale.y;
 	b2Vec2 center = b2Vec2(m_Offset.x, m_Offset.y);
 
 	m_Shape.SetAsBox(abs(sizeX), abs(sizeY), center, 0);
@@ -20,66 +18,52 @@ BoxCollider::BoxCollider(GameObject* gameObject, Transform* transform)
 
 void BoxCollider::Start()
 {
-	float mass = 1.0f;
-	if (gameObject->HasComponent<Rigidbody>())
-	{
-		Rigidbody* rigidbody = gameObject->GetComponent<Rigidbody>();
-		m_Body = rigidbody->GetBody();
-		mass = rigidbody->GetMass();
-	}
-	else
-	{
-		b2BodyDef bodyDef;
-		bodyDef.position = { transform->position.x, transform->position.y };
-		bodyDef.angle = ToRads(-transform->angle);
-		m_Body = Physics::CreateBody(bodyDef);
-	}
-
-	SetShape();
-	SetFixtureDef();
 	m_FixtureDef.shape = &m_Shape;
-	m_Fixture = m_Body->CreateFixture(&m_FixtureDef);
+	Collider::Start();
 }
 
 void BoxCollider::Reset()
 {
 	Collider::Reset();
-	size = { 0.5f, 0.5f };
+	m_Size = { 0.5f, 0.5f };
 }
 
-void BoxCollider::SetOffset(const Vector2f& offset)
+void BoxCollider::SetSize(const Vector2f& size)
 {
-	m_Offset = offset;
-	SetShape();
+	m_Size = size;
 
 	if (m_Body != nullptr)
 	{
+		b2Fixture* fixture = m_Body->GetFixtureList();
+		m_Body->DestroyFixture(fixture);
+		
+		SetShape();
 		m_Body->CreateFixture(&m_FixtureDef);
 	}
 }
 
 void BoxCollider::Serialize(json& out) const
 {
-	Component::Serialize(out["BoxCollider"]);
-
 	out["BoxCollider"] =
 	{
 		{ "Size",
-		{ { "X", size.x },
-		  { "Y", size.y } }},
+		{ { "X", m_Size.x },
+		  { "Y", m_Size.y } }},
 		{ "Offset",
 		{ { "X", m_Offset.x },
 		  { "Y", m_Offset.y } }}
 	};
+
+	Collider::Serialize(out["BoxCollider"]);
 }
 
 void BoxCollider::Deserialize(json& in)
 {
-	Component::Deserialize(in);
-
-	size.x = in["Size"]["X"];
-	size.y = in["Size"]["Y"];
+	m_Size.x = in["Size"]["X"];
+	m_Size.y = in["Size"]["Y"];
 
 	m_Offset.x = in["Offset"]["X"];
 	m_Offset.y = in["Offset"]["Y"];
+
+	Collider::Deserialize(in);
 }

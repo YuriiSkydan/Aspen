@@ -117,7 +117,7 @@
     <ClCompile Include="src\Scene\EditorCamera.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Scene\SceneSerializer.cpp" />
-    <ClCompile Include="src\ScriptManager.cpp" />
+    <ClCompile Include="src\Scripting\ScriptManager.cpp" />
     <ClCompile Include="src\Core\Time.cpp" />
     <ClCompile Include="src\GameObject\Tag.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
@@ -186,7 +186,7 @@
     <ClInclude Include="src\Scene\EditorCamera.h" />
     <ClInclude Include="src\Scene\Scene.h" />
     <ClInclude Include="src\Scene\SceneSerializer.h" />
-    <ClInclude Include="src\ScriptManager.h" />
+    <ClInclude Include="src\Scripting\ScriptManager.h" />
     <ClInclude Include="src\Core\Time.h" />
     <ClInclude Include="src\GameObject\Tag.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

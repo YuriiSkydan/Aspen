@@ -65,8 +65,6 @@ void AudioSource::SetStartPaused(bool value)
 
 void AudioSource::Serialize(json& out) const
 {
-	Component::Serialize(out["AudioSource"]);
-
 	out["AudioSource"] =
 	{
 		{ "Filename",  GetFilename() },
@@ -74,16 +72,18 @@ void AudioSource::Serialize(json& out) const
 		{ "MaxDistance",  GetMaxDistance()},
 		{ "IsLooped",  GetIsLooped()}
 	};
+
+	Component::Serialize(out["AudioSource"]);
 }
 
 void AudioSource::Deserialize(json& in)
 {
-	Component::Deserialize(in);
-
 	SetFilename(in["Filename"]);
 	SetMinDistance(in["MinDistance"]);
 	SetMinDistance(in["MaxDistance"]);
 	SetLooped(in["IsLooped"]);
+
+	Component::Deserialize(in);
 }
 
 AudioSource::~AudioSource()

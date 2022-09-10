@@ -1,5 +1,5 @@
 #include "Inspector.h"
-#include "src/ScriptManager.h"
+#include "Scripting/ScriptManager.h"
 #include "Components/AllComponents.h"
 #include "imgui/imgui_stdlib.h"
 
@@ -57,7 +57,6 @@ void Inspector::RenderMaterial(unsigned int collumnIndex, Material* material)
 		ImGui::Text("Material");
 		ImGui::Spacing();
 		ImGui::Text("Friction");
-		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Text("Dencity");
 		break;
@@ -149,14 +148,14 @@ void Inspector::RenderComponents()
 		RenderComponents<AllComponents>(it.get());
 
 	auto& scripts = m_SelectedGameObject->GetScripts();
-	for (size_t i = 0; i < scripts.size(); i++) 
+	for (size_t i = 0; i < scripts.size(); i++)
 	{
 		ImGui::PushID(i);
 		RenderComponent(scripts[i]);
 		ImGui::PopID();
 		ImGui::Separator();
 	}
-	 
+
 	ImGui::NewLine();
 	ImGui::NewLine();
 }
@@ -408,6 +407,9 @@ void Inspector::RenderComponent(Collider* collider)
 	DragFloat2("##Offset", collider, collider->GetOffset(),
 		&Collider::SetOffset, 0.01f);
 
+	Checkbox("##Is Trigger", collider, collider->IsTrigger(),
+		&Collider::SetIsTrigger);
+
 	ImGui::NewLine();
 	RenderMaterial(1, &collider->material);
 
@@ -430,7 +432,8 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat2("##Size", (float*)&boxCollider->size, 0.01f, 0.0f, FLT_MAX, "%.3f");
+		DragFloat2("##Size", boxCollider, boxCollider->GetSize(),
+			&BoxCollider::SetSize, 0.01f);
 
 		ImGui::Columns(1);
 
@@ -454,7 +457,8 @@ void Inspector::RenderComponent(CircleCollider* circleCollider)
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
 		ImGui::SetNextItemWidth(m_ItemWidth);
-		ImGui::DragFloat("##Radius", &circleCollider->radius, 0.001f, 0.0f);
+		DragFloat("##Radius", circleCollider, circleCollider->GetRadius(),
+			&CircleCollider::SetRadius, 0.001f, 0.0f);
 
 		ImGui::Columns(1);
 
@@ -482,7 +486,7 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 
 		ImGui::Columns(1);
 
-		auto& vertices = polygonCollider->GetVertices();
+		std::vector<b2Vec2> vertices = polygonCollider->GetVertices();
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
 			ImGui::PushID(i);
@@ -497,6 +501,9 @@ void Inspector::RenderComponent(PolygonCollider* polygonCollider)
 			ImGui::DragFloat2("##VertexX", (float*)(&vertices[i]), 0.001f);
 			ImGui::PopID();
 		}
+
+		polygonCollider->SetVerices(vertices);
+		RenderComponent(static_cast<Collider*>(polygonCollider));
 	}
 }
 
@@ -673,21 +680,31 @@ void Inspector::RenderComponent(Script* script)
 		ImGui::Columns(2, 0, false);
 		ImGui::SetColumnWidth(0, m_FirstCollumnWidth);
 
-		for (auto& variable : script->variables)
+		for (auto& property : script->GetProperties())
 		{
-			ImGui::Text(variable.name.c_str());
+			ImGui::Spacing();
+			ImGui::Text(property.GetName().c_str());
 		}
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
 
-		for (auto& variable : script->variables)
+		for (auto& property : script->GetProperties())
 		{
-			if (variable.type == VariableTypes::FLOAT)
+			void* variable = property.GetVariable();
+			switch (property.GetType())
 			{
-				float* var = static_cast<float*>(variable.variable);
+			case VariableTypes::INT:
 				ImGui::SetNextItemWidth(m_ItemWidth);
-				ImGui::DragFloat(("##"s + variable.name).c_str(), var, 0.01f);
+				ImGui::DragInt(("##"s + property.GetName()).c_str(), (int*)(variable), 0.01f);
+				break;
+			case VariableTypes::FLOAT:
+				ImGui::SetNextItemWidth(m_ItemWidth);
+				ImGui::DragFloat(("##"s + property.GetName()).c_str(), (float*)(variable), 0.01f);
+				break;
+			case VariableTypes::BOOL:
+				ImGui::Checkbox(("##"s + property.GetName()).c_str(), (bool*)(variable));
+				break;
 			}
 		}
 

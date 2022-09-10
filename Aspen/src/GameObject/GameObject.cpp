@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "../ScriptManager.h"
+#include "../Scripting/ScriptManager.h"
 #include "../Components/AllComponents.h"
 
 void GameObject::RemoveComponent(Component* component)
@@ -207,6 +207,7 @@ void GameObject::DeserializeComponent(json& in)
 		auto script = scripts.find(scriptName);
 		Script* newComponent = script->second->Create();
 		newComponent->SetName(scriptName);
+		newComponent->Deserialize(in);
 		AddScript(newComponent);
 	}
 }

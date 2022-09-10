@@ -13,6 +13,7 @@ private:
 	
 	bool m_IsLooped = false;
 	bool m_StartPaused = false;
+
 public:
 	AudioSource(GameObject* gameObject, Transform* transform);
 

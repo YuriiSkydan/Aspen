@@ -2,31 +2,43 @@
 #include "Trigger.h"
 #include "Collision.h"
 
-#define RegisterScript(className) extern "C" {__declspec(dllexport) Script* Create() { return new className(); }}
 #define SerializedField
+#define GenerateBody()
 
 enum class VariableTypes { INT = 0, BOOL, FLOAT, DOUBLE };
 
-struct Variable
+class Property
 {
-	void* variable;
-	VariableTypes type;
-	std::string name;
+private:
+	void* m_Variable;
+	VariableTypes m_Type;
+	std::string m_Name;
+
+public:
+	Property(void* ptr, VariableTypes type, const std::string& name)
+		: m_Variable(ptr), m_Type(type), m_Name(name)
+	{ }
+
+	void* GetVariable() const { return m_Variable; }
+	VariableTypes GetType() const { return m_Type; }
+	const std::string& GetName() const { return m_Name; }
 };
 
 class ASPEN Script : public Component
 {
 private:
 	std::string m_Name = "None";
-	
+
 	friend class GameObject;
 	friend class ScriptManager;
 	friend class Inspector;
+protected:
+	std::vector<Property> m_Properties;
+
 private:
 	void SetName(const std::string& name);
 	const std::string GetName() const { return m_Name; }
-public:
-	std::vector<Variable> variables;
+	const std::vector<Property>& GetProperties() const { return m_Properties; }
 
 public:
 	Script();

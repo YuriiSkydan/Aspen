@@ -1,11 +1,10 @@
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_fixture.h"
 #include "PolygonCollider.h"
-#include "Rigidbody.h"
-#include "../GameObject/GameObject.h"
-#include "../Math/Math.h"
-#include "../Physics/Physics.h"
 
+void PolygonCollider::SetShape()
+{
+	m_Shape.Set(m_Vertices.data(), m_Vertices.size());
+	m_FixtureDef.shape = &m_Shape;
+}
 
 PolygonCollider::PolygonCollider(GameObject* gameObject, Transform* transform)
 	: Collider(gameObject, transform)
@@ -18,40 +17,44 @@ PolygonCollider::PolygonCollider(GameObject* gameObject, Transform* transform)
 
 void PolygonCollider::Start()
 {
-	b2Body* body = nullptr;
-	float mass = 1.0f;
-	if (gameObject->HasComponent<Rigidbody>())
-	{
-		Rigidbody* rigidbody = gameObject->GetComponent<Rigidbody>();
-		body = rigidbody->GetBody();
-		mass = rigidbody->GetMass();
-	}
-	else
-	{
-		b2BodyDef bodyDef;
-		bodyDef.position = { transform->position.x, transform->position.y };
-		bodyDef.angle = ToRads(-transform->angle);
-		body = Physics::CreateBody(bodyDef);
-	}
-
-	b2PolygonShape shape;
-	shape.Set(m_Vertices.data(), m_Vertices.size());
-
-	SetFixtureDef();
-	m_FixtureDef.shape = &shape;
-
-	body->CreateFixture(&m_FixtureDef);
+	SetShape();
+	Collider::Start();
 }
 
 void PolygonCollider::AddVertex(const Vector2f& vertexPos)
 {
 	m_Vertices.push_back({ vertexPos.x, vertexPos.y });
+	ResetShape();
+}
+
+void PolygonCollider::RemoveVertex(const Vector2f& vertexPos)
+{
+	for (auto it = m_Vertices.begin(); it != m_Vertices.end(); ++it)
+	{
+		if (*it == b2Vec2{ vertexPos.x, vertexPos.y })
+		{
+			it = m_Vertices.erase(it);
+			break;
+		}
+	}
+
+	ResetShape();
+}
+
+void PolygonCollider::RemoveVertex(const std::vector<b2Vec2>::const_iterator& vertex)
+{
+	m_Vertices.erase(vertex);
+	ResetShape();
+}
+
+void PolygonCollider::SetVerices(const std::vector<b2Vec2>& verticies)
+{
+	m_Vertices = verticies;
+	ResetShape();
 }
 
 void PolygonCollider::Serialize(json& out) const
 {
-	Collider::Serialize(out);
-
 	out["PolygonCollider"] =
 	{
 		{ "Vertices", m_Vertices.size() }
@@ -63,6 +66,8 @@ void PolygonCollider::Serialize(json& out) const
 		vertexOut[std::to_string(i)]["X"] = m_Vertices[i].x;
 		vertexOut[std::to_string(i)]["Y"] = m_Vertices[i].y;
 	}
+
+	Collider::Serialize(out["PolygonCollider"]);
 }
 
 void PolygonCollider::Deserialize(json& in)
