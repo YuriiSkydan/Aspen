@@ -122,7 +122,9 @@ void Inspector::RenderGameObjectProperties()
 		for (auto& layer : LayerMask::GetLayers())
 		{
 			if (ImGui::Selectable(layer.second.c_str()))
+			{
 				m_SelectedGameObject->SetLayer(layer.first);
+			}
 		}
 
 		ImGui::Separator();
@@ -299,6 +301,9 @@ void Inspector::RenderComponent(Camera* camera)
 		ImGui::Text("Background");
 		ImGui::Spacing();
 		ImGui::Text("Size"); ImGui::SameLine();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Culling Mask");
 
 		ImGui::NextColumn();
 		ImGui::SetColumnWidth(1, m_SecondCollumnWidth);
@@ -307,6 +312,32 @@ void Inspector::RenderComponent(Camera* camera)
 		ImGui::ColorEdit4("##Background Color", (float*)&camera->backgroundColor);
 		ImGui::SetNextItemWidth(m_ItemWidth);
 		ImGui::DragFloat("##Size", &camera->size, 0.001f);
+
+		ImGui::SetNextItemWidth(m_ItemWidth);
+		if (ImGui::BeginCombo("##Culling Mask", "Culling Mask"))
+		{
+			for (auto& layer : LayerMask::GetLayers())
+			{
+				bool isCulling = !(camera->cullingMask & layer.first);
+				if (isCulling && ImGui::Selectable(layer.second.c_str()))
+				{
+					camera->cullingMask |= layer.first;
+				}
+			}
+
+			ImGui::Separator();
+
+			for (auto& layer : LayerMask::GetLayers())
+			{
+				bool isCulling = !(camera->cullingMask & layer.first);
+				if (!isCulling && ImGui::Selectable(layer.second.c_str()))
+				{
+					camera->cullingMask &= layer.first;
+				}
+			}
+
+			ImGui::EndCombo();
+		}
 
 		ImGui::Columns(1);
 	}
@@ -437,7 +468,7 @@ void Inspector::RenderComponent(BoxCollider* boxCollider)
 
 		ImGui::Columns(1);
 
-		RenderComponent((Collider*)boxCollider);
+		RenderComponent(static_cast<Collider*>(boxCollider));
 	}
 }
 
@@ -462,7 +493,7 @@ void Inspector::RenderComponent(CircleCollider* circleCollider)
 
 		ImGui::Columns(1);
 
-		RenderComponent((Collider*)circleCollider);
+		RenderComponent(static_cast<Collider*>(circleCollider));
 	}
 }
 

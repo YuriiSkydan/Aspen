@@ -52,6 +52,8 @@ GameObject::GameObject(Scene* scene, const GameObject& other)
 	strcpy_s(m_Name, 20, other.m_Name);
 	m_IsActive = other.m_IsActive;
 	m_ID = other.m_ID;
+	m_Layer = other.m_Layer;
+	m_Tag = other.m_Tag;
 
 	CopyComponents<AllComponents>(other);
 

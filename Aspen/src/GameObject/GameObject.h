@@ -26,7 +26,7 @@ private:
 	unsigned int m_ID;
 	bool m_IsActive = true;
 	char m_Name[40];
-	
+
 	LayerMask m_Layer;
 	Scene* m_Scene = nullptr;
 	Tag m_Tag;
@@ -52,8 +52,6 @@ private:
 	void ComponentsEnable();
 	void ComponentsDisable();
 
-	void AddScript(Script* script);
-
 	template<typename... Components>
 	void CopyComponents(const GameObject& gameObject)
 	{
@@ -70,6 +68,8 @@ private:
 			}(), ...);
 	}
 	void RemoveComponent(Component* component);
+
+	void AddScript(Script* script);
 
 public:
 	GameObject(Scene* scene);

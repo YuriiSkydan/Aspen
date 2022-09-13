@@ -30,13 +30,11 @@ class Inspector
 {
 private:
 	Ptr<GameObject>& m_SelectedGameObject;
-
 	AnimationClip* m_ChoosenClip = nullptr;
 
 	unsigned int m_FirstCollumnWidth = 110;
 	unsigned int m_SecondCollumnWidth;
 	unsigned int m_ItemWidth;
-
 	bool m_TagsAndLayersManager = false;
 
 private:
@@ -62,7 +60,6 @@ private:
 	}
 
 	void RenderMaterial(unsigned int collumnIndex, Material* material = nullptr);
-
 	void RenderGameObject();
 	void RenderGameObjectProperties();
 	void RenderComponents();
@@ -86,7 +83,6 @@ private:
 				}
 			}(), ...);
 	}
-
 	bool RenderComponentHeader(const std::string& componentName, Component* component, ComponentPropertyFlags flags = None);
 	void RenderComponent(Transform* transform);
 	void RenderComponent(SpriteRenderer* spriteRenderer);

@@ -25,7 +25,7 @@ private:
 
 	public:
 		ScriptDLL(HINSTANCE dll, const std::string& scriptName, std::filesystem::file_time_type addedTime)
-			: m_DLL(dll), m_ScriptName(scriptName)
+			: m_DLL(dll), m_ScriptName(scriptName), m_AddedTime(addedTime)
 		{
 			m_CreateFunction = ScriptCreatePtr(GetProcAddress(m_DLL, ("Create" + scriptName).c_str()));
 		

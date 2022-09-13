@@ -137,8 +137,6 @@ void Editor::ImGuiRender()
 
 	GameWindow();
 	SceneWindow();
-
-	//ImGui::ShowDemoWindow();
 }
 
 void Editor::GameWindow()
@@ -475,7 +473,7 @@ void Editor::Toolbar()
 
 			//m_ActiveScene = m_RuntimeScene;
 			SceneManager::GetActiveScene()->Start();
-			
+
 			m_SelectedObject = nullptr;
 		}
 	}
@@ -561,15 +559,11 @@ void Editor::MainMenuBar()
 			if (ImGui::MenuItem("New Project"));
 			if (ImGui::MenuItem("Open Project"));
 			if (ImGui::MenuItem("Save Project"));
+
 			ImGui::EndMenu();
 		}
 
 		if (ImGui::BeginMenu("Edit"))
-		{
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Gamebject"))
 		{
 			ImGui::EndMenu();
 		}

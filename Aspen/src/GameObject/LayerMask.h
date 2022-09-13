@@ -22,6 +22,12 @@ public:
 	static LayerMask GetMask(std::string_view name);
 	static const std::string& LayerToName(std::uint8_t value);
 
+	uint8_t operator|=(const LayerMask& other);
+	uint8_t operator&=(const LayerMask& other);
+
+	uint8_t operator|=(uint8_t other);
+	uint8_t operator&=(uint8_t other);
+
 	friend uint8_t ASPEN operator|(const LayerMask& a, const LayerMask& b);
 	friend uint8_t ASPEN operator&(const LayerMask& a, const LayerMask& b);
 

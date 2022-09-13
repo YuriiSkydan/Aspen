@@ -6,10 +6,10 @@ using namespace std::string_literals;
 
 ProjectPanel::ProjectPanel()
 	: m_CurrentDirectory("Assets")
-	, m_BackArrowIcon("Resources/BackArrow_2.png")
-	, m_FolderIcon("Resources/FolderIcon_3.png")
-	, m_FileIcon("Resources/FileIcon_2.png")
-	, m_CppFileIcon("Resources/CppFileIcon_2.png")
+	, m_BackArrowIcon("Resources/BackArrow.png")
+	, m_FolderIcon("Resources/FolderIcon.png")
+	, m_FileIcon("Resources/FileIcon.png")
+	, m_CppFileIcon("Resources/CppFileIcon.png")
 	, m_SceneFileIcon("Resources/SceneIcon.png")
 	, m_AudioFileIcon("Resources/AudioIcon.png")
 { }
@@ -97,7 +97,7 @@ void ProjectPanel::RenderDirectory()
 			ImGui::SetDragDropPayload("PROJECT_PANEL_ITEM", itemPath.c_str(), (itemPath.size() + 1) * sizeof(char));
 			ImGui::EndDragDropSource();
 		}
-
+		
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
 			if (file.first.is_directory())

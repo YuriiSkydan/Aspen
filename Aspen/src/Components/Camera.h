@@ -1,4 +1,5 @@
 #pragma once
+#include "../GameObject/LayerMask.h"
 #include "Transform.h"
 #include "SpriteRenderer.h"
 
@@ -13,6 +14,7 @@ private:
 public:
 	float size = 1;
 	Color backgroundColor;
+	LayerMask cullingMask;
 
 public:
 	Camera(GameObject* gameObject, Transform* transform);

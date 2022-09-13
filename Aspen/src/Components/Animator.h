@@ -59,7 +59,6 @@ private:
 	friend class Inspector;
 private:
 	void AddAnimation(const std::string& name);
-
 	void AddBoolParameter(const std::string& name);
 	void AddFloatParameter(const std::string& name);
 	void AddIntegerParameter(const std::string& name);

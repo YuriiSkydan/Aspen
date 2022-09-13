@@ -17,9 +17,9 @@ private:
 	static void Remove(std::string_view name);
 	static std::vector<std::string>& GetTags() { return s_Tags; }
 
-	Tag(std::string_view name);
 public:
 	Tag();
+	Tag(std::string_view name);
 
 	const std::string GetName() const { return m_Name; }
 	

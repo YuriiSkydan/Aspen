@@ -77,6 +77,15 @@ std::vector<GameObject*> Scene::GetObjectsWithTag(const Tag& tag)
 	return objectsWithTag;
 }
 
+std::vector<GameObject*> Scene::GetGameObjects()
+{
+	std::vector<GameObject*> objects;
+	for (auto& gameObject : m_GameObjects)
+		objects.push_back(gameObject.get());
+
+	return objects;
+}
+
 void Scene::DestroyGameObject(GameObject* gameObject)
 {
 	for (auto it = m_GameObjects.begin(); it != m_GameObjects.end(); ++it)
@@ -218,7 +227,8 @@ void Scene::Render()
 		{
 			if (it != nullptr)
 			{
-				if (it->gameObject->IsActive() && it->IsEnabled())
+				if (it->gameObject->IsActive() && it->IsEnabled() &&
+					!(it->gameObject->GetLayer() & mainCamera->cullingMask))
 				{
 					Renderer::Draw(it);
 				}

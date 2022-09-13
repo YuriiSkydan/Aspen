@@ -20,7 +20,7 @@ void InitProperties()
 
 private:
 	[[SerializedField]] float m_Speed = 2.0f;
-	[[SerializedField]] float m_JumpForce = 4.0f;
+	[[SerializedField]] float m_JumpForce = 0.1f;
 	[[SerializedField]] bool m_TestBool = false;
 	[[SerializedField]] int m_TestInt = 10;
 	float m_MovingDirection = 0.0f;
@@ -85,7 +85,6 @@ public:
 	{
 		if (Input::IsKeyPressed(Key::Space) && m_Rigidbody->GetLinearVelocity().y == 0)
 		{
-			std::cout << "Jumping\n";
 			m_Rigidbody->AddForce(Vector2f(0.0f, m_JumpForce), ForceMode::Impulse);
 		}
 

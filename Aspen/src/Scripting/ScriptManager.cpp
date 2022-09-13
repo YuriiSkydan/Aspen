@@ -12,7 +12,7 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 		{
 			std::string filename = GetFilename(it.path());
 			bool doesExist = m_Scripts.find(filename) != m_Scripts.end();
-			bool isOutdated = doesExist ? m_Scripts[filename]->GetAddedTime() < it.last_write_time() : false;
+			bool isOutdated = doesExist ? it.last_write_time() > m_Scripts[filename]->GetAddedTime() : false;
 
 			if (!doesExist)
 			{
@@ -38,27 +38,25 @@ void ScriptManager::FindScriptsInDirectory(const std::filesystem::path& director
 				continue;
 			}
 
-			if (!doesExist || isOutdated)
+			if (isOutdated)
 			{
 				std::vector<GameObject*> addScriptObjects;
-				if (doesExist)
+
+				auto scriptObjects = SceneManager::GetActiveScene()->GetObjectsWithComponent<Script>();
+				for (auto& object : scriptObjects)
 				{
-					auto scriptObjects = SceneManager::GetActiveScene()->GetObjectsWithComponent<Script>();
-					for (auto& object : scriptObjects)
+					auto scripts = object->GetScripts();
+					for (auto script : scripts)
 					{
-						auto scripts = object->GetScripts();
-						for (auto script : scripts)
+						if (script->GetName() == filename)
 						{
-							if (script->GetName() == filename)
-							{
-								addScriptObjects.push_back(object);
-								script->Remove();
-							}
+							addScriptObjects.push_back(object);
+							script->Remove();
 						}
 					}
-
-					m_Scripts.erase(filename);
 				}
+
+				m_Scripts.erase(filename);
 
 				CompileCpp(it.path());
 				bool success = LoadDLL(it);
@@ -97,12 +95,13 @@ bool ScriptManager::FindDLL(const std::string& filename, std::filesystem::direct
 bool ScriptManager::LoadDLL(const std::filesystem::directory_entry& entry)
 {
 	std::string filename = GetFilename(entry.path());
-	HINSTANCE dll = LoadLibraryA(("Binaries\\"s + filename + "_generated" + ".dll").c_str());
+	std::string filepath = "Binaries\\"s + filename + "_generated" + ".dll";
+	HINSTANCE dll = LoadLibraryA(filepath.c_str());
 
 	if (dll)
 	{
 		std::pair<std::string, std::unique_ptr<ScriptDLL>> newElement;
-		newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename, entry.last_write_time()));
+		newElement = std::make_pair(filename, std::make_unique<ScriptDLL>(dll, filename, std::filesystem::last_write_time(filepath)));
 		m_Scripts.insert(std::move(newElement));
 		return true;
 	}

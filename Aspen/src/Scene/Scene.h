@@ -51,6 +51,7 @@ public:
 	//Getters
 	GameObject* GetObjectWithID(int ID);
 	std::vector<GameObject*> GetObjectsWithTag(const Tag& tag);
+	std::vector<GameObject*> GetGameObjects();
 
 	std::string GetName() const { return m_Name; }
 	unsigned int GetWidth() const { return m_Width; }
