@@ -1,7 +1,6 @@
 #pragma once
 #include "Matrix.h"
 //#include <numbers>
-#include <iostream> // delete it
 
 const float PI = 3.14159265359f;
 
